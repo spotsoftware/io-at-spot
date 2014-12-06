@@ -1,0 +1,10 @@
+'use strict';
+
+module.exports = {
+    ORGANIZATION_ID: '5482fd551693a803582dda23',
+    ORGANIZATION_PASSWORD: 'bellazio',
+    SERVER_ADDR: "http://192.168.14.4",
+    SERVER_SOCKET_PORT: "9001",
+    SERVER_HTTP_PORT: "9000",
+    NTAG212_PUBLIC_KEY: "04494e1a386d3d3cfe3dc10e5de68a499b1c202db5b132393e89ed19fe5be8bc61"
+};
