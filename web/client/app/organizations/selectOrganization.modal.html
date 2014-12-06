@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h3 class="modal-title">Organizations</h3>
+</div>
+<div class="modal-body">
+    <div ng-repeat="organization in organizations">
+        <div>
+            <a class="pointer" ng-click="select(organization)">{{ organization.name }}</a>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

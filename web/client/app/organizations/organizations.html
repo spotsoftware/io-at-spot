@@ -1,0 +1,159 @@
+<div class="container">
+    <h2>Organizations</h2>
+    <div class="row bottom-detached">
+        <div class="col-md-12 text-right">
+            <button class="btn btn-success" ng-click="actions.new()">New Organization</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" ng-repeat="org in model.organizations" id="{{org._id}}">
+                <div class="panel-heading">
+                    <h4>{{org.name}}</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row col-md-6 col-xs-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Name</label>
+                                <div class="col-sm-10">
+                                    <span class="pointer" editable-text="org.name" onaftersave="actions.updateOrganization(org)" ng-show="utils.currentUserIsAdmin(org)">{{org.name}}</span>
+                                    <span ng-hide="utils.currentUserIsAdmin(org)">{{org.name}}</span>
+                                </div>
+                            </div>
+                            <!--<div class="form-group">
+                                <label class="col-sm-2 control-label">Logo</label>
+                                <div class="col-sm-10 logo">
+                                    <input type="file" on-read-file="actions.imageChanged($imageDataUrl, org)" accept="image/*" ng-show="false" />
+                                    <img ng-show="utils.currentUserIsAdmin(org)" ng-src="{{org.imageDataUrl}}" class="pointer" height="100" width="100" ng-click="actions.changeImage($event)" />
+                                    <img ng-hide="utils.currentUserIsAdmin(org)" ng-src="{{org.imageDataUrl}}" height="100" width="100" />
+                                </div>
+                            </div>-->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Role</label>
+                                <div class="col-sm-10">
+                                    <span>{{org.userRole}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12 col-xs-12 bottom-detached">
+                        <tabset>
+                            <tab heading="Members">
+                                <div ng-include src="'app/members/members.html'" ng-controller="MembersCtrl" ng-init="model.organization = org"></div>
+                            </tab>
+                            <tab heading="Time Offs">
+                                <div class="panel-body">
+                                    <div class="form form-horizontal">
+                                        <div class="row form-group">
+                                            <label class="col-sm-2 control-label">Default time off amount</label>
+                                            <div class="col-md-4">
+                                                <a href="#" editable-number="org.settings.defaultTimeOffAmount" e-min="1" e-max="10">{{ org.settings.defaultTimeOffAmount }}</a>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-sm-2 control-label">Time off types</label>
+                                            <div class="col-md-4">
+                                                <ul class="col-md-4 col-lg-4 col-sm-6 nav nav-stacked" ng-repeat="timeOffType in org.settings.timeOffTypes">
+                                                    <li class="active">
+                                                        <a>{{timeOffType}}<button ng-show="utils.currentUserIsAdmin(org)" type="button" class="close" ng-click="actions.deleteTimeOffType(org, timeOffType)">&times;</button></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group" ng-show="utils.currentUserIsAdmin(org)">
+                                            <div class="col-sm-2"></div>
+                                            <div class="col-md-4">
+                                                <p class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
+                                                    <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tab>
+                            <tab heading="Working Days">
+                                <div class="panel-body">
+                                    <table class="table table-striped table-working-days">
+                                        <thead>
+                                            <tr>
+                                                <th>
+
+                                                </th>
+                                                <th>
+                                                    Mon
+                                                </th>
+                                                <th>
+                                                    Tue
+                                                </th>
+                                                <th>
+                                                    Wed
+                                                </th>
+                                                <th>
+                                                    Thu
+                                                </th>
+                                                <th>
+                                                    Fri
+                                                </th>
+                                                <th>
+                                                    Sat
+                                                </th>
+                                                <th>
+                                                    Sun
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    Active
+                                                </td>
+                                                <td ng-repeat="workingDay in org.settings.workingDays">
+                                                    <div class="btn-group" ng-show="utils.currentUserIsAdmin(org)">
+                                                        <label class="btn btn-primary" ng-model="workingDay.active" btn-checkbox ng-change="actions.updateOrganization(org)">{{ workingDay.active ? 'Disable' : 'Enable' }}</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Start Time
+                                                </td>
+                                                <td ng-repeat="workingDay in org.settings.workingDays">
+                                                    <span ng-show="!workingDay.active">-</span>
+                                                    <span ng-show="!utils.currentUserIsAdmin(org) && workingDay.active">{{ (workingDay.startOfficeTime | date:"HH:mm") || 'empty' }}</span>
+                                                    <a ng-show="utils.currentUserIsAdmin(org) && workingDay.active" href="#" editable-bstime="workingDay.startOfficeTime" e-show-meridian="false" e-hour-step="1" e-minute-step="30" onaftersave="actions.updateOrganization(org)">{{ (workingDay.startOfficeTime | date:"HH:mm") || 'empty' }}</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    End Time
+                                                </td>
+                                                <td ng-repeat="workingDay in org.settings.workingDays">
+                                                    <span ng-show="!workingDay.active">-</span>
+                                                    <span ng-show="!utils.currentUserIsAdmin(org) && workingDay.active">{{ (workingDay.endOfficeTime | date:"HH:mm") || 'empty' }}</span>
+                                                    <a ng-show="utils.currentUserIsAdmin(org) && workingDay.active" href="#" editable-bstime="workingDay.endOfficeTime" e-show-meridian="false" e-hour-step="1" e-minute-step="30" onaftersave="actions.updateOrganization(org)">{{ (workingDay.endOfficeTime | date:"HH:mm") || 'empty' }}</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </tab>
+                            <tab heading="Authentication" ng-show="utils.currentUserIsAdmin(org)">
+                                <div class="panel-body">
+                                    <div ng-show="org.hasPassword">Password is set.</div>
+                                    <div ng-hide="org.hasPassword">Password is not set.</div>
+                                    <button class="btn btn-primary top-detached" ng-click="actions.setupOrganizationPassword(org)" ng-disabled="">Setup new password</button>
+                                </div>
+                            </tab>
+                        </tabset>
+                    </div>
+                    <div class="row col-md-6 col-xs-12">
+                        <button class="btn btn-danger" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

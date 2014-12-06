@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Reset password</h1>
+        </div>
+        <div class="col-sm-12">
+            <form class="form" name="form" ng-submit="reset(form)" novalidate>
+
+                <div class="form-group" ng-class="{ 'has-success': form.password.$valid && submitted,
+                                                  'has-error': form.password.$invalid && submitted }">
+                    <label>New password</label>
+
+                    <input type="password" name="password" class="form-control" ng-model="user.password" ng-minlength="6" required mongoose-error/>
+                    <p class="help-block" ng-show="(form.password.$error.minlength || form.password.$error.required) && submitted">
+                        Password must be at least 6 characters.
+                    </p>
+                    <p class="help-block" ng-show="form.password.$error.mongoose">
+                        {{ errors.password }}
+                    </p>
+                </div>
+
+                <div class="form-group" ng-class="{ 'has-success': form.confirmPassword.$valid && submitted,
+                                                  'has-error': form.confirmPassword.$invalid && submitted }">
+                    <label>Confirm new password</label>
+
+                    <input type="password" name="confirmPassword" class="form-control" ng-model="user.confirmPassword" equals="user.password" />
+                    <p class="help-block" ng-show="(form.confirmPassword.$error.equals) && submitted">
+                        Password is not matching.
+                    </p>
+                </div>
+
+
+                <div>
+                    <button class="btn btn-primary btn-lg btn-login" type="submit">
+                        Reset password
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <hr>
+</div>

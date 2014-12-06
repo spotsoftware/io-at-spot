@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_primary">#0F0F1E</color>
+    <color name="color_primary_darker">#006DD9</color>
+    <color name="color_primary_dark">#000000</color>
+    <color name="color_accent">#FFFFFF</color>
+    <color name="color_accent_opaque">#55FFFFFF</color>
+    <color name="text_color_primary">#FFFFFF</color>
+    <color name="windows_background_color">#0080FF</color>
+    <color name="button_color">#62A8ED</color>
+    <color name="button_color_pressed">#4576A6</color>
+    <color name="button_text_color">#FFFFFF</color>
+    <color name="button_text_color_pressed">#FFFFFF</color>
+</resources>

@@ -1,0 +1,99 @@
+<div class="panel-body">
+    <div class="table-responsive">
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th>
+                        name
+                    </th>
+                    <th>
+                        email
+                    </th>
+                    <th>
+                        role
+                    </th>
+                    <th>
+                        nfc-uid
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="member in model.organization.members">
+                    <td>
+                        {{ member._user.name }}
+                    </td>
+                    <td>
+                        {{ member._user.email }}
+                    </td>
+                    <td class="col-md-2">
+                        <div class="btn-group" ng-show="model.editingMember._id === member._id">
+                            <label class="btn btn-default" ng-model="model.editingMember.role" btn-radio="'user'" ng-disabled="utils.isMemberCurrentUser(member)">user</label>
+                            <label class="btn btn-warning" ng-model="model.editingMember.role" btn-radio="'admin'" ng-disabled="utils.isMemberCurrentUser(member)">admin</label>
+                        </div>
+                        <div ng-hide="model.editingMember._id === member._id">
+                            {{ member.role }}
+                        </div>
+                    </td>
+                    <td class="col-md-3">
+                        <div class="read-uid input-group" ng-show="model.editingMember._id === member._id">
+                            <input type='text' ng-model="model.editingMember.nfc_uid" class="form-control" />
+                            <a class="btn btn-primary has-spinner input-group-addon" ng-click="actions.readUid(model.editingMember)" ng-class="{ active: utils.readingUid }" ng-show="utils.currentUserIsAdmin()">
+                                Read
+                                <span class="spinner">
+                                    <i class="glyphicon glyphicon-refresh icon-spin"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div ng-hide="model.editingMember._id === member._id">
+                            {{ member.nfc_uid }}
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <button role='button' class='btn btn-success' ng-click='actions.updateMember(member)' ng-show="model.editingMember._id === member._id">Save</button>
+                        <button role='button' class='btn btn-default' ng-click='actions.cancelEditMember(member)' ng-show="model.editingMember._id === member._id">Cancel</button>
+                        <button role='button' class='btn btn-primary' ng-click='actions.editMember(member)' ng-show="!(model.editingMember._id === member._id) && utils.currentUserIsAdmin()">Edit</button>
+                        <button role='button' class='btn btn-danger' ng-click='actions.removeMember(member)' ng-show="!(model.editingMember._id === member._id) && utils.currentUserIsAdmin()" ng-disabled="utils.isMemberCurrentUser(member)">Remove</button>
+                    </td>
+                </tr>
+                <tr ng-show="model.addingMember">
+                    <td>
+                        <input type="text" typeahead-on-select="actions.userSelected($item, $model, $label)" ng-model="model.selectedUser" typeahead-editable="false" placeholder="Type user's name" typeahead-min-length="3" typeahead="user.name for user in proxies.searchUsers.request($viewValue, 'name')" typeahead-loading="model.loadingUsers" class="form-control">
+                        <i ng-show="model.loadingUsers" class="glyphicon glyphicon-refresh"></i>
+                    </td>
+                    <td>
+                        <input type="text" typeahead-on-select="actions.userSelected($item, $model, $label)" ng-model="model.selectedUser" typeahead-editable="false" placeholder="Type user's email" typeahead-min-length="3" typeahead="user.email for user in proxies.searchUsers.request($viewValue, 'email')" typeahead-loading="model.loadingUsers" class="form-control">
+                        <i ng-show="model.loadingUsers" class="glyphicon glyphicon-refresh"></i>
+                    </td>
+                    <td class="col-md-2">
+                        <div class="btn-group" ng-show="model.selectedUser">
+                            <label class="btn btn-default" ng-model="model.selectedUser.role" btn-radio="'user'">user</label>
+                            <label class="btn btn-warning" ng-model="model.selectedUser.role" btn-radio="'admin'">admin</label>
+                        </div>
+                    </td>
+                    <td class="col-md-3">
+                        <div class="read-uid input-group" ng-show="model.selectedUser">
+                            <input type='text' ng-model="model.selectedUser.nfc_uid" class="form-control" />
+                            <a class="btn btn-primary has-spinner input-group-addon" ng-click="actions.readUid(model.selectedUser)" ng-class="{ active: utils.readingUid }">
+                                Read
+                                <span class="spinner">
+                                    <i class="glyphicon glyphicon-refresh icon-spin"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <button role='button' class='btn btn-primary' ng-click='actions.toggleAddingMember()'>Cancel</button>
+                        <button role='button' class='btn btn-success' ng-click='actions.addMember()' ng-disabled="!model.selectedUser">Add</button>
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+        <div class="text-right">
+            <button ng-hide="model.addingMember || !utils.currentUserIsAdmin(org)" class="btn btn-success" ng-click="actions.toggleAddingMember()">Add Member</button>
+        </div>
+    </div>
+</div>

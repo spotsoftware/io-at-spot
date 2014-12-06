@@ -1,0 +1,120 @@
+<div class="container">
+    <h2>Review time offs</h2>
+    <div class="row">
+        <div class="btn-group" dropdown is-open="utils.userDropdownOpened">
+            <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!parent.isCurrentOrganizationAdmin()">
+                {{model.membersFilterText}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="member in model.organization.members">
+                    <a class="pointer" ng-click="actions.memberFilterChange(member._user)" href>{{member._user.name}}</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a class="pointer" ng-click="actions.memberFilterChange('all') " href>All</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="btn-group col-md-6">
+            <label class="btn btn-primary" ng-model="model.fastPeriodFilter" btn-radio="'lm'" uncheckable>Last month</label>
+            <label class="btn btn-primary" ng-model="model.fastPeriodFilter" btn-radio="'lw'" uncheckable>Last week</label>
+            <label class="btn btn-primary" ng-model="model.fastPeriodFilter" btn-radio="'tm'" uncheckable>This month</label>
+            <label class="btn btn-primary" ng-model="model.fastPeriodFilter" btn-radio="'tw'" uncheckable>This week</label>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="btn-group" dropdown is-open="utils.dropdownOpened">
+            <button type="button" class="btn btn-primary dropdown-toggle">
+                {{model.timeOffTypeFilter}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="timeOffType in model.timeOffTypes">
+                    <a ng-click="actions.timeOffTypeChange(timeOffType)">{{timeOffType}}</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a ng-click="actions.timeOffTypeChange('All')">All</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row form-inline">
+        <div class=" col-md-12 col-xs-12">
+            <div class="form-group">
+                <label>
+                    From:
+                </label>
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.from" is-open="utils.fromOpened" min-date="null" max-date="model.to" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" disabled />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="actions.dateFromOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </p>
+            </div>
+            <div class="form-group">
+                <label>
+                    To:
+                </label>
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.to" is-open="utils.toOpened" min-date="model.from" max-date="null" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" disabled/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="actions.dateToOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </p>
+            </div>
+            <button class="btn btn-primary" ng-click="actions.search()">Search</button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        name
+                    </th>
+                    <th>
+                        performed at
+                    </th>
+                    <th>
+                        time off type
+                    </th>
+                    <th>
+                        amount
+                    </th>
+                    <th>
+                        commands
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in model.timeOffs">
+                    <td>
+                        {{ item._user.name }}
+                    </td>
+                    <td>
+                        {{ item.performedAt }}
+                    </td>
+                    <td>
+                        {{ item.timeOffType }}
+                    </td>
+                    <td>
+                        {{ item.amount }}
+                    </td>
+                    <td>
+                        <button role='button' class='btn btn-primary' ng-click='actions.edit(item)'>Edit</button>
+                        <button role='button' class='btn btn-danger' ng-click='actions.delete(item)'>Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <pagination total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
+        <pre>Page: {{model.page}} / {{model.numPages}}</pre>
+    </div>
+    <div>
+        <button class="btn btn-primary" ng-click="actions.new()">New</button>
+    </div>
+</div>

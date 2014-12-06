@@ -1,0 +1,34 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Forgot</h1>
+        </div>
+        <div class="col-sm-12">
+            <form class="form" name="form" ng-submit="forgot(form)" novalidate>
+
+                <div class="form-group" ng-class="{ 'has-success': form.email.$valid && submitted,
+                                            'has-error': form.email.$invalid && submitted }">
+                    <label>Email</label>
+
+                    <input type="email" name="email" class="form-control" ng-model="user.email" required/>
+                    <p class="help-block" ng-show="form.email.$error.email && submitted">
+                        Doesn't look like a valid email.
+                    </p>
+                    <p class="help-block" ng-show="form.email.$error.required && submitted">
+                        What's your email address?
+                    </p>
+                    <p class="help-block">{{ errors.other }}</p>
+                </div>
+
+
+                <div>
+                    <button class="btn btn-primary btn-lg btn-login" type="submit">
+                        Reset password
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <hr>
+</div>
