@@ -1,9 +1,11 @@
-<div class="container">
-    <h2>Organizations</h2>
-    <div class="row bottom-detached">
-        <div class="col-md-12 text-right">
-            <button class="btn btn-success" ng-click="actions.new()">New Organization</button>
-        </div>
+<div class="container table-list organizations">
+
+    <h2 class="title">Organizations</h2>
+
+    <div class="row main-commands">
+      <button class="btn btn-new" ng-click="actions.new()">
+        Organizations <span><i class="fa fa-plus"></i></span>
+      </button>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -16,7 +18,7 @@
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Name</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-10 form-control-static">
                                     <span class="pointer" editable-text="org.name" onaftersave="actions.updateOrganization(org)" ng-show="utils.currentUserIsAdmin(org)">{{org.name}}</span>
                                     <span ng-hide="utils.currentUserIsAdmin(org)">{{org.name}}</span>
                                 </div>
@@ -31,30 +33,30 @@
                             </div>-->
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Role</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-10 form-control-static">
                                     <span>{{org.userRole}}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row col-md-12 col-xs-12 bottom-detached">
+                    <div class="row col-xs-12 bottom-detached">
                         <tabset>
                             <tab heading="Members">
                                 <div ng-include src="'app/members/members.html'" ng-controller="MembersCtrl" ng-init="model.organization = org"></div>
                             </tab>
                             <tab heading="Time Offs">
                                 <div class="panel-body">
-                                    <div class="form form-horizontal">
+                                    <div class="form form-horizontal top-detached">
                                         <div class="row form-group">
-                                            <label class="col-sm-2 control-label">Default time off amount</label>
-                                            <div class="col-md-4">
+                                            <label class="col-sm-3 control-label">Default time off amount</label>
+                                            <div class="col-sm-9 form-control-static">
                                                 <a href="#" editable-number="org.settings.defaultTimeOffAmount" e-min="1" e-max="10">{{ org.settings.defaultTimeOffAmount }}</a>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="col-sm-2 control-label">Time off types</label>
-                                            <div class="col-md-4">
-                                                <ul class="col-md-4 col-lg-4 col-sm-6 nav nav-stacked" ng-repeat="timeOffType in org.settings.timeOffTypes">
+                                            <label class="col-sm-3 control-label">Time off types</label>
+                                            <div class="col-sm-9">
+                                                <ul class="col-sm-4 col-md-3 col-lg-2 nav nav-stacked" ng-repeat="timeOffType in org.settings.timeOffTypes">
                                                     <li class="active">
                                                         <a>{{timeOffType}}<button ng-show="utils.currentUserIsAdmin(org)" type="button" class="close" ng-click="actions.deleteTimeOffType(org, timeOffType)">&times;</button></a>
                                                     </li>
@@ -62,13 +64,12 @@
                                             </div>
                                         </div>
                                         <div class="row form-group" ng-show="utils.currentUserIsAdmin(org)">
-                                            <div class="col-sm-2"></div>
-                                            <div class="col-md-4">
-                                                <p class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
-                                                    <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
-                                                </p>
-                                            </div>
+                                          <div class="col-sm-6 col-md-4">
+                                              <p class="input-group">
+                                                  <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
+                                                  <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
+                                              </p>
+                                          </div>
                                         </div>
                                     </div>
                                 </div>
@@ -148,8 +149,10 @@
                             </tab>
                         </tabset>
                     </div>
-                    <div class="row col-md-6 col-xs-12">
-                        <button class="btn btn-danger" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
+                    <div class="col-xs-12 text-right">
+                      <div class="col-xs-12">
+                        <button class="btn btn-primary" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
+                      </div>
                     </div>
                 </div>
             </div>

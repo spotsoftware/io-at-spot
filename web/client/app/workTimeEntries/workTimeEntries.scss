@@ -1,7 +1,10 @@
-.workTimeEntries {
-    .row {
-        padding-top: 5px;
-        padding-bottom: 5px;
+.filters {
+    > * {
+        margin: 10px 0;
     }
-    
+}
+.filters.form-inline {
+    label {
+        display: block;
+    }
 }

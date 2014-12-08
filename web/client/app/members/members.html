@@ -1,19 +1,25 @@
 <div class="panel-body">
+    <div class="row main-commands">
+      <button class="btn btn-new" ng-click="actions.toggleAddingMember()" ng-disabled="model.addingMember" ng-hide="!utils.currentUserIsAdmin(org)">
+        Members <span><i class="fa fa-plus"></i></span>
+      </button>
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-striped ">
+        <table class="table">
             <thead>
                 <tr>
                     <th>
-                        name
+                        Name
                     </th>
                     <th>
-                        email
+                        Email
                     </th>
                     <th>
-                        role
+                        Role
                     </th>
                     <th>
-                        nfc-uid
+                        NFC-uid
                     </th>
                     <th>
 
@@ -52,10 +58,14 @@
                         </div>
                     </td>
                     <td class="text-right">
-                        <button role='button' class='btn btn-success' ng-click='actions.updateMember(member)' ng-show="model.editingMember._id === member._id">Save</button>
-                        <button role='button' class='btn btn-default' ng-click='actions.cancelEditMember(member)' ng-show="model.editingMember._id === member._id">Cancel</button>
-                        <button role='button' class='btn btn-primary' ng-click='actions.editMember(member)' ng-show="!(model.editingMember._id === member._id) && utils.currentUserIsAdmin()">Edit</button>
-                        <button role='button' class='btn btn-danger' ng-click='actions.removeMember(member)' ng-show="!(model.editingMember._id === member._id) && utils.currentUserIsAdmin()" ng-disabled="utils.isMemberCurrentUser(member)">Remove</button>
+                        <button role='button' class='btn btn-primary' ng-click='actions.updateMember(member)' ng-show="model.editingMember._id === member._id"><i class="fa fa-check"></i></button>
+                        <button role='button' class='btn btn-default' ng-click='actions.cancelEditMember(member)' ng-show="model.editingMember._id === member._id"><i class="fa fa-remove"></i></button>
+                        <button role='button' class='btn btn-edit' ng-click='actions.editMember(member)' ng-show="!(model.editingMember._id === member._id) && utils.currentUserIsAdmin()">
+                          <i class="fa fa-pencil"></i>EDIT
+                        </button>
+                        <button role='button' class='btn btn-delete' ng-click='actions.removeMember(member)' ng-show="!(model.editingMember._id === member._id) && utils.currentUserIsAdmin()" ng-disabled="utils.isMemberCurrentUser(member)">
+                          <i class="fa fa-times"></i>DELETE
+                        </button>
                     </td>
                 </tr>
                 <tr ng-show="model.addingMember">
@@ -92,8 +102,5 @@
             </tbody>
 
         </table>
-        <div class="text-right">
-            <button ng-hide="model.addingMember || !utils.currentUserIsAdmin(org)" class="btn btn-success" ng-click="actions.toggleAddingMember()">Add Member</button>
-        </div>
     </div>
 </div>

@@ -1,0 +1,90 @@
+.navbar-default {
+    margin-bottom: 0;
+    background-color: $black;
+    border: none;
+    li {
+        line-height: 35px;
+    }
+    .navbar-toggle {
+        margin-top: 16px;
+        margin-bottom: 15px;
+        background-color: transparent;
+        .icon-bar {
+            background-color: $white;
+        }
+    }
+    .navbar-toggle:hover {
+        background-color: transparent;
+        .icon-bar {
+            background-color: $blue;
+        }
+    }
+    .navbar-toggle:focus {
+        background-color: transparent;
+        .icon-bar {
+            background-color: $blue;
+        }
+    }
+    .navbar-text {
+        color: $white;
+    }
+    .navbar-brand {
+        height: 65px;
+        line-height: 30px;
+        font-size: 24px;
+        color: $white;
+    }
+    .navbar-brand:hover {
+        color: $white;
+    }
+    .navbar-nav {
+        > .open {
+            > a {
+                background-color: transparent;
+                color: $blue;
+            }
+            > a:hover, > a:focus, > a:active {
+                background-color: transparent;
+                color: $blue;
+            }
+        }
+        > li {
+            > a {
+                text-transform: uppercase;
+                color: $white;
+                line-height: 35px;
+            }
+            > a:hover, > a:focus, > a:active {
+                color: $white;
+            }
+            > p.navbar-text {
+                position: relative;
+                display: block;
+                padding: 0px 15px;
+            }
+            .dropdown-menu {
+                background-color: $black;
+                >li {
+                    > a {
+                        color: $white !important;
+                    }
+                    > a:hover, > a:focus, > a:active {
+                        background-color: transparent;
+                        color: $blue !important;
+                        cursor: pointer !important;
+                    }
+                }
+            }
+        }
+        > li.active {
+            > a {
+                color: $blue;
+                background-color: transparent;
+            }
+            > a:hover, > a:focus, > a:active {
+                color: $blue;
+                background-color: transparent;
+            }
+        }
+    }
+}

@@ -28,25 +28,7 @@
                         {{ authModel.currentUser.name }}@<a class="pointer" ng-click="selectOrganization()">{{ authModel.currentOrganization.name }}</a>
                     </p>
                 </li>
-                <!--
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Action</a>
-                        </li>
-                        <li><a href="#">Another action</a>
-                        </li>
-                        <li><a href="#">Something else here</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Separated link</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">One more separated link</a>
-                        </li>
-                    </ul>
-                </li>-->
-                <li ng-show="isLoggedIn()" ng-class="{active: isActive('/settings')}" class="dropdown">
+                <li ng-show="isLoggedIn()" ng-class="{active: isActive('/settings')}" class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-cog"></span>
                     </a>
