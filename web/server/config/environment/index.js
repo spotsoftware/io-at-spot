@@ -21,6 +21,9 @@ var all = {
     // Server port
     port: process.env.PORT || 9000,
 
+    // enables CORS request
+    enableCORS: true,
+
     // Should we populate the DB with sample data?
     seedDB: false,
 

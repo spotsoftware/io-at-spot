@@ -14,6 +14,7 @@ var cookieParser = require('cookie-parser');
 var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
+var crossDomain = require('./cross-domain');
 var passport = require('passport');
 
 module.exports = function(app) {
@@ -22,6 +23,11 @@ module.exports = function(app) {
   app.set('views', config.root + '/server/views');
   app.engine('html', require('ejs').renderFile);
   app.set('view engine', 'html');
+
+  if(config.enableCORS) {
+      app.use(crossDomain);
+  }
+  
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
