@@ -8,8 +8,8 @@ var errorBuilder = require('../../error-builder');
 
 // Get list of timeOffs
 exports.index = function (req, res, next) {
-    if (!req.body) {
-        return next(new errorBuilder("request body can't be empty", 403));
+    if (!req.query) {
+        return next(new errorBuilder("request query string can't be empty", 403));
     }
 
     var organizationId = new mongoose.Types.ObjectId(req.params.organizationId);
@@ -29,49 +29,48 @@ exports.index = function (req, res, next) {
         }
     ];
 
-    if (req.body.from && req.body.to) {
+    if (req.query.from && req.query.to) {
 
         filterConditions.push({
             performedAt: {
-                $gte: new Date(req.body.from),
-                $lte: new Date(req.body.to)
+                $gte: new Date(req.query.from),
+                $lte: new Date(req.query.to)
             }
         });
 
-    } else if (req.body.from) {
+    } else if (req.query.from) {
 
         filterConditions.push({
             performedAt: {
-                $gte: new Date(req.body.from)
+                $gte: new Date(req.query.from)
             }
         });
 
-    } else if (req.body.to) {
+    } else if (req.query.to) {
 
         filterConditions.push({
             performedAt: {
-                $lte: new Date(req.body.to)
+                $lte: new Date(req.query.to)
             }
         });
     }
 
-    if (req.body.timeOffType) {
+    if (req.query.timeOffType) {
 
         filterConditions.push({
-            timeOffType: req.body.timeOffType
+            timeOffType: req.query.timeOffType
         });
     }
 
     var membersFilter = [];
 
-    console.log(req.user);
     membersFilter.push({
         _user: req.user._id
     });
 
     //Only if the user is the owner of the organization
-    if (auth.ensureOrganizationAdmin() && req.body.members && req.body.members.length > 0) {
-        array.forEach(req.body.members.length, function (el, i) {
+    if (auth.ensureOrganizationAdmin() && req.query.members && req.query.members.length > 0) {
+        array.forEach(req.query.members.length, function (el, i) {
 
             membersFilter.push({
                 _user: el._user

@@ -8,11 +8,10 @@ var errorBuilder = require('../../error-builder');
 
 // Get list of workTimeEntries
 exports.index = function (req, res, next) {
-    /*if (!req.body) {
-    return next(new errorBuilder("request body can't be empty", 403));
-}*/
 
-console.log(req.query);
+    if (!req.query) {
+        return next(new errorBuilder("request query string can't be empty", 403));
+    }
 
     var organizationId = new mongoose.Types.ObjectId(req.params.organizationId);
     var page = req.query.page || 1;
@@ -66,19 +65,19 @@ console.log(req.query);
 
     var membersFilter = [];
 
-        if (auth.ensureOrganizationAdmin()) {
-                var queryMembers = JSON.parse(req.query.members);
-                queryMembers.forEach(function (member, i) {
-                    membersFilter.push({
-                        _user: member
-                    });
+    if (auth.ensureOrganizationAdmin()) {
+            var queryMembers = JSON.parse(req.query.members);
+            queryMembers.forEach(function (member, i) {
+                membersFilter.push({
+                    _user: member
                 });
-
-        } else {
-            membersFilter.push({
-                _user: req.user._id
             });
-        }
+
+    } else {
+        membersFilter.push({
+            _user: req.user._id
+        });
+    }
 
     if(membersFilter.length > 0) {
         filterConditions.push({
