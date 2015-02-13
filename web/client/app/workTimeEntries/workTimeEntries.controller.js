@@ -232,19 +232,20 @@ angular.module('ioAtSpotApp')
 
                 proxies.search = {
                     requestData: function () {
+
+                        console.log($scope.model.membersFilter);
+
                         return {
+                            organizationId: $scope.parent.currentOrganization._id,
+                            page: $scope.model.page,
                             from: $scope.model.from,
                             to: $scope.model.to,
-                            workTimeEntryType: $scope.model.workTimeEntryType,
-                            members: $scope.model.membersFilter
-                        }
+                            type: $scope.model.workTimeEntryType,
+                            members: JSON.stringify($scope.model.membersFilter)
+                        };
                     },
                     request: function () {
-                        WorkTimeEntries.query({
-                                organizationId: $scope.parent.currentOrganization._id,
-                                page: $scope.model.page
-                            },
-                            proxies.search.requestData()).$promise.then(
+                        WorkTimeEntries.query(proxies.search.requestData(), {}).$promise.then(
                             function (pagedResult) {
                                 proxies.search.successCallback(pagedResult);
                             },

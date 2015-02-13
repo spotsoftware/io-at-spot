@@ -8,9 +8,11 @@ var errorBuilder = require('../../error-builder');
 
 // Get list of workTimeEntries
 exports.index = function (req, res, next) {
-    if (!req.body) {
-        return next(new errorBuilder("request body can't be empty", 403));
-    }
+    /*if (!req.body) {
+    return next(new errorBuilder("request body can't be empty", 403));
+}*/
+
+console.log(req.query);
 
     var organizationId = new mongoose.Types.ObjectId(req.params.organizationId);
     var page = req.query.page || 1;
@@ -29,60 +31,60 @@ exports.index = function (req, res, next) {
         }
     ];
 
-    if (req.body.from && req.body.to) {
+    if (req.query.from && req.query.to) {
 
         filterConditions.push({
             performedAt: {
-                $gte: new Date(req.body.from),
-                $lte: new Date(req.body.to)
+                $gte: new Date(req.query.from),
+                $lte: new Date(req.query.to)
             }
         });
 
-    } else if (req.body.from) {
+    } else if (req.query.from) {
 
         filterConditions.push({
             performedAt: {
-                $gte: new Date(req.body.from)
+                $gte: new Date(req.query.from)
             }
         });
 
-    } else if (req.body.to) {
+    } else if (req.query.to) {
 
         filterConditions.push({
             performedAt: {
-                $lte: new Date(req.body.to)
+                $lte: new Date(req.query.to)
             }
         });
     }
 
-    if (req.body.workTimeEntryType) {
+    if (req.query.type) {
 
         filterConditions.push({
-            workTimeEntryType: req.body.workTimeEntryType
+            workTimeEntryType: req.query.type
         });
     }
-
 
     var membersFilter = [];
-    console.log(req.body.members);
 
+        if (auth.ensureOrganizationAdmin()) {
+                var queryMembers = JSON.parse(req.query.members);
+                queryMembers.forEach(function (member, i) {
+                    membersFilter.push({
+                        _user: member
+                    });
+                });
 
-    if (auth.ensureOrganizationAdmin()) {
-        req.body.members.forEach(function (member, i) {
+        } else {
             membersFilter.push({
-                _user: member
+                _user: req.user._id
             });
-        });
+        }
 
-    } else {
-        membersFilter.push({
-            _user: req.user._id
+    if(membersFilter.length > 0) {
+        filterConditions.push({
+            $or: membersFilter
         });
     }
-
-    filterConditions.push({
-        $or: membersFilter
-    });
 
     //    var util = require('util');
     //    console.log(util.inspect({
