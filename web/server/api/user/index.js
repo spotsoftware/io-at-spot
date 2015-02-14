@@ -7,10 +7,14 @@ var auth = require('../../auth/auth.service');
 
 var router = express.Router();
 
-router.post('/', auth.isAuthenticated(), controller.index);
+// RESTfully talking, we created a new sub-resource of /user for the currently logged user.
 router.get('/me', auth.isAuthenticated(), controller.me);
-// router.delete('/me', auth.isAuthenticated(), controller.destroy);
 router.put('/me', auth.isAuthenticated(), controller.update);
-router.post('/new', controller.create);
+router.patch('/me', auth.isAuthenticated(), controller.update);
+router.delete('/me', auth.isAuthenticated(), controller.delete);
+
+router.get('/', auth.isAuthenticated(), controller.index);
+router.get('/:id', auth.isAuthenticated(), controller.getUser);
+router.post('/', controller.create);
 
 module.exports = router;

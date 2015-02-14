@@ -24,18 +24,18 @@ exports.index = function (req, res, next) {
 
     var filters = [];
 
-    if (req.body.searchField && req.body.searchText) {
+    if (req.query.searchField && req.query.searchText) {
         var filter = {};
 
-        filter[req.body.searchField] = new RegExp(req.body.searchText, "i");
+        filter[req.query.searchField] = new RegExp(req.query.searchText, "i");
 
         filters.push(filter);
     }
 
-    if (req.body.excluded) {
+    if (req.query.excluded) {
         filters.push({
             _id: {
-                $nin: req.body.excluded
+                $nin: req.query.excluded
             }
         });
     }
@@ -49,6 +49,14 @@ exports.index = function (req, res, next) {
             }
             res.json(200, users);
         });
+};
+
+exports.getUser = function (req, res, next) {
+
+};
+
+exports.delete = function (req, res, next) {
+
 };
 
 /**
