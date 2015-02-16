@@ -15,7 +15,8 @@ router.delete('/me', auth.isAuthenticated(), controller.delete);
 
 router.get('/', auth.isAuthenticated(), controller.index);
 // TODO - left blank, don't know if needed and if possible without modifications to the domain model.
-router.get('/:id', auth.isAuthenticated(), controller.getUser);
+router.get('/:id', auth.isAuthenticated(), controller.detail);
+// TODO - shouln't we enforce the security on user creation?
 router.post('/', controller.create);
 // TODO - left blank, don't know if needed and if possible without modifications to the domain model
 router.delete('/:id', controller.delete);

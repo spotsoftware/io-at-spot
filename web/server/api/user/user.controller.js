@@ -51,10 +51,6 @@ exports.index = function (req, res, next) {
         });
 };
 
-exports.getUser = function (req, res, next) {
-
-};
-
 exports.delete = function (req, res, next) {
 
     if (req.param.id) {
@@ -68,14 +64,17 @@ exports.delete = function (req, res, next) {
  * Creates a new user and assigns to it a token with 5 hours of validity.
  */
 exports.create = function (req, res, next) {
+    
     var newUser = new User(req.body);
 
     newUser.provider = 'local';
 
     newUser.save(function (err, user) {
+
         if (err) {
             return validationError(next, err);
         }
+
         var token = jwt.sign({
                 _id: user._id
             },
@@ -83,26 +82,32 @@ exports.create = function (req, res, next) {
                 expiresInMinutes: 60 * 5
             });
 
-        res.json({
-            token: token
-        });
+        res.status(201);
+        res.location('/api/users/' + user._id);
+
+        return res.json({ token: token });
     });
 };
 
 /**
  * Get data about the user related to the passed '_id'.
  */
-exports.show = function (req, res, next) {
+exports.detail = function (req, res, next) {
     var userId = req.params.id;
 
     User.findById(userId, function (err, user) {
+
         if (err) {
             return next(err);
         }
+
         if (!user) {
             return res.send(401);
         }
-        res.json(user.profile);
+
+        res.status(200);
+
+        return res.json(user.profile);
     });
 };
 
