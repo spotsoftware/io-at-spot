@@ -136,7 +136,28 @@ exports.create = function (req, res, next) {
         if (err) {
             return next(err);
         }
-        return res.json(201, savedWorkTimeEntry);
+        
+        res.status(201);
+        res.location('/api/organizations/' + organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+        
+        return res.json(savedWorkTimeEntry);
+    });
+};
+
+exports.detail = function (req, res, next) {
+    
+    WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
+        if(err) {
+            return next(err);
+        }
+        
+        if(!workTimeEntry) {
+            return next(new errorBuilder("work time entry not found", 404));
+        }
+        
+        res.status(200);
+        
+        return res.json(workTimeEntry);
     });
 };
 
