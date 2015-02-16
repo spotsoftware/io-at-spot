@@ -158,6 +158,22 @@ exports.index = function (req, res, next) {
     });
 };
 
+exports.detail = function (req, res, next) {
+
+    TimeOff.findById(req.param.id, function (err, timeOff) {
+
+        if (err) {
+            return next(err);
+        }
+
+        if (!timeOff) {
+            return next(new errorBuilder('No resource was found matching the given id.', 404));
+        }
+
+        return res.json(200, timeOff);
+    });
+};
+
 // Creates a new timeOff in the DB.
 exports.create = function (req, res, next) {
 
@@ -173,10 +189,15 @@ exports.create = function (req, res, next) {
     timeOff.performedAt = req.body.performedAt;
 
     timeOff.save(function (err, savedTimeOff) {
+
         if (err) {
             return next(err);
         }
-        return res.json(201, savedTimeOff);
+
+        res.status(201);
+        res.location('/api/organizations/'+ organizationId +'/timeOffs/' + savedTimeOff._id);
+
+        return res.json(savedTimeOff);
     });
 };
 
