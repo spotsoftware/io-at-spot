@@ -14,7 +14,10 @@ router.patch('/me', auth.isAuthenticated(), controller.update);
 router.delete('/me', auth.isAuthenticated(), controller.delete);
 
 router.get('/', auth.isAuthenticated(), controller.index);
+// TODO - left blank, don't know if needed and if possible without modifications to the domain model.
 router.get('/:id', auth.isAuthenticated(), controller.getUser);
 router.post('/', controller.create);
+// TODO - left blank, don't know if needed and if possible without modifications to the domain model
+router.delete('/:id', controller.delete);
 
 module.exports = router;

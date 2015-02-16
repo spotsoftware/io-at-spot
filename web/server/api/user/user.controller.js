@@ -57,6 +57,11 @@ exports.getUser = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
 
+    if (req.param.id) {
+        // delete a given user
+    } else {
+        // delete current user
+    }
 };
 
 /**
