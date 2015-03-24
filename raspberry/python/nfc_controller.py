@@ -90,7 +90,8 @@ class NFCController(object):
                     self.clf = nfc.ContactlessFrontend(device)
                     while not self.clf.connect(llcp=llcp_options, rdwr=rdwr_options):
                         pass
-                except:
+                except Exception, e:
+                    print e
                     pass
             
             print "STATUS: waiting for peer data"

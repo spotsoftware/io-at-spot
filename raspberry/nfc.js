@@ -31,9 +31,11 @@ var server = new zerorpc.Server({
 
 server.bind("tcp://0.0.0.0:4242");
 
-var pyshell = pythonShell.run("nfc_controller.py");
 console.log('starting nfcpy');
-
+var python = require('child_process').spawn('python', ["/home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py"]);
+process.on('exit', function() {
+    python.kill();
+});
 module.exports = function(listener){
     _listener = listener;
 };

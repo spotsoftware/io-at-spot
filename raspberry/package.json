@@ -11,13 +11,14 @@
   ],
   "dependencies": {
     "bleno": "",
-    "onoff": "",
-    "socket.io-client": "",
-    "zerorpc": "",
     "ecdsa": "0.5.3",
+    "gith": "^1.0.4",
+    "node-persist": "",
+    "onoff": "",
     "python-shell": "",
     "request-json": "",
-    "node-persist": ""
+    "socket.io-client": "",
+    "zerorpc": ""
   },
   "engines": {
     "node": ">=0.8"
