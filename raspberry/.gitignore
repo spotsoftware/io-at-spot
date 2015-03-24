@@ -1,4 +1,4 @@
 node_modules/
 persist/
 tmp/
-/public/config/config.js
+config/config.js
