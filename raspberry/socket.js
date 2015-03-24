@@ -6,13 +6,12 @@ var config = require('./config/config');
 //NPM dependencies
 var io = require('socket.io-client');
 var client = require('request-json').newClient(config.SERVER_ADDR + ':' + config.SERVER_HTTP_PORT);
-var hook = require('hook');
 
 //Start of parallel entities
 require('./config/close_handler');
 require('./ble')(this);
 require('./nfc')(this);
-
+require('./hook');
 
 //Module vars
 var _socket = null;
