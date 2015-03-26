@@ -11,7 +11,6 @@ var client = require('request-json').newClient(config.SERVER_ADDR + ':' + config
 require('./config/close_handler');
 require('./ble')(this);
 require('./nfc')(this);
-require('./hook');
 
 //Module vars
 var _socket = null;
