@@ -21,6 +21,10 @@ if [ -f /home/pi/io-at-spot/deploy.zip ]; then
     #move install dependencies
     cd deploy
 
+    #saving old node_modules and config file
+    mv /home/pi/io-at-spot/deploy/node_modules node_modules
+    mv /home/pi/io-at-spot/deploy/config/config.js config/config.js
+
     echo 'npm install'
     #install dependencies
     sudo npm install
@@ -34,6 +38,9 @@ if [ -f /home/pi/io-at-spot/deploy.zip ]; then
     echo 'replacing deploy dir'
     # Replace with new files
     mv deploy /home/pi/io-at-spot/
+
+    cd /home/pi/io-at-spot
+    rm -rf io-at-spot-deploy       
 
     # Perhaps call any other scripts you need to rebuild assets here
     # or set owner/permissions

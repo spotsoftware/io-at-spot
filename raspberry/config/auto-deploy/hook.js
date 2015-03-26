@@ -9,7 +9,7 @@ gith({
 
     console.log("new push on deploy branch and raspberry folder received");
 
-    exec('config/hook.sh', function(err, stdout, stderr){
+    exec('/.hook.sh', function(err, stdout, stderr){
         if (err){
             return err;
         }
