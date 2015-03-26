@@ -7,7 +7,7 @@ cd /home/pi/io-at-spot && wget -O deploy.zip -q https://github.com/spotsoftware/
 if [ -f /home/pi/io-at-spot/deploy.zip ]; then
     # Unzip the zip file
     unzip -q /home/pi/io-at-spot/deploy.zip
-
+    echo 'unzipping file'
     # Delete zip file
     rm /home/pi/io-at-spot/deploy.zip
 
@@ -18,19 +18,22 @@ if [ -f /home/pi/io-at-spot/deploy.zip ]; then
     mv raspberry deploy
 
     #ANDREA merge deploy:
-
+    echo 'stopping service'
     sudo /etc/init.d/nodeup stop
 
+    echo 'rsyncing'
     rsync -av deploy/ /home/pi/io-at-spot/deploy/
     #(after checking)
     cd .. && sudo rm -rf io-at-spot-deploy
 
     cd /home/pi/io-at-spot/deploy/
-
+    echo 'installing dependencies'
     sudo npm install
 
+    echo 'restarting service'
     sudo /etc/init.d/nodeup start
 
+    echo 'end'
     #END:
 
     # Perhaps call any other scripts you need to rebuild assets here
