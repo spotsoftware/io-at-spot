@@ -26,7 +26,7 @@ function isOnline(){
 function authenticate(){
     //Secure socket configuration
 
-    console.log('trying authentication...');
+    console.log('authenticating...');
     client.post('auth/device/', {
         id: config.ORGANIZATION_ID,
         password: config.ORGANIZATION_PASSWORD
