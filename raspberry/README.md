@@ -86,7 +86,7 @@ cd raspberry
 
 * Setup bluetoothd daemon as a startup service
 ```sh
-sudo cp config/startup.sh /etc/init.d/bluetoothd
+sudo cp app/config/bluetooth.sh /etc/init.d/bluetoothd
 sudo chmod uog+rx /etc/init.d/bluetoothd
 sudo update-rc.d bluetoothd defaults
 ```

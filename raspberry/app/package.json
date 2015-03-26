@@ -1,0 +1,25 @@
+{
+    "name": "node-server",
+    "author": "Andrea Corzani",
+    "version": "0.0.1",
+    "description": "Doorkeeper project",
+    "main": "socket.js",
+    "keywords": [
+    "BLE",
+    "door-opener",
+    "spot-software"
+  ],
+    "dependencies": {
+        "bleno": "",
+        "ecdsa": "0.5.3",
+        "node-persist": "",
+        "onoff": "",
+        "python-shell": "",
+        "request-json": "",
+        "socket.io-client": "",
+        "zerorpc": ""
+    },
+    "engines": {
+        "node": ">=0.8"
+    }
+}
