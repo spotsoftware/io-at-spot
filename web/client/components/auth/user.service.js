@@ -18,7 +18,7 @@ angular.module('ioAtSpotApp')
                 }
             },
             save: {
-                url: '/api/users/new',
+                url: '/api/users/',
                 method: 'POST'
             }
         });

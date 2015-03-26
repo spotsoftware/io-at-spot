@@ -9,6 +9,9 @@ var errorBuilder = require('../../error-builder');
 
 var validationError = function (next, err) {
     var error = new errorBuilder(err.message, 422);
+
+    console.log('Error built.');
+
     error.validation = err.errors;
     return next(error);
 };
@@ -21,18 +24,18 @@ exports.index = function (req, res, next) {
 
     var filters = [];
 
-    if (req.body.searchField && req.body.searchText) {
+    if (req.query.searchField && req.query.searchText) {
         var filter = {};
 
-        filter[req.body.searchField] = new RegExp(req.body.searchText, "i");
+        filter[req.query.searchField] = new RegExp(req.query.searchText, "i");
 
         filters.push(filter);
     }
 
-    if (req.body.excluded) {
+    if (req.query.excluded) {
         filters.push({
             _id: {
-                $nin: req.body.excluded
+                $nin: req.query.excluded
             }
         });
     }
@@ -48,18 +51,30 @@ exports.index = function (req, res, next) {
         });
 };
 
+exports.delete = function (req, res, next) {
+
+    if (req.param.id) {
+        // delete a given user
+    } else {
+        // delete current user
+    }
+};
+
 /**
  * Creates a new user and assigns to it a token with 5 hours of validity.
  */
 exports.create = function (req, res, next) {
+    
     var newUser = new User(req.body);
 
     newUser.provider = 'local';
 
     newUser.save(function (err, user) {
+
         if (err) {
             return validationError(next, err);
         }
+
         var token = jwt.sign({
                 _id: user._id
             },
@@ -67,26 +82,32 @@ exports.create = function (req, res, next) {
                 expiresInMinutes: 60 * 5
             });
 
-        res.json({
-            token: token
-        });
+        res.status(201);
+        res.location('/api/users/' + user._id);
+
+        return res.json({ token: token });
     });
 };
 
 /**
  * Get data about the user related to the passed '_id'.
  */
-exports.show = function (req, res, next) {
+exports.detail = function (req, res, next) {
     var userId = req.params.id;
 
     User.findById(userId, function (err, user) {
+
         if (err) {
             return next(err);
         }
+
         if (!user) {
             return res.send(401);
         }
-        res.json(user.profile);
+
+        res.status(200);
+
+        return res.json(user.profile);
     });
 };
 

@@ -9,10 +9,22 @@ angular.module('ioAtSpotApp')
                 }, {
                     query: {
                         url: '/api/users/',
-                        method: 'POST',
+                        method: 'GET',
                         isArray: true
                     },
-
+                    detail: {
+                        url: '/api/users/:id/',
+                        method: 'GET',
+                        params: {
+                            id: '@id'
+                        },
+                        isArray: false
+                    },
+                    create: {
+                        url: '/api/users/',
+                        method: 'POST',
+                        isArray: false
+                    },
                     update: {
                         url: '/api/users/me',
                         method: 'PUT',

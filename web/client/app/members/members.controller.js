@@ -162,8 +162,7 @@ angular.module('ioAtSpotApp')
                         }
                     },
                     request: function (searchText, searchField) {
-                        return Users.query({},
-                            $scope.proxies.searchUsers.requestData(searchText, searchField)).$promise.then(
+                        return Users.query($scope.proxies.searchUsers.requestData(searchText, searchField), {}).$promise.then(
                             function (data) {
                                 return $scope.proxies.searchUsers.successCallback(data);
                             });

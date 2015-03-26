@@ -20,7 +20,7 @@ angular.module('ioAtSpotApp')
                         isArray: false
                     },
                     create: {
-                        url: '/api/organizations/new',
+                        url: '/api/organizations',
                         method: 'POST',
                         isArray: false
                     },

@@ -29,6 +29,7 @@ exports.index = function (req, res, next) {
             if (err) {
                 return next(err);
             }
+
             var organizationsToReturn = [];
 
             organizations.forEach(function (org) {
@@ -46,18 +47,22 @@ exports.index = function (req, res, next) {
         });
 };
 
-//// Get a single organization
-//exports.show = function (req, res) {
-//    Organization.findById(req.params.organizationId, function (err, organization) {
-//        if (err) {
-//            return handleError(res, err);
-//        }
-//        if (!organization) {
-//            return res.send(404);
-//        }
-//        return res.json(organization);
-//    });
-//};
+// Get a single organization
+exports.detail = function (req, res) {
+
+   Organization.findById(req.params.organizationId, function (err, organization) {
+
+       if (err) {
+           return next(err);
+       }
+
+       if (!organization) {
+           return next(new errorBuilder("No organization matching the given id was found.", 404));
+       }
+
+       return res.json(organization);
+   });
+};
 
 // Creates a new organization in the DB.
 exports.create = function (req, res, next) {
@@ -111,7 +116,10 @@ exports.create = function (req, res, next) {
                 return next(err);
             }
 
-            return res.json(201, organization.public);
+            res.status(201);
+            res.location('/api/organizations/' + organization._id);
+
+            return res.json(organization.public);
         });
 
 
@@ -143,11 +151,13 @@ exports.update = function (req, res, next) {
         }
 
         organization.save(function (err) {
+
             if (err) {
-                return handleError(res, err);
+                return next(err);
             }
-            //console.log('org controller, sync wd', organization.settings.workingDays, organization._id);
+
             device.syncWorkingDays(organization._id, organization.settings.workingDays);
+
             return res.json(200, organization.public);
         });
     });

@@ -188,16 +188,14 @@ angular.module('ioAtSpotApp')
 
                         return {
                             from: $scope.model.from,
-                            to: $scope.model.to,
-                            timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter
-                        }
+                            organizationId: $scope.parent.currentOrganization._id,
+                            page: $scope.model.page,
+                            timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
+                            to: $scope.model.to
+                        };
                     },
                     request: function () {
-                        TimeOffs.query({
-                                organizationId: $scope.parent.currentOrganization._id,
-                                page: $scope.model.page
-                            },
-                            proxies.search.requestData()).$promise.then(
+                        TimeOffs.query(proxies.search.requestData(), {}).$promise.then(
                             function (pagedResult) {
                                 proxies.search.successCallback(pagedResult);
                             },
