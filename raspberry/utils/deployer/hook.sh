@@ -22,8 +22,8 @@ if [ -f /home/pi/io-at-spot/deploy.zip ]; then
     cd deploy
 
     #saving old node_modules and config file
-    mv /home/pi/io-at-spot/doorkeeper/deploy/node_modules node_modules
-    mv /home/pi/io-at-spot/doorkeeper/deploy/config/config.js config/config.js
+    cp -r /home/pi/io-at-spot/doorkeeper/deploy/node_modules node_modules
+    cp -r /home/pi/io-at-spot/doorkeeper/deploy/config/config.js config/config.js
 
     echo 'npm install'
     #install dependencies
