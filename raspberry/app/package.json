@@ -1,16 +1,18 @@
 {
-    "name": "node-server",
+    "name": "io-at-spot",
     "author": "Andrea Corzani",
-    "version": "0.0.1",
-    "description": "Doorkeeper project",
+    "version": "0.1",
+    "description": "Doorkeeper node for raspberry pi",
     "main": "socket.js",
     "keywords": [
     "BLE",
+    "NFC",
     "door-opener",
     "spot-software"
   ],
     "dependencies": {
         "bleno": "",
+        "bunyan": "^1.3.4",
         "ecdsa": "0.5.3",
         "node-persist": "",
         "onoff": "",

@@ -2,6 +2,7 @@
 var actuatorService = require('./actuator');
 var offlineHelper = require('./offline-helper');
 var config = require('./config/config');
+var log = require('./logger');
 
 //NPM dependencies
 var io = require('socket.io-client');
@@ -18,39 +19,39 @@ var _isConnected = false;
 var _readingUid = false;
 var _readingUidTimeout = null;
 
-function isOnline(){
+function isOnline() {
     return _isConnected;
 }
 
-function authenticate(){
+function authenticate() {
     //Secure socket configuration
 
-    console.log('trying auth...');
+    log.debug('authenticating...');
+
     client.post('auth/device/', {
         id: config.ORGANIZATION_ID,
         password: config.ORGANIZATION_PASSWORD
-    }, function(err, res, body) {
-        if(err){
-            console.log('cannot authenticate.');
+    }, function (err, res, body) {
+        if (err) {
+            log.error(err, 'cannot authenticate.');
 
-            setTimeout(function(){
+            setTimeout(function () {
                 authenticate();
             }, 10000);
 
         } else {
+            log.info('authenticated. Connecting to secure socket with token :' + body.token);
             connectSocket(body.token);
         }
     });
 }
 
 /*
-* This function manages the socket connection:
-* 1: try the connection
-* 2: register socket events handler
-*/
-function connectSocket(authToken){
-
-    //console.log('connecting to secure socket');
+ * This function manages the socket connection:
+ * 1: try the connection
+ * 2: register socket events handler
+ */
+function connectSocket(authToken) {
 
     _socket = io.connect(config.SERVER_ADDR + ':' + config.SERVER_SOCKET_PORT, {
         query: 'token=' + authToken
@@ -58,7 +59,7 @@ function connectSocket(authToken){
 
     _socket.on('connect', function () {
 
-        console.log('socket connected');
+        log.debug('socket connected');
 
         _isConnected = true;
 
@@ -70,25 +71,29 @@ function connectSocket(authToken){
         // socket disconnected
         _isConnected = false;
 
-        console.log('socket disconnected');
+        log.warn('socket disconnected');
     });
 
-    _socket.on('connect_timeout', function(){
+    _socket.on('connect_timeout', function () {
 
-        console.log('socket timed out');
+        log.warn('socket timed out');
 
         authenticate();
     });
 
-    _socket.on('error', function () {
-        console.log('socket error');
+    _socket.on('error', function (err) {
+        log.error(err, 'socket error');
     });
 
-    _socket.on('read', function(){
+    _socket.on('read', function () {
+        log.info('reading nfc uid request, start blinking');
+
         _readingUid = true;
         actuatorService.startBlinking();
 
-        readingUidTimeout = setTimeout(function(){
+        readingUidTimeout = setTimeout(function () {
+            log.info('was not possible to read uid in last 5 seconds');
+
             _socket.emit('uid', {
                 uid: null
             });
@@ -98,18 +103,20 @@ function connectSocket(authToken){
         }, 5000);
     });
 
-    _socket.on('members', function(data){
+    _socket.on('members', function (data) {
         offlineHelper.storeMembers(data.members);
     });
 
-    _socket.on('workingDays', function(data){
+    _socket.on('workingDays', function (data) {
         offlineHelper.storeWorkingDays(data.workingDays);
     });
 
 }
 
-function onNFCTagSubmitted(uid){
-    if(_readingUid){
+function onNFCTagSubmitted(uid) {
+    log.info('nfc tag read, uid:' + uid);
+
+    if (_readingUid) {
         _socket.emit('uid', {
             uid: uid
         });
@@ -119,22 +126,28 @@ function onNFCTagSubmitted(uid){
         _readingUid = false;
         clearTimeout(_readingUidTimeout);
     } else {
-        if(isOnline()){
+        if (isOnline()) {
 
-            _socket.emit('nfcTagSubmitted', { uid: uid }, function(response){
+            _socket.emit('nfcTagSubmitted', {
+                uid: uid
+            }, function (response) {
 
-                console.log(response);
+                log.info({
+                    response: response
+                }, 'nfc authentication response received');
 
-                if(response.responseCode == 200){
+                if (response.responseCode == 200) {
+                    //Need more specified details on authentication
                     actuatorService.openDoor();
                 } else {
+                    //Need more specified details on authentication error
                     actuatorService.error();
                 }
             });
 
         } else {
 
-            if(offlineHelper.authorizeAccess(uid)){
+            if (offlineHelper.authorizeAccess(uid)) {
                 actuatorService.openDoor();
             } else {
                 actuatorService.error();
@@ -143,8 +156,10 @@ function onNFCTagSubmitted(uid){
     }
 }
 
-function onTokenSubmitted(stringData, callback){
-    if(isOnline()){
+function onTokenSubmitted(stringData, callback) {
+    log.info('token read:' + stringData);
+
+    if (isOnline()) {
 
         var token = stringData.substr(0, stringData.length - 1);
         var type = stringData.substr(stringData.length - 1);
@@ -152,11 +167,13 @@ function onTokenSubmitted(stringData, callback){
         _socket.emit('tokenSubmitted', {
             token: token,
             workTimeEntryType: type === 'I' ? 'in' : 'out'
-        }, function(response){
+        }, function (response) {
 
-            console.log(response);
+            log.info({
+                response: response
+            }, 'token authentication response received');
 
-            if(response.responseCode == 200){
+            if (response.responseCode == 200) {
                 actuatorService.openDoor();
             } else {
                 actuatorService.error();
@@ -165,6 +182,8 @@ function onTokenSubmitted(stringData, callback){
         });
 
     } else {
+        log.warn('device is offline, cannot authenticate.');
+
         actuatorService.error();
 
         callback({
@@ -175,7 +194,7 @@ function onTokenSubmitted(stringData, callback){
 }
 
 
-console.log('starting socket service');
+log.debug('starting socket service');
 
 authenticate();
 

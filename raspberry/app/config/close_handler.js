@@ -1,5 +1,6 @@
 var sys = require('sys'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    logger = require('../logger');
 
 process.stdin.resume(); //so the program will not close instantly
 
@@ -7,25 +8,38 @@ function exitHandler(options, err) {
     if (options.cleanup) {
         exec("killall l2cap-ble");
         exec("killall python");
-        console.log('clean');
+        logger.warn('cleaning nfcpy and ble child processes');
     }
-    if (err) console.log(err.stack);
-    if (options.exit) process.exit();
+    if (err) {
+        logger.fatal(err, "error");
+    }
+
+    if (options.exit) {
+        logger.warn('closing process.');
+        setTimeout(function () {
+            process.exit();
+        }, 500);
+    }
 }
 
 console.log('registering closing handlers');
 
 //do something when app is closing
+/*
 process.on('exit', exitHandler.bind(null, {
-    cleanup: true
+    cleanup: true,
+    exit: true
 }));
+*/
 
 //catches ctrl+c event
 process.on('SIGINT', exitHandler.bind(null, {
+    cleanup: true,
     exit: true
 }));
 
 //catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, {
+    cleanup: true,
     exit: true
 }));

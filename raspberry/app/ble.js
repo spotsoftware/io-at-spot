@@ -1,5 +1,7 @@
 var util = require('util');
 var bleno = require('bleno');
+var logger = require('./logger');
+
 var BlenoPrimaryService = bleno.PrimaryService;
 var BlenoCharacteristic = bleno.Characteristic;
 
@@ -8,22 +10,24 @@ var _listener = null,
     dataBuffer = null;
 
 
-var DigitalSignatureCharacteristic = function() {
-  DigitalSignatureCharacteristic.super_.call(this, {
-    uuid: 'f000cc41-0451-4000-b000-000000000000',
-    properties: ['read']
-  });
+var DigitalSignatureCharacteristic = function () {
+    DigitalSignatureCharacteristic.super_.call(this, {
+        uuid: 'f000cc41-0451-4000-b000-000000000000',
+        properties: ['read']
+    });
 };
 
 util.inherits(DigitalSignatureCharacteristic, BlenoCharacteristic);
 
-DigitalSignatureCharacteristic.prototype.onReadRequest = function(offset, callback) {
-    
-    //console.log('Read request :)');
+DigitalSignatureCharacteristic.prototype.onReadRequest = function (offset, callback) {
+
+    logger.debug('BLE digital signature characteristic read request.');
+
     var result = this.RESULT_SUCCESS;
     var data = new Buffer('dynamic value');
 
     if (offset > data.length) {
+        logger.error('invalid BLE read');
         result = this.RESULT_INVALID_OFFSET;
         data = null;
     }
@@ -31,107 +35,110 @@ DigitalSignatureCharacteristic.prototype.onReadRequest = function(offset, callba
     callback(result, data);
 };
 
-var WriteTokenChunkCharacteristic = function(){
-    
+var WriteTokenChunkCharacteristic = function () {
+
     WriteTokenChunkCharacteristic.super_.call(this, {
-    uuid: 'f000cc42-0451-4000-b000-000000000000',
-    properties: ['write'],
-    secure: ['write']
-  });
+        uuid: 'f000cc42-0451-4000-b000-000000000000',
+        properties: ['write'],
+        secure: ['write']
+    });
 };
 
 util.inherits(WriteTokenChunkCharacteristic, BlenoCharacteristic);
 
-WriteTokenChunkCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+WriteTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
 
-    if(dataBuffer === null) {
+    if (dataBuffer === null) {
         dataBuffer = data;
-    }else {
+    } else {
         var newBuffer = Buffer.concat([dataBuffer, data]);
         dataBuffer = newBuffer;
     }
     callback(this.RESULT_SUCCESS);
 };
 
-var WriteLastTokenChunkCharacteristic = function() {
-  WriteLastTokenChunkCharacteristic.super_.call(this, {
-    uuid: 'f000cc44-0451-4000-b000-000000000000',
-    properties: ['write'],
-    secure: ['write']
-  });
+var WriteLastTokenChunkCharacteristic = function () {
+    WriteLastTokenChunkCharacteristic.super_.call(this, {
+        uuid: 'f000cc44-0451-4000-b000-000000000000',
+        properties: ['write'],
+        secure: ['write']
+    });
 };
 
 util.inherits(WriteLastTokenChunkCharacteristic, BlenoCharacteristic);
 
-WriteLastTokenChunkCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+WriteLastTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
 
     var newBuffer = Buffer.concat([dataBuffer, data]);
     dataBuffer = newBuffer;
-    console.log('last', dataBuffer.toString());
-    _listener.onTokenSubmitted(dataBuffer.toString(), function(response){
-        
+
+    logger.debug('BLE final token read:' + dataBuffer.toString());
+
+    _listener.onTokenSubmitted(dataBuffer.toString(), function (response) {
+
         //write back the response and disconnect client!
         var data = new Buffer(4);
-        data.writeUInt32LE(response.responseCode, 0);  
-        console.log('notification!');
+        data.writeUInt32LE(response.responseCode, 0);
+        logger.debug('notify back client');
         notifyCallback(data);
-        
-        setTimeout(function(){    
+
+        setTimeout(function () {
+            logger.debug('forcing client disconnection');
             bleno.disconnect();
         }, 500)
-       
+
     });
-    
+
     callback(this.RESULT_SUCCESS);
 };
 
-var NotifyCharacteristic = function() {
-  NotifyCharacteristic.super_.call(this, {
-    uuid: 'f000cc43-0451-4000-b000-000000000000',
-    properties: ['notify'],
-    secure: ['write']
-  });
+var NotifyCharacteristic = function () {
+    NotifyCharacteristic.super_.call(this, {
+        uuid: 'f000cc43-0451-4000-b000-000000000000',
+        properties: ['notify'],
+        secure: ['write']
+    });
 };
 
 util.inherits(NotifyCharacteristic, BlenoCharacteristic);
 
-NotifyCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-  console.log('NotifyCharacteristic subscribe');
-  
-  notifyCallback = updateValueCallback;
+NotifyCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    logger.debug('client subscribed to notify characteristic');
+
+    notifyCallback = updateValueCallback;
 
 };
 
-NotifyCharacteristic.prototype.onUnsubscribe = function() {
-  console.log('NotifyCharacteristic unsubscribe');
+NotifyCharacteristic.prototype.onUnsubscribe = function () {
+    clogger.debug('client unsubscribed from notify characteristic');
 
-  if (this.changeInterval) {
-    clearInterval(this.changeInterval);
-    this.changeInterval = null;
-  }
+    if (this.changeInterval) {
+        clearInterval(this.changeInterval);
+        this.changeInterval = null;
+    }
 };
 
-NotifyCharacteristic.prototype.onNotify = function() {
-  console.log('NotifyCharacteristic on notify');
+NotifyCharacteristic.prototype.onNotify = function () {
+    logger.debug('on notify');
 };
 
 function SampleService() {
-  SampleService.super_.call(this, {
-    uuid: 'f000cc40-0451-4000-b000-000000000000',
-    characteristics: [
+    SampleService.super_.call(this, {
+        uuid: 'f000cc40-0451-4000-b000-000000000000',
+        characteristics: [
       new DigitalSignatureCharacteristic(),
       new WriteTokenChunkCharacteristic(),
       new WriteLastTokenChunkCharacteristic(),
       new NotifyCharacteristic()
     ]
-  });
+    });
 }
 
 util.inherits(SampleService, BlenoPrimaryService);
 
-bleno.on('stateChange', function(state) {
-    console.log('on -> stateChange: ' + state);
-    
+bleno.on('stateChange', function (state) {
+    logger.debug('bleno state change: ' + state);
+
     if (state === 'poweredOn') {
         bleno.startAdvertising('raspy', ['f000cc40-0451-4000-b000-000000000000']);
     } else {
@@ -140,41 +147,44 @@ bleno.on('stateChange', function(state) {
 });
 
 // Linux only events /////////////////
-bleno.on('accept', function(clientAddress) {
-  console.log('on -> accept, client: ' + clientAddress);
+bleno.on('accept', function (clientAddress) {
+    logger.debug('bleno accept client: ' + clientAddress);
 
-  //bleno.updateRssi();
-  
-  dataBuffer = null;
+
+    dataBuffer = null;
 });
 
-bleno.on('disconnect', function(clientAddress) {
-  console.log('on -> disconnect, client: ' + clientAddress);
+bleno.on('disconnect', function (clientAddress) {
+    logger.debug('bleno disconnect client: ' + clientAddress);
 });
 
-bleno.on('rssiUpdate', function(rssi) {
-  console.log('on -> rssiUpdate: ' + rssi);
+bleno.on('rssiUpdate', function (rssi) {
+    logger.debug('bleno rssi update: ' + rssi);
 });
 //////////////////////////////////////
 
-bleno.on('advertisingStart', function(error) {
-  console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
+bleno.on('advertisingStart', function (error) {
 
-  if (!error) {
-    bleno.setServices([
+    if (error) {
+        log.fatal(error, 'bleno: cannot start advertising');
+    }
+    logger.debug('bleno advertising start.');
+
+    if (!error) {
+        bleno.setServices([
       new SampleService()
     ]);
-  }
+    }
 });
 
-bleno.on('advertisingStop', function() {
-  console.log('on -> advertisingStop');
+bleno.on('advertisingStop', function () {
+    logger.debug('bleno advertising start.');
 });
 
-bleno.on('servicesSet', function() {
-  console.log('on -> servicesSet');
+bleno.on('servicesSet', function () {
+    logger.debug('bleno service set.');
 });
 
-module.exports = function(listener){
+module.exports = function (listener) {
     _listener = listener;
 };
