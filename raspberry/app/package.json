@@ -1,7 +1,7 @@
 {
     "name": "io-at-spot",
     "author": "Andrea Corzani",
-    "version": "0.1",
+    "version": "0.0.1",
     "description": "Doorkeeper node for raspberry pi",
     "main": "socket.js",
     "keywords": [
