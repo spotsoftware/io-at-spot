@@ -14,6 +14,8 @@ import android.os.Message;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.UUID;
 
 import it.spot.io.doorkeeper.DoorKeeperApplication;
@@ -30,27 +32,40 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
     private static final UUID READ_DIGITAL_SIG_CHAR = UUID.fromString("f000cc41-0451-4000-b000-000000000000");
     private static final UUID WRITE_TOKEN_CHUNK_CHAR = UUID.fromString("f000cc42-0451-4000-b000-000000000000");
     private static final UUID WRITE_LAST_TOKEN_CHUNK_CHAR = UUID.fromString("f000cc44-0451-4000-b000-000000000000");
+    private static final UUID WRITE_MARK_ACCESS_CHAR = UUID.fromString("f000cc45-0451-4000-b000-000000000000");
     private static final UUID NOTIFY_AUTHENTICATION_CHAR = UUID.fromString("f000cc43-0451-4000-b000-000000000000");
     /* Client Configuration Descriptor */
     private static final UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     private static final String DEVICE_NAME = "raspy";
-
+    private final BleBondingBroadcastReceiver mBondingBroadcastReceiver;
     private boolean mIsActive;
-
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice;
     private BluetoothGatt mConnectedGatt;
     private Activity mActivity;
     private Handler mMessageHandler, mHandler;
     private IBleListener mListener;
-
-    private final BleBondingBroadcastReceiver mBondingBroadcastReceiver;
-
     private int mChunkIndex;
     private byte[][] mChunks;
 
     // { Construction
+    private Runnable mStopRunnable = new Runnable() {
+        @Override
+        public void run() {
+            stopScan();
+        }
+    };
+
+    // }
+
+    // { IBleHelper implementation
+    private Runnable mStartRunnable = new Runnable() {
+        @Override
+        public void run() {
+            startScan();
+        }
+    };
 
     public BleHelper(IBleListener listener, BluetoothAdapter adapter, Activity activity, Handler messageHandler) {
         super();
@@ -67,9 +82,21 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
         mHandler = new Handler();
     }
 
-    // }
+    public static byte[][] chunkArray(byte[] array, int chunkSize) {
+        int numOfChunks = (int) Math.ceil((double) array.length / chunkSize);
+        byte[][] output = new byte[numOfChunks][];
 
-    // { IBleHelper implementation
+        for (int i = 0; i < numOfChunks; ++i) {
+            int start = i * chunkSize;
+            int length = Math.min(array.length - start, chunkSize);
+
+            byte[] temp = new byte[length];
+            System.arraycopy(array, start, temp, 0, length);
+            output[i] = temp;
+        }
+
+        return output;
+    }
 
     @Override
     public void readSignature() {
@@ -77,12 +104,12 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
     }
 
     @Override
-    public void writeToken(String token, boolean isEntrance) {
+    public void writeToken(String token, boolean mark) {
         if (mConnectedGatt != null) {
-            writeTokenCharacteristic(token, isEntrance);
+            writeMarkCharacteristic(mark);
+            writeTokenCharacteristic(token, mark);
         }
     }
-
 
     @Override
     public boolean adapterIsOff() {
@@ -98,6 +125,10 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
             mConnectedGatt = null;
         }
     }
+
+    // }
+
+    // { Private methods
 
     @Override
     public void pause() {
@@ -121,21 +152,24 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
         this.mIsActive = true;
     }
 
-    // }
-
-    // { Private methods
-
     private void startScan() {
         //mHandler.postDelayed(mStartRunnable, 100);
         this.mBluetoothAdapter.startLeScan(this);
-        mHandler.postDelayed(mStopRunnable, 5000);
+        //mHandler.postDelayed(mStopRunnable, 5000);
     }
+
+    // }
+
+    // { BluetoothGattCallback abstract method implementation
 
     private void stopScan() {
 
         mBluetoothAdapter.stopLeScan(this);
     }
 
+    // }
+
+    // { Private runnables
 
     private void connectToDevice() {
 
@@ -164,8 +198,6 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
 
     // }
 
-    // { BluetoothGattCallback abstract method implementation
-
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] bytes) {
 
@@ -190,42 +222,6 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
                 this.mListener.onBLEDeviceReady();
             }
         }
-    }
-
-    // }
-
-    // { Private runnables
-
-    private Runnable mStopRunnable = new Runnable() {
-        @Override
-        public void run() {
-            stopScan();
-        }
-    };
-
-    private Runnable mStartRunnable = new Runnable() {
-        @Override
-        public void run() {
-            startScan();
-        }
-    };
-
-    // }
-
-    public static byte[][] chunkArray(byte[] array, int chunkSize) {
-        int numOfChunks = (int) Math.ceil((double) array.length / chunkSize);
-        byte[][] output = new byte[numOfChunks][];
-
-        for (int i = 0; i < numOfChunks; ++i) {
-            int start = i * chunkSize;
-            int length = Math.min(array.length - start, chunkSize);
-
-            byte[] temp = new byte[length];
-            System.arraycopy(array, start, temp, 0, length);
-            output[i] = temp;
-        }
-
-        return output;
     }
 
     private void writeNextChunk() {
@@ -271,6 +267,16 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
         mConnectedGatt.writeDescriptor(descriptor);
     }
 
+    private void writeMarkCharacteristic(boolean mark) {
+
+        BluetoothGattCharacteristic markAccessCharacteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
+                .getCharacteristic(WRITE_MARK_ACCESS_CHAR);
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.putInt(mark ? 1 : 0);
+        markAccessCharacteristic.setValue(bb.array());
+        Log.i(TAG, "Write mark access characteristic " + mark);
+    }
 
     private void writeTokenCharacteristic(String token, boolean isEntrance) {
 
@@ -345,7 +351,7 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
 
             Log.w(TAG, "Read sig completed");
 
-            mListener.onReadSignatureCompleted(characteristic.getValue());
+            mListener.onBLEReadSignatureCompleted(characteristic.getValue());
 
             //After reading the initial value, next we enable notifications
             //
@@ -362,6 +368,8 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
                 Log.w(TAG, "Write chunk completed");
             } else if (WRITE_LAST_TOKEN_CHUNK_CHAR.equals(characteristic.getUuid())) {
                 Log.w(TAG, "Write last chunk completed");
+            } else if (WRITE_MARK_ACCESS_CHAR.equals(characteristic.getUuid())) {
+                Log.w(TAG, "Write mark access completed");
             }
         }
     }
@@ -373,7 +381,7 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
             mMessageHandler.sendMessage(Message.obtain(null, DoorKeeperApplication.MessageConstants.MSG_DISMISS, ""));
             enableNotification(false);
 
-            mListener.onWriteTokenCompleted(characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT32, 0));
+            mListener.onBLEWriteTokenCompleted(characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT32, 0));
             Log.w(TAG, "Notification of authorization received");
         }
     }

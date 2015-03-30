@@ -84,10 +84,11 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
     /**
      * Implementation for the CreateNdefMessageCallback interface
      */
-    private NdefMessage createNdefMessage(String text) {
+    private NdefMessage createNdefMessage(String text, boolean mark) {
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[]{
-                        createTextRecord(text)
+                        createTextRecord(text),
+                        createTextRecord(mark ? "1" : "0")
                 });
         return msg;
     }
@@ -126,15 +127,15 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
     }
 
     @Override
-    public void writeToken(final String token, final boolean isEntrance) {
+    public void writeToken(final String token, final boolean mark) {
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                NfcHelper.this.mNfcAdapter.setNdefPushMessage(createNdefMessage(token + (isEntrance ? "I" : "O")), mActivity);
+//                
 //            }
 //        }, 200);
 
-        mNfcAdapter.setNdefPushMessage(createNdefMessage(token + (isEntrance ? "I" : "O")), mActivity);
+        mNfcAdapter.setNdefPushMessage(createNdefMessage(token, mark), mActivity);
     }
 
     @Override
