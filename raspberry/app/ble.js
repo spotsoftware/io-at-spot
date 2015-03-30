@@ -110,7 +110,7 @@ NotifyCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValue
 };
 
 NotifyCharacteristic.prototype.onUnsubscribe = function () {
-    clogger.debug('client unsubscribed from notify characteristic');
+    logger.debug('client unsubscribed from notify characteristic');
 
     if (this.changeInterval) {
         clearInterval(this.changeInterval);
