@@ -1,0 +1,13 @@
+{
+    "name": "deployer",
+    "author": "Andrea Corzani",
+    "version": "0.0.1",
+    "description": "Doorkeeper project",
+    "main": "hook.js",
+    "dependencies": {
+        "gith": "^1.0.4"
+    },
+    "engines": {
+        "node": ">=0.8"
+    }
+}
