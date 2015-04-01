@@ -21,7 +21,7 @@ angular.module('ioAtSpotApp')
 
                     model.workTimeEntry = {
                         performedAt: performedAt.toDate(),
-                        workTimeEntryType: 'in',
+                        //workTimeEntryType: 'in',
                         manual: true
                     };
                 }
@@ -30,8 +30,8 @@ angular.module('ioAtSpotApp')
                     if (newValue != oldValue) {
 
                         if (!Utils.isTimeValid(newValue,
-                            new Date(organizationSettings.workingDays[newValue.getDay()].startOfficeTime),
-                            new Date(organizationSettings.workingDays[newValue.getDay()].endOfficeTime))) {
+                                new Date(organizationSettings.workingDays[newValue.getDay()].startOfficeTime),
+                                new Date(organizationSettings.workingDays[newValue.getDay()].endOfficeTime))) {
 
                             model.workTimeEntry.performedAt = oldValue;
                         }
