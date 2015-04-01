@@ -72,7 +72,6 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
 
     }
 
-
     private NdefRecord createTextRecord(String payload) {
         Charset utfEncoding = Charset.forName("UTF-8");
         byte[] textBytes = payload.getBytes(utfEncoding);
@@ -88,7 +87,7 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[]{
                         createTextRecord(text),
-                        createTextRecord(mark ? "1" : "0")
+                        createTextRecord(mark ? "true" : "false")
                 });
         return msg;
     }

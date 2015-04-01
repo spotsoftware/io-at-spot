@@ -188,6 +188,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     @Override
     public void onBLEReadSignatureCompleted(byte[] result) {
         //TODO: Check for signature
+
         this.mBLEHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
     }
 
