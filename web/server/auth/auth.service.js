@@ -143,8 +143,10 @@ function signToken(id, expiration) {
  */
 function verifyToken(token, callback) {
 
+    console.log('token='+token, 'session='+config.secrets.session);
     jwt.verify(token, config.secrets.session, function (err, decoded) {
         if (err) {
+            console.log('error', err);
             return callback(err);
         }
         callback(undefined, decoded);
