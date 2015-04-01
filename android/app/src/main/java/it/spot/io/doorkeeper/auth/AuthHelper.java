@@ -231,6 +231,11 @@ public class AuthHelper implements IAuthHelper {
     }
 
     @Override
+    public void resetGoogleAuthentication() {
+        this.mPlusClient.disconnect();
+    }
+
+    @Override
     public boolean googleLogin() {
         if (!mPlusClient.isConnected()) {
             // Make sure that we will connect the resolution (e.g. fire the intent and pop up a
