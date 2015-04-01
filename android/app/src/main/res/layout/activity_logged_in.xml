@@ -39,7 +39,8 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:background="@drawable/darker_bg_border_bottom_white"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_open"
@@ -51,6 +52,16 @@
             android:textSize="@dimen/font_medium"
             android:textAllCaps="false"
             android:text="@string/action_open_door_ble" />
+
+        <CheckBox
+            android:id="@+id/chk_mark"
+            android:text="@string/mark"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="25dp" />
 
     </LinearLayout>
 
