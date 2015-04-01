@@ -4,7 +4,7 @@
 <div class="modal-body">
     <div>
         <p class="input-group">
-            <input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="model.workTimeEntry.performedAt" min-date="null" is-open="dateUtils.opened" max-date="dateUtils.today" date-disabled="dateUtils.disabled(date, mode)" ng-required="true" close-text="Close" readonly/>
+            <input type="text" class="form-control" datepicker-popup="dd MMMM yyyy" ng-model="model.workTimeEntry.performedAt" min-date="null" is-open="dateUtils.opened" max-date="dateUtils.today" date-disabled="dateUtils.disabled(date, mode)" ng-required="true" close-text="Close" readonly/>
             <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="actions.dateOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
               </span>
@@ -12,10 +12,6 @@
     </div>
     <div>
         <timepicker ng-model="model.workTimeEntry.performedAt" ng-change="dateUtils.timeChanged()" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
-    </div>
-    <div class="btn-group">
-        <label class="btn btn-primary" ng-model="model.workTimeEntry.workTimeEntryType" btn-radio="'in'">in</label>
-        <label class="btn btn-primary" ng-model="model.workTimeEntry.workTimeEntryType" btn-radio="'out'">out</label>
     </div>
 </div>
 <div class="modal-footer">
