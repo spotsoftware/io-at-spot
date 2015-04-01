@@ -21,11 +21,9 @@ exports.index = function (req, res, next) {
     var filter = {};
 
     //Filters of mapreduce to have aggregated data, and query
-    var filterConditions = [
-        {
+    var filterConditions = [{
             _organization: organizationId
-        },
-        {
+        }, {
             deleted: false
         }
     ];
@@ -66,12 +64,12 @@ exports.index = function (req, res, next) {
     var membersFilter = [];
 
     if (auth.ensureOrganizationAdmin()) {
-            var queryMembers = JSON.parse(req.query.members);
-            queryMembers.forEach(function (member, i) {
-                membersFilter.push({
-                    _user: member
-                });
+        var queryMembers = JSON.parse(req.query.members);
+        queryMembers.forEach(function (member, i) {
+            membersFilter.push({
+                _user: member
             });
+        });
 
     } else {
         membersFilter.push({
@@ -79,7 +77,7 @@ exports.index = function (req, res, next) {
         });
     }
 
-    if(membersFilter.length > 0) {
+    if (membersFilter.length > 0) {
         filterConditions.push({
             $or: membersFilter
         });
@@ -119,16 +117,16 @@ exports.index = function (req, res, next) {
     });
 };
 
-// Creates a new workTimeEntry in the DB.
-exports.create = function (req, res, next) {
-
-    var organizationId = req.params.organizationId;
+/**
+ * A private function to store a brand new worktime entry on the DB.
+ */
+function saveEntry(req, type, res) {
 
     var workTimeEntry = new WorkTimeEntry();
 
+    workTimeEntry.workTimeEntryType = type;
     workTimeEntry._user = req.body.userId;
-    workTimeEntry._organization = organizationId;
-    workTimeEntry.workTimeEntryType = req.body.workTimeEntryType;
+    workTimeEntry._organization = req.params.organizationId;
     workTimeEntry.manual = req.body.manual;
     workTimeEntry.performedAt = req.body.performedAt;
 
@@ -136,27 +134,59 @@ exports.create = function (req, res, next) {
         if (err) {
             return next(err);
         }
-        
+
         res.status(201);
-        res.location('/api/organizations/' + organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
-        
+        res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+
         return res.json(savedWorkTimeEntry);
     });
+}
+
+// Creates a new workTimeEntry in the DB.
+exports.create = function (req, res, next) {
+
+    if (req.body.workTimeEntryType) {
+        saveEntry(req, req.body.workTimeEntryType, res);
+
+    } else {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        WorkTimeEntry
+            .find({
+                _user: req.body.userId,
+                _organization: req.params.organizationId,
+                deleted: false,
+                performedAt: {
+                    $gte: today
+                }
+            })
+            .sort('-performedAt')
+            .exec(function (err, entries) {
+
+                if (err) return next(err);
+
+                var type = entries.length === 0 ? 'in' :
+                    (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
+
+                saveEntry(req, type, res);
+            });
+    }
 };
 
 exports.detail = function (req, res, next) {
-    
+
     WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
-        if(err) {
+        if (err) {
             return next(err);
         }
-        
-        if(!workTimeEntry) {
+
+        if (!workTimeEntry) {
             return next(new errorBuilder("work time entry not found", 404));
         }
-        
+
         res.status(200);
-        
+
         return res.json(workTimeEntry);
     });
 };
@@ -172,7 +202,6 @@ exports.update = function (req, res, next) {
         }
 
         workTimeEntry.performedAt = req.body.performedAt;
-        console.log(req.body.workTimeEntryType);
         workTimeEntry.workTimeEntryType = req.body.workTimeEntryType;
         workTimeEntry.manual = true;
 
@@ -188,7 +217,6 @@ exports.update = function (req, res, next) {
 // Deletes a workTimeEntry from the DB.
 exports.destroy = function (req, res, next) {
     WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
-        console.log(workTimeEntry);
         if (err) {
             return next(err);
         }

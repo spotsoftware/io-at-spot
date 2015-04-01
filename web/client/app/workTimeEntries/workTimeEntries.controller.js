@@ -97,7 +97,7 @@ angular.module('ioAtSpotApp')
                     return true;
                 };
 
-                utils.format = 'shortDate';
+                utils.format = 'dd MMMM yyyy';
 
                 utils.disabled = function (date, mode) {
                     return false; //(mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));

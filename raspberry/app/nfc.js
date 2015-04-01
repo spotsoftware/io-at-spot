@@ -6,11 +6,12 @@ var zerorpc = require("zerorpc"),
 var _listener = null;
 
 var server = new zerorpc.Server({
-    token: function (token, reply) {
+    token: function (token, mark, reply) {
 
-        logger.debug('nfc token read: ' + token.toString());
+        mark = (mark === 'true');
+        logger.debug('nfc token read: ' + token.toString() + ', mark = ' + mark);
 
-        _listener.onTokenSubmitted(token, function (response) {
+        _listener.onTokenSubmitted(token, mark, function (response) {
 
             reply(null, response);
 
