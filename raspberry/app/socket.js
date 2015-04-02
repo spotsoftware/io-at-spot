@@ -37,7 +37,7 @@ function authenticate() {
 
             setTimeout(function () {
                 authenticate();
-            }, 10000);
+            }, 60000);
 
         } else {
             log.info('authenticated. Connecting to secure socket with token :' + body.token);
