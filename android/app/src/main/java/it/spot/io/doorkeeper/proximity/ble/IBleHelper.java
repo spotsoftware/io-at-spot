@@ -9,6 +9,6 @@ public interface IBleHelper extends IProximityServiceHelper {
 
     public void readSignature();
 
-    public void writeToken(String token, boolean isEntrance);
+    public void writeToken(String token, boolean mark);
 
 }

@@ -20,6 +20,8 @@ public interface IAuthHelper {
 
     public void setupGoogleAuthentication(final Activity activity, final IGoogleAuthListener listener, final int requestCode);
 
+    public void resetGoogleAuthentication();
+
     public boolean googleLogin();
 
     public void googleLogout();

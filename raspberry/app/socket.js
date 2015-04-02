@@ -156,17 +156,16 @@ function onNFCTagSubmitted(uid) {
     }
 }
 
-function onTokenSubmitted(stringData, callback) {
+function onTokenSubmitted(stringData, mark, callback) {
     log.info('token read:' + stringData);
 
     if (isOnline()) {
 
-        var token = stringData.substr(0, stringData.length - 1);
-        var type = stringData.substr(stringData.length - 1);
+        var token = stringData;
 
         _socket.emit('tokenSubmitted', {
             token: token,
-            workTimeEntryType: type === 'I' ? 'in' : 'out'
+            mark: mark
         }, function (response) {
 
             log.info({

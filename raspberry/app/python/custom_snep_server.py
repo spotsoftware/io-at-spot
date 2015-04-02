@@ -17,12 +17,14 @@ class CustomSnepServer(nfc.snep.SnepServer):
         self.snep_client = nfc.snep.SnepClient(llc)
   
     #method invoked in a separate thread
-    def send_result(self, token):
+    def send_result(self, token, mark):
         
         #call node.js to validate token
+        
         c = zerorpc.Client()
         c.connect("tcp://127.0.0.1:4242")
-        response = c.token(token)
+        response = c.token(token, mark)
+        
         #response = {
         #    'message': 'ok'
         #}
@@ -38,11 +40,13 @@ class CustomSnepServer(nfc.snep.SnepServer):
     #method called when peer push an ndef message
     def put(self, ndef_message):
         print "STATUS: received data from peer"        
-        
+        print ndef_message
         #everything in the first record
-        record = ndef_message.pop()
+        markRecord = ndef_message.pop()
+        tokenRecord = ndef_message.pop()
         
-        thread = threading.Thread(target=self.send_result, args=([record.data]))
+        #TODO: last char
+        thread = threading.Thread(target=self.send_result, args=([tokenRecord.data, markRecord.data]))
         thread.start()
         
         return nfc.snep.Success

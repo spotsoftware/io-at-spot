@@ -9,11 +9,14 @@ angular.module('ioAtSpotApp')
                     workEntryId: '@workTimeEntryId'
                 }, {
                     query: {
-                        url: '/api/organizations/:organizationId/timeOffs?page=:page',
-                        method: 'POST',
+                        url: '/api/organizations/:organizationId/timeOffs?page=:page&from=:from&to=:to&timeOffType=:timeOffType',
+                        method: 'GET',
                         params: {
+                            from: '@from',
                             organizationId: '@organizationId',
-                            page: '@page'
+                            page: '@page',
+                            timeOffType: '@timeOffType',
+                            to: '@to'
                         },
                         isArray: false //returns an object (that also contains an array)
                     },
@@ -26,7 +29,7 @@ angular.module('ioAtSpotApp')
                         isArray: false
                     },
                     create: {
-                        url: '/api/organizations/:organizationId/timeOffs/new',
+                        url: '/api/organizations/:organizationId/timeOffs',
                         method: 'POST',
                         params: {
                             organizationId: '@organizationId'

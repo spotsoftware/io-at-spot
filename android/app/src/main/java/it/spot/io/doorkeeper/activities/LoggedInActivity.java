@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     private ILoggedUser mLoggedUser;
 
     private Button mOpenButton;
+    private CheckBox mMarkCheckbox;
     private ProgressDialog mProgressDialog;
     private TextView mNameTextView;
 
@@ -59,6 +61,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
                 mOpenButton.setEnabled(false);
             }
         });
+        this.mMarkCheckbox = (CheckBox) this.findViewById(R.id.chk_mark);
 
         this.mNameTextView = (TextView) this.findViewById(R.id.name);
 
@@ -140,7 +143,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
             if (!this.mNfcHelper.isP2PStarted()) {
                 Log.w(TAG, "Reading signature" + this.mNfcHelper.readSignature(intent));
 
-                this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), true);
+                this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
             } else {
                 Log.w(TAG, "Reading result");
                 Toast.makeText(this, this.mNfcHelper.readAuthenticationResult(intent), Toast.LENGTH_LONG).show();
@@ -183,13 +186,14 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     }
 
     @Override
-    public void onReadSignatureCompleted(byte[] result) {
+    public void onBLEReadSignatureCompleted(byte[] result) {
         //TODO: Check for signature
-        this.mBLEHelper.writeToken(this.mLoggedUser.getToken(), true);
+
+        this.mBLEHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
     }
 
     @Override
-    public void onWriteTokenCompleted(int result) {
+    public void onBLEWriteTokenCompleted(int result) {
         Log.w(TAG, result + "");
     }
 

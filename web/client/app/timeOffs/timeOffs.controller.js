@@ -61,10 +61,9 @@ angular.module('ioAtSpotApp')
             $scope.utils = new function () {
                 var utils = this;
 
-                //utils.isCurrentOrganizationAdmin = Auth.isCurrentOrganizationAdmin;
                 utils.userDropdownOpened = false;
 
-                utils.format = 'dd-MMMM-yyyy';
+                utils.format = 'dd MMMM yyyy';
 
                 utils.disabled = function (date, mode) {
                     return false;
@@ -78,6 +77,25 @@ angular.module('ioAtSpotApp')
 
 
             $scope.actions = {
+
+                memberFilterChange: function (user) {
+                    if (user === 'all') {
+
+                        $scope.model.membersFilter = [];
+                        angular.forEach($scope.parent.currentOrganization.members, function (member) {
+                            $scope.model.membersFilter.push(member._user._id);
+                        });
+
+                        $scope.model.membersFilterText = 'All';
+
+                    } else {
+                        $scope.model.membersFilterText = user.name;
+                        $scope.model.membersFilter = [user._id];
+                    }
+                    $scope.utils.userDropdownOpened = false;
+                    $scope.actions.search();
+                },
+
                 timeOffTypeChange: function (timeOffType) {
                     $scope.model.timeOffTypeFilter = timeOffType;
                     $scope.utils.dropdownOpened = false;
@@ -188,16 +206,14 @@ angular.module('ioAtSpotApp')
 
                         return {
                             from: $scope.model.from,
-                            to: $scope.model.to,
-                            timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter
-                        }
+                            organizationId: $scope.parent.currentOrganization._id,
+                            page: $scope.model.page,
+                            timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
+                            to: $scope.model.to
+                        };
                     },
                     request: function () {
-                        TimeOffs.query({
-                                organizationId: $scope.parent.currentOrganization._id,
-                                page: $scope.model.page
-                            },
-                            proxies.search.requestData()).$promise.then(
+                        TimeOffs.query(proxies.search.requestData(), {}).$promise.then(
                             function (pagedResult) {
                                 proxies.search.successCallback(pagedResult);
                             },

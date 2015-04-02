@@ -8,8 +8,9 @@ var errorBuilder = require('../../error-builder');
 
 // Get list of workTimeEntries
 exports.index = function (req, res, next) {
-    if (!req.body) {
-        return next(new errorBuilder("request body can't be empty", 403));
+
+    if (!req.query) {
+        return next(new errorBuilder("request query string can't be empty", 403));
     }
 
     var organizationId = new mongoose.Types.ObjectId(req.params.organizationId);
@@ -20,55 +21,51 @@ exports.index = function (req, res, next) {
     var filter = {};
 
     //Filters of mapreduce to have aggregated data, and query
-    var filterConditions = [
-        {
+    var filterConditions = [{
             _organization: organizationId
-        },
-        {
+        }, {
             deleted: false
         }
     ];
 
-    if (req.body.from && req.body.to) {
+    if (req.query.from && req.query.to) {
 
         filterConditions.push({
             performedAt: {
-                $gte: new Date(req.body.from),
-                $lte: new Date(req.body.to)
+                $gte: new Date(req.query.from),
+                $lte: new Date(req.query.to)
             }
         });
 
-    } else if (req.body.from) {
+    } else if (req.query.from) {
 
         filterConditions.push({
             performedAt: {
-                $gte: new Date(req.body.from)
+                $gte: new Date(req.query.from)
             }
         });
 
-    } else if (req.body.to) {
+    } else if (req.query.to) {
 
         filterConditions.push({
             performedAt: {
-                $lte: new Date(req.body.to)
+                $lte: new Date(req.query.to)
             }
         });
     }
 
-    if (req.body.workTimeEntryType) {
+    if (req.query.type) {
 
         filterConditions.push({
-            workTimeEntryType: req.body.workTimeEntryType
+            workTimeEntryType: req.query.type
         });
     }
-
 
     var membersFilter = [];
-    console.log(req.body.members);
-
 
     if (auth.ensureOrganizationAdmin()) {
-        req.body.members.forEach(function (member, i) {
+        var queryMembers = JSON.parse(req.query.members);
+        queryMembers.forEach(function (member, i) {
             membersFilter.push({
                 _user: member
             });
@@ -80,9 +77,11 @@ exports.index = function (req, res, next) {
         });
     }
 
-    filterConditions.push({
-        $or: membersFilter
-    });
+    if (membersFilter.length > 0) {
+        filterConditions.push({
+            $or: membersFilter
+        });
+    }
 
     //    var util = require('util');
     //    console.log(util.inspect({
@@ -118,16 +117,16 @@ exports.index = function (req, res, next) {
     });
 };
 
-// Creates a new workTimeEntry in the DB.
-exports.create = function (req, res, next) {
-
-    var organizationId = req.params.organizationId;
+/**
+ * A private function to store a brand new worktime entry on the DB.
+ */
+function saveEntry(req, type, res) {
 
     var workTimeEntry = new WorkTimeEntry();
 
+    workTimeEntry.workTimeEntryType = type;
     workTimeEntry._user = req.body.userId;
-    workTimeEntry._organization = organizationId;
-    workTimeEntry.workTimeEntryType = req.body.workTimeEntryType;
+    workTimeEntry._organization = req.params.organizationId;
     workTimeEntry.manual = req.body.manual;
     workTimeEntry.performedAt = req.body.performedAt;
 
@@ -135,7 +134,60 @@ exports.create = function (req, res, next) {
         if (err) {
             return next(err);
         }
-        return res.json(201, savedWorkTimeEntry);
+
+        res.status(201);
+        res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+
+        return res.json(savedWorkTimeEntry);
+    });
+}
+
+// Creates a new workTimeEntry in the DB.
+exports.create = function (req, res, next) {
+
+    if (req.body.workTimeEntryType) {
+        saveEntry(req, req.body.workTimeEntryType, res);
+
+    } else {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        WorkTimeEntry
+            .find({
+                _user: req.body.userId,
+                _organization: req.params.organizationId,
+                deleted: false,
+                performedAt: {
+                    $gte: today
+                }
+            })
+            .sort('-performedAt')
+            .exec(function (err, entries) {
+
+                if (err) return next(err);
+
+                var type = entries.length === 0 ? 'in' :
+                    (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
+
+                saveEntry(req, type, res);
+            });
+    }
+};
+
+exports.detail = function (req, res, next) {
+
+    WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
+        if (err) {
+            return next(err);
+        }
+
+        if (!workTimeEntry) {
+            return next(new errorBuilder("work time entry not found", 404));
+        }
+
+        res.status(200);
+
+        return res.json(workTimeEntry);
     });
 };
 
@@ -150,7 +202,6 @@ exports.update = function (req, res, next) {
         }
 
         workTimeEntry.performedAt = req.body.performedAt;
-        console.log(req.body.workTimeEntryType);
         workTimeEntry.workTimeEntryType = req.body.workTimeEntryType;
         workTimeEntry.manual = true;
 
@@ -166,7 +217,6 @@ exports.update = function (req, res, next) {
 // Deletes a workTimeEntry from the DB.
 exports.destroy = function (req, res, next) {
     WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
-        console.log(workTimeEntry);
         if (err) {
             return next(err);
         }

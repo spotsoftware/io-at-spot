@@ -110,10 +110,8 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
                         mPlusSignInButton.setEnabled(false);
                     }
                 } else {
-
                     s.replace(0, s.length(), mPreviousText);
                 }
-
             }
         });
 
@@ -122,7 +120,6 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
         this.mAuthenticationHelper = new AuthHelper();
         this.mAuthenticationHelper.setupGoogleAuthentication(this, this, AuthHelper.PLUS_REQUEST_CODE);
         this.mAuthenticationHelper.setupServerIpAddress(this.mTxtIp.getText().toString());
-
 
         SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
 
@@ -325,6 +322,7 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
                     onLoginCompleted(response.getData());
                 } else {
                     handleGenericError(response.getErrorMessage());
+                    mAuthenticationHelper.resetGoogleAuthentication();
                 }
             }
         });

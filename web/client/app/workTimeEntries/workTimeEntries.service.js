@@ -9,11 +9,15 @@ angular.module('ioAtSpotApp')
                     workEntryId: '@workTimeEntryId'
                 }, {
                     query: {
-                        url: '/api/organizations/:organizationId/workTimeEntries?page=:page',
-                        method: 'POST',
+                        url: '/api/organizations/:organizationId/workTimeEntries?page=:page&from=:from&to=:to&type=:type&members=:members',
+                        method: 'GET',
                         params: {
+                            from: '@from',
+                            members: '@members',
                             organizationId: '@organizationId',
-                            page: '@page'
+                            page: '@page',
+                            to: '@to',
+                            type: '@type'
                         },
                         isArray: false //returns an object (that also contains an array)
                     },
@@ -26,7 +30,7 @@ angular.module('ioAtSpotApp')
                         isArray: false
                     },
                     create: {
-                        url: '/api/organizations/:organizationId/workTimeEntries/new',
+                        url: '/api/organizations/:organizationId/workTimeEntries/',
                         method: 'POST',
                         params: {
                             organizationId: '@organizationId'

@@ -14,7 +14,7 @@ public interface INfcHelper extends IProximityServiceHelper {
 
     public String readSignature(final Intent ndefIntent);
 
-    public void writeToken(final String token, final boolean isEntrance);
+    public void writeToken(final String token, final boolean mark);
 
     public String readAuthenticationResult(final Intent ndefIntent);
 

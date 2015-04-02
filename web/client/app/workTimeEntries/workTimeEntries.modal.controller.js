@@ -21,20 +21,13 @@ angular.module('ioAtSpotApp')
 
                     model.workTimeEntry = {
                         performedAt: performedAt.toDate(),
-                        workTimeEntryType: 'in',
                         manual: true
                     };
                 }
 
                 $scope.$watch('model.workTimeEntry.performedAt', function (newValue, oldValue) {
-                    if (newValue != oldValue) {
-
-                        if (!Utils.isTimeValid(newValue,
-                            new Date(organizationSettings.workingDays[newValue.getDay()].startOfficeTime),
-                            new Date(organizationSettings.workingDays[newValue.getDay()].endOfficeTime))) {
-
-                            model.workTimeEntry.performedAt = oldValue;
-                        }
+                    if (!newValue) {
+                        model.workTimeEntry.performedAt = oldValue;
                     }
                 });
             };

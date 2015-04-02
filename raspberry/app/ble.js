@@ -7,7 +7,8 @@ var BlenoCharacteristic = bleno.Characteristic;
 
 var _listener = null,
     notifyCallback = null,
-    dataBuffer = null;
+    dataBuffer = null,
+    markAccess = true;
 
 
 var DigitalSignatureCharacteristic = function () {
@@ -57,6 +58,24 @@ WriteTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset,
     callback(this.RESULT_SUCCESS);
 };
 
+var WriteMarkAccessCharacteristic = function () {
+
+    WriteMarkAccessCharacteristic.super_.call(this, {
+        uuid: 'f000cc45-0451-4000-b000-000000000000',
+        properties: ['write'],
+        secure: ['write']
+    });
+};
+
+util.inherits(WriteMarkAccessCharacteristic, BlenoCharacteristic);
+
+WriteMarkAccessCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
+
+    markAccess = !!(data.readUInt32LE(0)); 
+
+    callback(this.RESULT_SUCCESS);
+};
+
 var WriteLastTokenChunkCharacteristic = function () {
     WriteLastTokenChunkCharacteristic.super_.call(this, {
         uuid: 'f000cc44-0451-4000-b000-000000000000',
@@ -74,7 +93,7 @@ WriteLastTokenChunkCharacteristic.prototype.onWriteRequest = function (data, off
 
     logger.debug('BLE final token read:' + dataBuffer.toString());
 
-    _listener.onTokenSubmitted(dataBuffer.toString(), function (response) {
+    _listener.onTokenSubmitted(dataBuffer.toString(), markAccess, function (response) {
 
         //write back the response and disconnect client!
         var data = new Buffer(4);
@@ -106,7 +125,6 @@ NotifyCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValue
     logger.debug('client subscribed to notify characteristic');
 
     notifyCallback = updateValueCallback;
-
 };
 
 NotifyCharacteristic.prototype.onUnsubscribe = function () {
@@ -129,7 +147,8 @@ function SampleService() {
       new DigitalSignatureCharacteristic(),
       new WriteTokenChunkCharacteristic(),
       new WriteLastTokenChunkCharacteristic(),
-      new NotifyCharacteristic()
+      new NotifyCharacteristic(),
+      new WriteMarkAccessCharacteristic()
     ]
     });
 }
@@ -152,6 +171,7 @@ bleno.on('accept', function (clientAddress) {
 
 
     dataBuffer = null;
+    markAccess = true;
 });
 
 bleno.on('disconnect', function (clientAddress) {
