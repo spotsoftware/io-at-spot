@@ -48,6 +48,7 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
     private IBleListener mListener;
     private int mChunkIndex;
     private byte[][] mChunks;
+    private String mToken;
 
     // { Construction
     private Runnable mStopRunnable = new Runnable() {
@@ -106,8 +107,8 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
     @Override
     public void writeToken(String token, boolean mark) {
         if (mConnectedGatt != null) {
+            this.mToken = token;
             writeMarkCharacteristic(mark);
-            writeTokenCharacteristic(token, mark);
         }
     }
 
@@ -275,12 +276,14 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
         bb.order(ByteOrder.LITTLE_ENDIAN);
         bb.putInt(mark ? 1 : 0);
         markAccessCharacteristic.setValue(bb.array());
+        mConnectedGatt.writeCharacteristic(markAccessCharacteristic);
         Log.i(TAG, "Write mark access characteristic " + mark);
     }
 
-    private void writeTokenCharacteristic(String token, boolean isEntrance) {
+    private void writeTokenCharacteristic() {
 
-        String data = token + (isEntrance ? "I" : "O");
+        String data = mToken;
+
         mMessageHandler.sendMessage(Message.obtain(null, DoorKeeperApplication.MessageConstants.MSG_PROGRESS, "Authenticating..."));
         try {
             mChunks = chunkArray(data.getBytes("UTF-8"), 20);
@@ -370,6 +373,8 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
                 Log.w(TAG, "Write last chunk completed");
             } else if (WRITE_MARK_ACCESS_CHAR.equals(characteristic.getUuid())) {
                 Log.w(TAG, "Write mark access completed");
+
+                writeTokenCharacteristic();
             }
         }
     }
