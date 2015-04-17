@@ -21,15 +21,16 @@ var server = new zerorpc.Server({
 
         logger.debug('nfc tag read, uid: ' + uid.toString() + ' signature: ' + signature.toString());
 
-        var isValid = ecdsa.verifySignature(uid, signature);
-        if (!isValid) {
-            logger.debug('invalid uid signature');
-            return reply(null, isValid);
-        }
+        ecdsa.verifySignature(uid, signature, function (isValid) {
+            if (!isValid) {
+                logger.debug('invalid uid signature');
+                return reply(null, isValid);
+            }
 
-        //Valid UID
-        _listener.onNFCTagSubmitted(uid);
-        reply(null);
+            //Valid UID
+            _listener.onNFCTagSubmitted(uid);
+            reply(null);
+        });
     }
 });
 

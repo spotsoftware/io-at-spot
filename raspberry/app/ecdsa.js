@@ -1,35 +1,18 @@
-//var crypto = require('crypto');
-//var ecparams = require('ecurve-names')('secp128r1');
-var ecdsa = require('ecdsa')('secp128r1');
 var config = require('./config/config');
 var publicKey = config.NTAG212_PUBLIC_KEY;
 var publicKeyName = config.NTAG212_PUBLIC_KEY_NAME;
 
-function verifySignature(uid, signature){
+function verifySignature(uid, signature, callback) {
     //mock
-    return true;
-    
-    var signatureBuf = new Buffer(signature, 'hex');
-    var uidBuf = new Buffer(uid, 'hex');
-    var publicKeyBuf = new Buffer(publicKey, 'hex');
-    
-    console.log("uid: ", uid, uidBuf);
-    console.log("sign: ", signature, signatureBuf);
-    console.log("publicKey: ", publicKey, publicKeyBuf);
-    
-    //console.log(ecdsa);
-    //console.log(signature);
-    var isValid;
-    try {
-        isValid = ecdsa.verify(uidBuf, signatureBuf, publicKeyBuf);
-    }
-    catch(ex){
-        console.log(ex);
-    }
-    
-    
-    console.log('isvalid?', isValid);
-    return isValid;
+    var exec = require("child_process").exec;
+    var cmd = './verify_sig.rb -k "' + publicKey + '" -s "' + signature + '" -d "' + uid + '"';
+    exec(cmd, function (err, stdout, stderr) {
+        if (stdout === 'true') {
+            callback(true);
+        } else {
+            callback(false);
+        }
+    });
 }
 
 exports.verifySignature = verifySignature;

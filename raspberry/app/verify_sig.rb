@@ -86,18 +86,19 @@ def main
   digest = options.digest.to_i(16)
   signature = create_signature options.signature
 
-  puts "--> PubKey ".ljust(50, "-")
-  puts "X:     #{pubk.x}"
-  puts "Y:     #{pubk.y}"
-  puts "Valid: #{ECDSA::Group::Secp128r1.valid_public_key?(pubk)}"
+  #puts "--> PubKey ".ljust(50, "-")
+  #puts "X:     #{pubk.x}"
+  #puts "Y:     #{pubk.y}"
+  #puts "Valid: #{ECDSA::Group::Secp128r1.valid_public_key?(pubk)}"
 
-  puts "--> Digest ".ljust(50, "-")
-  puts "Value: #{digest}"
+  #puts "--> Digest ".ljust(50, "-")
+  #puts "Value: #{digest}"
 
-  puts "--> Signature ".ljust(50, "-")
-  puts "R:     #{signature.r}"
-  puts "S:     #{signature.s}"
-  puts "Valid: #{ECDSA.valid_signature?(pubk, digest, signature)}"
+  #puts "--> Signature ".ljust(50, "-")
+  #puts "R:     #{signature.r}"
+  #puts "S:     #{signature.s}"
+  #puts "Valid: #{ECDSA.valid_signature?(pubk, digest, signature)}"
+  puts "#{ECDSA.valid_signature?(pubk, digest, signature)}"
 
 end
 
