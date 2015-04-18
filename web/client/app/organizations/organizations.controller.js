@@ -27,9 +27,11 @@ angular.module('ioAtSpotApp')
                 },
 
                 addTimeOffType: function (org) {
-                    org.settings.timeOffTypes.push($scope.model.newTimeOffType);
-                    $scope.model.newTimeOffType = '';
-                    $scope.actions.updateOrganization(org);
+                    if ($scope.model.newTimeOffType !== '' && org.settings.timeOffTypes.indexOf($scope.model.newTimeOffType) === -1) {
+                        org.settings.timeOffTypes.push($scope.model.newTimeOffType);
+                        $scope.model.newTimeOffType = '';
+                        $scope.actions.updateOrganization(org);
+                    }
                 },
 
                 deleteTimeOffType: function (org, timeOffType) {
