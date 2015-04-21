@@ -50,18 +50,18 @@ exports.index = function (req, res, next) {
 // Get a single organization
 exports.detail = function (req, res) {
 
-    Organization.findById(req.params.organizationId, function (err, organization) {
+   Organization.findById(req.params.organizationId, function (err, organization) {
 
-        if (err) {
-            return next(err);
-        }
+       if (err) {
+           return next(err);
+       }
 
-        if (!organization) {
-            return next(new errorBuilder("No organization matching the given id was found.", 404));
-        }
+       if (!organization) {
+           return next(new errorBuilder("No organization matching the given id was found.", 404));
+       }
 
-        return res.json(organization);
-    });
+       return res.json(organization);
+   });
 };
 
 // Creates a new organization in the DB.
@@ -143,7 +143,6 @@ exports.update = function (req, res, next) {
         }
 
         if (req.body.settings) {
-            //DANGER: not really safe.. can break everything
             organization.settings = req.body.settings;
         }
 

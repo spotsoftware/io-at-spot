@@ -3,9 +3,9 @@
     <h2 class="title">Organizations</h2>
 
     <div class="row main-commands">
-        <button class="btn btn-new" ng-click="actions.new()">
-            Organizations <span><i class="fa fa-plus"></i></span>
-        </button>
+      <button class="btn btn-new" ng-click="actions.new()">
+        Organizations <span><i class="fa fa-plus"></i></span>
+      </button>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -56,7 +56,7 @@
                                         <div class="row form-group">
                                             <label class="col-sm-3 control-label">Time off types</label>
                                             <div class="col-sm-9">
-                                                <ul class="col-sm-4 col-md-3 col-lg-2 nav nav-stacked" ng-repeat="timeOffType in org.settings.timeOffTypes track by $index">
+                                                <ul class="col-sm-4 col-md-3 col-lg-2 nav nav-stacked" ng-repeat="timeOffType in org.settings.timeOffTypes">
                                                     <li class="active">
                                                         <a>{{timeOffType}}<button ng-show="utils.currentUserIsAdmin(org)" type="button" class="close" ng-click="actions.deleteTimeOffType(org, timeOffType)">&times;</button></a>
                                                     </li>
@@ -64,12 +64,12 @@
                                             </div>
                                         </div>
                                         <div class="row form-group" ng-show="utils.currentUserIsAdmin(org)">
-                                            <div class="col-sm-6 col-md-4">
-                                                <p class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType" required>
-                                                    <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
-                                                </p>
-                                            </div>
+                                          <div class="col-sm-6 col-md-4">
+                                              <p class="input-group">
+                                                  <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
+                                                  <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
+                                              </p>
+                                          </div>
                                         </div>
                                     </div>
                                 </div>
@@ -150,9 +150,9 @@
                         </tabset>
                     </div>
                     <div class="col-xs-12 text-right">
-                        <div class="col-xs-12">
-                            <button class="btn btn-primary" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
-                        </div>
+                      <div class="col-xs-12">
+                        <button class="btn btn-primary" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
+                      </div>
                     </div>
                 </div>
             </div>

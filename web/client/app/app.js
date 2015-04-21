@@ -1,26 +1,25 @@
 'use strict';
 
 angular.module('ioAtSpotApp', [
-    'ngCookies',
-    'ngResource',
-    'ngSanitize',
-    'btford.socket-io',
-    'ui.router',
-    'ui.bootstrap',
+  'ngCookies',
+  'ngResource',
+  'ngSanitize',
+  'btford.socket-io',
+  'ui.router',
+  'ui.bootstrap',
     'angular-momentjs',
     'xeditable',
     'duScroll',
     'messageCenter',
     'equals'
 ])
-    .config(
-        function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, USER_ROLES) {
-            $urlRouterProvider
-                .otherwise('/');
+    .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
+        $urlRouterProvider
+            .otherwise('/');
 
-            $locationProvider.html5Mode(true);
-            $httpProvider.interceptors.push('authInterceptor');
-        })
+        $locationProvider.html5Mode(true);
+        $httpProvider.interceptors.push('authInterceptor');
+    })
 
 .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
     return {
@@ -47,8 +46,7 @@ angular.module('ioAtSpotApp', [
     };
 })
 
-.run(function ($rootScope, $state, Auth, editableOptions, AUTH_EVENTS) {
-
+.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
         console.log('stateChangeStart');

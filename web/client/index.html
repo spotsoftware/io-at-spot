@@ -23,6 +23,9 @@
     <!-- build:css({.tmp,client}) app/app.css -->
     <link rel="stylesheet" href="app/app.css">
     <!-- injector:css -->
+    <link rel="stylesheet" href="app/main/main.css">
+    <link rel="stylesheet" href="app/mixins.css">
+    <link rel="stylesheet" href="app/vars.css">
     <!-- endinjector -->
     <!-- endbuild -->
 </head>
@@ -31,15 +34,9 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    <div class="messages">
-        <mc-messages></mc-messages>
-    </div>
 
     <!-- Add your site or application content here -->
-    <div ui-view="">
-
-    </div>
-
+    <div ui-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
@@ -75,9 +72,10 @@
     <script src="bower_components/angular-socket-io/socket.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/momentjs/moment.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
     <script src="bower_components/angular-momentjs/angular-momentjs.js"></script>
     <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
-    <script src="bower_components/angular-scroll/angular-scroll.min.js"></script>
+    <script src="bower_components/angular-scroll/angular-scroll.js"></script>
     <!-- endbower -->
     <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -90,6 +88,7 @@
     <script src="app/account/login/login.controller.js"></script>
     <script src="app/account/profile/profile.controller.js"></script>
     <script src="app/account/reset/reset.controller.js"></script>
+    <script src="app/account/settings/settings.controller.js"></script>
     <script src="app/account/signup/signup.controller.js"></script>
     <script src="app/admin/admin.controller.js"></script>
     <script src="app/admin/admin.js"></script>

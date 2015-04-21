@@ -17,7 +17,9 @@
       "uibootstrap": true,
       "socketio": true,
       "mongoose": true,
-      "auth": true
+      "auth": true,
+      "oauth": true,
+      "googleAuth": true
     }
   },
   "generator-ng-component": {

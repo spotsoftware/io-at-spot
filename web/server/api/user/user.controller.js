@@ -33,10 +33,9 @@ exports.index = function (req, res, next) {
     }
 
     if (req.query.excluded) {
-
         filters.push({
             _id: {
-                $nin: typeof req.query.excluded !== 'String' ? req.query.excluded : [req.query.excluded]
+                $nin: req.query.excluded
             }
         });
     }
@@ -65,7 +64,7 @@ exports.delete = function (req, res, next) {
  * Creates a new user and assigns to it a token with 5 hours of validity.
  */
 exports.create = function (req, res, next) {
-
+    
     var newUser = new User(req.body);
 
     newUser.provider = 'local';
@@ -86,9 +85,7 @@ exports.create = function (req, res, next) {
         res.status(201);
         res.location('/api/users/' + user._id);
 
-        return res.json({
-            token: token
-        });
+        return res.json({ token: token });
     });
 };
 

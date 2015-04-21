@@ -1,38 +1,43 @@
-$icon-font-path:"/bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
- $fa-font-path:"/bower_components/font-awesome/fonts";
+$icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+$fa-font-path: "/bower_components/font-awesome/fonts";
 @import 'vars.scss';
 @import 'mixins.scss';
-@import 'bootstrap-sass-official/vendor/assets/stylesheets/bootstrap';
+@import 'bootstrap-sass-official/assets/stylesheets/bootstrap';
 @import 'font-awesome/scss/font-awesome';
-
 /**
  * App-wide Styles
  */
 
 body {
-    font-family: "Roboto";
+    //font-family: "Roboto";
     background-color: $gray-background;
     color: $gray-font;
 }
+
 h3 {
     margin: 10px 0;
     font-weight: 300;
     font-size: 26px;
 }
+
 a {
     color: $blue;
 }
+
 a:hover {
     color: $blue;
 }
+
 .page-header {
     padding: 10px 0;
     margin: 0 0 20px 0;
     box-shadow: 0px 2px 1px $gray-header;
 }
+
 .panel-default > .panel-heading {
     background-color: $gray-header;
 }
+
 .btn-primary,
 .pagination > li > a,
 .pagination > li > span {
@@ -41,6 +46,7 @@ a:hover {
     color: $blue;
     font-weight: 600;
 }
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
@@ -56,6 +62,7 @@ a:hover {
     border-color: $gray-header;
     color: $white;
 }
+
 table.table {
     > tbody {
         > tr {
@@ -73,45 +80,55 @@ table.table {
         padding: 8px 0 8px 22px;
     }
 }
+
 .input-group-btn {
     > .btn {
         height: 34px;
     }
 }
+
 .vertically-ontop {
     vertical-align: top;
 }
+
 .bottom-detached {
     margin-bottom: 20px;
 }
+
 .top-detached {
     margin-top: 20px;
 }
+
 .browsehappy {
     margin: 0.2em 0;
     background: #ccc;
     color: #000;
     padding: 0.2em 0;
 }
+
 .pointer {
     cursor: pointer;
 }
+
 .tab-content {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
+
 .icon-device {
     background-image: url('../assets/images/icon_device.png');
     background-size: 24px 24px;
     height: 24px;
     width: 24px;
 }
+
 .old-password-form.form-inline {
     .form-group {
         margin: 0;
     }
 }
+
 .messages {
     position: fixed;
     z-index: 1001;
@@ -121,23 +138,27 @@ table.table {
     width: 400px;
     text-align: center;
 }
+
 .btn-group,
 .btn-group-vertical {
     > .btn {
         min-width: 90px;
     }
 }
+
 //
 //
 // CUSTOM BUTTONS
 //
 //
- .btn.btn-edit {
+.btn.btn-edit {
     @include custom-button($green, $dark-green);
 }
+
 .btn.btn-delete {
     @include custom-button($red, $dark-red);
 }
+
 .btn.btn-new {
     background: none;
     color: $gray-font;
@@ -174,22 +195,24 @@ table.table {
         }
     }
 }
+
 //
 //
 // TITLE
 //
 //
- .title {
+.title {
     box-shadow: 0 4px 2px -2px $gray-shadow;
     margin: 0;
     padding: 20px;
 }
+
 //
 //
 // TABLE LIST DATA
 //
 //
- .table-list {
+.table-list {
     .main-commands {
         padding: 20px 10px;
         margin: 0;
@@ -204,11 +227,11 @@ table.table {
             }
             .input-group > .form-control {
                 //width: 70%;
-
             }
         }
     }
 }
+
 // Component styles are injected through grunt
 // injector
 @import 'account/forgot/forgot.scss';
