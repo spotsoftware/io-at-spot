@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .controller('ProfileCtrl', function ($scope, User, Auth) {
+    .controller('ProfileCtrl', function ($scope, User, Auth, authModel) {
         $scope.errors = {};
 
         $scope.model = {
-            user: $scope.parent.currentUser
+            user: authModel.currentUser
         };
 
         $scope.changePassword = function (form) {

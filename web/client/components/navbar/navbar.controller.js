@@ -53,7 +53,7 @@ angular.module('ioAtSpotApp')
                         return $scope.currentOrganization;
                     },
                     organizations: function () {
-                        return $scope.actions.queryOrganizations();
+                        return $scope.actions.queryOrganizations().$promise;
                     }
                 }
             }).result.then(function (selectedOrganization) {

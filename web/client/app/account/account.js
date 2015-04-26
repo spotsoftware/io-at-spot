@@ -8,10 +8,35 @@ angular.module('ioAtSpotApp')
                 templateUrl: 'app/account/login/login.html',
                 controller: 'LoginCtrl'
             })
-            .state('public.signup', {
-                url: '/signup',
-                templateUrl: 'app/account/signup/signup.html',
-                controller: 'SignupCtrl'
+            //            .state('public.signup', {
+            //                url: '/signup',
+            //                templateUrl: 'app/account/signup/signup.html',
+            //                controller: 'SignupCtrl'
+            //            })
+            .state('public.join', {
+                url: '/join/?organizationId&inviteId',
+                templateUrl: 'app/account/join/join.html',
+                controller: 'JoinCtrl',
+                resolve: {
+                    /*token: ['$stateParams',
+                        function ($stateParams) {
+                            return $stateParams.token;
+                        }],*/
+                    invite: ['$stateParams', 'Invites',
+                        function ($stateParams, Invites) {
+                            return Invites.detail({
+                                organizationId: $stateParams.organizationId,
+                                id: $stateParams.inviteId
+                            }, {}).$promise;
+                        }],
+                    organization: ['$stateParams', 'Organizations',
+                        function ($stateParams, Organizations) {
+
+                            return Organizations.detail({
+                                organizationId: $stateParams.organizationId
+                            }, {}).$promise;
+                        }],
+                }
             })
             .state('public.forgot', {
                 url: '/forgot',
@@ -33,6 +58,12 @@ angular.module('ioAtSpotApp')
                 url: '/profile',
                 templateUrl: 'app/account/profile/profile.html',
                 controller: 'ProfileCtrl',
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.user],
+                resolve: {
+                    authModel: ['Auth',
+                    function (Auth) {
+                            return Auth.getAuthModel().$promise;
+                    }]
+                }
             });
     });

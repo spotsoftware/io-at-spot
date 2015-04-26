@@ -1,0 +1,57 @@
+<div class="invites panel-body">
+    <div class="row main-commands">
+        <button class="btn btn-new" ng-click="actions.toggleAddingInvite()" ng-disabled="model.addingInvite" ng-hide="!utils.currentUserIsAdmin(org)">
+            Invite Member <span><i class="fa fa-plus"></i></span>
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="invite in model.invites">
+                    <td>
+                        {{ invite._user.email }}
+                    </td>
+                    <td>
+                        {{ invite._user.name }}
+                    </td>
+                    <td class="text-right">
+                        <button role='button' class='btn btn-invite' ng-click='actions.refreshInvite(invite)' ng-show="utils.currentUserIsAdmin()">
+                            <i class="fa fa-envelope"></i>RE-SEND
+                        </button>
+                        <button role='button' class='btn btn-delete' ng-click='actions.removeInvite(invite)' ng-show="utils.currentUserIsAdmin()">
+                            <i class="fa fa-times"></i>DELETE
+                        </button>
+                    </td>
+                </tr>
+                <tr ng-show="model.addingInvite">
+                    <td>
+                        <input type="text" typeahead-on-select="actions.userSelected($item, $model, $label)" ng-model="model.selectedUser" typeahead-editable="true" placeholder="Type user's email" typeahead-min-length="3" typeahead="user.email for user in proxies.searchUsers.request($viewValue, 'email')" typeahead-loading="model.loadingUsers" class="form-control">
+                        <i ng-show="model.loadingUsers" class="glyphicon glyphicon-refresh"></i>
+                    </td>
+                    <td>
+                        <input type="text" typeahead-on-select="actions.userSelected($item, $model, $label)" ng-model="model.selectedUser" typeahead-editable="false" placeholder="Type user's name" typeahead-min-length="3" typeahead="user.name for user in proxies.searchUsers.request($viewValue, 'name')" typeahead-loading="model.loadingUsers" class="form-control">
+                        <i ng-show="model.loadingUsers" class="glyphicon glyphicon-refresh"></i>
+                    </td>
+                    <td class="text-right">
+                        <button role='button' class='btn btn-primary' ng-click='actions.toggleAddingInvite()'>Cancel</button>
+                        <button role='button' class='btn btn-success' ng-click='actions.addInvite()' ng-disabled="!utils.isUserSelected() && !utils.isEmailValid()">Invite</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

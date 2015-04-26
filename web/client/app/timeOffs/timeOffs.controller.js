@@ -2,8 +2,9 @@
 
 angular.module('ioAtSpotApp')
     .controller('TimeOffsCtrl',
-        function ($scope, $http, socket, Auth, TimeOffs, $moment, $modal) {
+        function ($scope, $http, socket, authModel, TimeOffs, $moment, $modal) {
 
+            //var authModel = Auth.getAuthModel();
 
             $scope.model = new function () {
                 var model = this;
@@ -17,15 +18,15 @@ angular.module('ioAtSpotApp')
                 model.day = new Date();
 
                 model.fastPeriodFilter = null;
-                model.membersFilter = [$scope.parent.currentUser._id];
-                model.membersFilterText = $scope.parent.currentUser.name;
+                model.membersFilter = [authModel.currentUser._id];
+                model.membersFilterText = authModel.currentUser.name;
                 model.timeOffTypeFilter = 'All';
                 model.from = null;
                 model.to = null;
 
                 //model.organization = Auth.getCurrentOrganization(organizations);
-                model.workingDays = $scope.parent.currentOrganization.settings.workingDays;
-                model.timeOffTypes = $scope.parent.currentOrganization.settings.timeOffTypes;
+                model.workingDays = authModel.currentOrganization.settings.workingDays;
+                model.timeOffTypes = authModel.currentOrganization.settings.timeOffTypes;
 
                 $scope.$watch('model.fastPeriodFilter', function (newValue, oldValue) {
 
@@ -73,6 +74,10 @@ angular.module('ioAtSpotApp')
                 utils.fromOpened = false;
                 utils.toOpened = false;
 
+                utils.isCurrentOrganizationAdmin = function () {
+
+                    return authModel.currentOrganization.userRole === 'admin';
+                }
             };
 
 
@@ -82,7 +87,7 @@ angular.module('ioAtSpotApp')
                     if (user === 'all') {
 
                         $scope.model.membersFilter = [];
-                        angular.forEach($scope.parent.currentOrganization.members, function (member) {
+                        angular.forEach(authModel.currentOrganization.members, function (member) {
                             $scope.model.membersFilter.push(member._user._id);
                         });
 
@@ -159,7 +164,7 @@ angular.module('ioAtSpotApp')
                                 return to;
                             },
                             organizationSettings: function () {
-                                return $scope.parent.currentOrganization.settings
+                                return authModel.currentOrganization.settings
                             }
                         }
                     }).result.then(function (timeOff) {
@@ -185,7 +190,7 @@ angular.module('ioAtSpotApp')
                                 return null;
                             },
                             organizationSettings: function () {
-                                return $scope.parent.currentOrganization.settings
+                                return authModel.currentOrganization.settings
                             }
                         }
                     }).result.then(function (timeOff) {
@@ -206,7 +211,7 @@ angular.module('ioAtSpotApp')
 
                         return {
                             from: $scope.model.from,
-                            organizationId: $scope.parent.currentOrganization._id,
+                            organizationId: authModel.currentOrganization._id,
                             page: $scope.model.page,
                             timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
                             to: $scope.model.to
@@ -236,7 +241,7 @@ angular.module('ioAtSpotApp')
                 proxies.create = {
                     requestData: function (timeOff) {
                         return {
-                            userId: $scope.parent.currentUser._id,
+                            userId: authModel.currentUser._id,
                             timeOffType: timeOff.timeOffType,
                             amount: timeOff.amount,
                             performedAt: timeOff.performedAt
@@ -244,7 +249,7 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (timeOff) {
                         TimeOffs.create({
-                                organizationId: $scope.parent.currentOrganization._id
+                                organizationId: authModel.currentOrganization._id
                             },
                             proxies.create.requestData(timeOff)).$promise.then(
                             function () {
@@ -273,7 +278,7 @@ angular.module('ioAtSpotApp')
                     request: function (timeOff) {
                         console.log('edit', timeOff);
                         TimeOffs.update({
-                                organizationId: $scope.parent.currentOrganization._id,
+                                organizationId: authModel.currentOrganization._id,
                                 timeOffId: timeOff._id
                             },
                             proxies.edit.requestData(timeOff)).$promise.then(
@@ -307,7 +312,7 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (timeOff) {
                         TimeOffs.delete({
-                                organizationId: $scope.parent.currentOrganization._id,
+                                organizationId: authModel.currentOrganization._id,
                                 timeOffId: timeOff._id
                             },
                             proxies.delete.requestData(timeOff)).$promise.then(

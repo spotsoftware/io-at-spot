@@ -6,6 +6,12 @@ angular.module('ioAtSpotApp')
             .state('private.workTimeEntries', {
                 url: '/WorkTimeEntries',
                 templateUrl: 'app/workTimeEntries/workTimeEntries.html',
-                controller: 'WorkTimeEntriesCtrl'
+                controller: 'WorkTimeEntriesCtrl',
+                resolve: {
+                    authModel: ['Auth',
+                    function (Auth) {
+                            return Auth.getAuthModel().$promise;
+                    }]
+                }
             });
     });

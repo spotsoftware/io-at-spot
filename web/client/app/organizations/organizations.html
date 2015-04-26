@@ -2,6 +2,19 @@
 
     <h2 class="title">Organizations</h2>
 
+    <div class="row" ng-if="model.invites.length > 0">
+        <div class="col-md-12 pending-invites">
+            <h3>Pending invites</h3>
+            <ul>
+                <li ng-repeat="invite in model.invites">
+                    <span>{{invite.organization.name}}</span>
+                    <button class="btn btn-primary" ng-click="actions.acceptInvite(invite)">Accept</button>
+                    <button class="btn btn-danger" ng-click="actions.removeInvite(invite)">Decline</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="row main-commands">
       <button class="btn btn-new" ng-click="actions.new()">
         Organizations <span><i class="fa fa-plus"></i></span>
@@ -42,7 +55,8 @@
                     <div class="row col-xs-12 bottom-detached">
                         <tabset>
                             <tab heading="Members">
-                                <div ng-include src="'app/members/members.html'" ng-controller="MembersCtrl" ng-init="model.organization = org"></div>
+                                <div ng-include src="'app/members/members.html'" ng-controller="MembersCtrl" ng-init="model.organization=org"></div>
+                                <div ng-if="utils.currentUserIsAdmin(org)" ng-include src="'app/invites/invites.html'" ng-controller="InvitesCtrl" ng-init="model.organization=org"></div>
                             </tab>
                             <tab heading="Time Offs">
                                 <div class="panel-body">
@@ -50,7 +64,8 @@
                                         <div class="row form-group">
                                             <label class="col-sm-3 control-label">Default time off amount</label>
                                             <div class="col-sm-9 form-control-static">
-                                                <a href="#" editable-number="org.settings.defaultTimeOffAmount" e-min="1" e-max="10">{{ org.settings.defaultTimeOffAmount }}</a>
+                                                <a ng-show="utils.currentUserIsAdmin(org)" href="#" editable-number="org.settings.defaultTimeOffAmount" e-min="1" e-max="10">{{ org.settings.defaultTimeOffAmount }}</a>
+                                                <span ng-hide="utils.currentUserIsAdmin(org)">{{org.settings.defaultTimeOffAmount}}</span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
@@ -106,12 +121,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            <tr ng-show="utils.currentUserIsAdmin(org)">
                                                 <td>
                                                     Active
                                                 </td>
                                                 <td ng-repeat="workingDay in org.settings.workingDays">
-                                                    <div class="btn-group" ng-show="utils.currentUserIsAdmin(org)">
+                                                    <div class="btn-group">
                                                         <label class="btn btn-primary" ng-model="workingDay.active" btn-checkbox ng-change="actions.updateOrganization(org)">{{ workingDay.active ? 'Disable' : 'Enable' }}</label>
                                                     </div>
                                                 </td>

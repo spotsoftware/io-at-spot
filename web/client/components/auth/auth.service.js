@@ -33,8 +33,9 @@ angular.module('ioAtSpotApp')
                 authModel.currentUser = user;
 
                 Organizations.query().$promise.then(function (organizations) {
-                    authModel.currentOrganization = getCurrentOrganization(organizations);
 
+                    authModel.currentOrganization = getCurrentOrganization(organizations.organizations);
+                    //console.log('balblbalbla', authModel.currentOrganization);
                     deferred.resolve(authModel);
 
                 }, function (err) {
@@ -152,6 +153,13 @@ angular.module('ioAtSpotApp')
             return !!(authModel.currentUser._id);
         };
 
+
+        authService.signUp = function (data) {
+            return User.create(data, function (data) {
+                $cookieStore.put('token', data.token);
+            });
+        };
+
         /**
          * Create a new user
          *
@@ -227,6 +235,10 @@ angular.module('ioAtSpotApp')
 
         authService.getAuthModel = function () {
             return authModel;
+        };
+
+        authService.updateAuthModel = function () {
+            authModel.$promise = populateModel();
         };
 
 

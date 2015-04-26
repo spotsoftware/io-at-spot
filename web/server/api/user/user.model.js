@@ -5,14 +5,19 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var BaseSchema = require('../base/model.js');
 var Organization = require('../organization/organization.model');
-var authTypes = ['github', 'twitter', 'facebook', 'google'];
+var authTypes = ['google'];
 
 
 var UserSchema = new BaseSchema({
-    name: String,
+    name: {
+        type: String,
+        lowercase: true,
+        default: ''
+    },
     email: {
         type: String,
-        lowercase: true
+        lowercase: true,
+        required: true
     },
     hashedPassword: String,
     provider: String,
@@ -48,7 +53,9 @@ UserSchema
     .get(function () {
         return {
             'name': this.name,
-            //            'role': this.role
+            'email': this.email,
+            'active': this.active
+                //            'role': this.role
         };
     });
 
@@ -106,20 +113,26 @@ var validatePresenceOf = function (value) {
  */
 UserSchema
     .pre('save', function (next) {
-        this.wasNew = this.isNew;
+        //this.wasNew = this.isNew;
+
         if (!this.isNew) {
             return next();
         } else {
             //this.active = false;
         }
 
-        if (!validatePresenceOf(this.hashedPassword) && authTypes.indexOf(this.provider) === -1) {
-            next(new Error('Invalid password'));
+        if (this.active) {
+            if (!validatePresenceOf(this.hashedPassword) && authTypes.indexOf(this.provider) === -1) {
+                next(new Error('Invalid password'));
+            } else {
+                next();
+            }
         } else {
             next();
         }
     });
 
+/*
 UserSchema
     .post('save', function () {
 
@@ -178,6 +191,7 @@ UserSchema
             });
         }
     });
+*/
 
 /**
  * Static Methods

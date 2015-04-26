@@ -6,8 +6,8 @@
 }
 
 .read-uid > input {
-    display:inline-block;
-    width:calc(100% - 100px);
+    display: inline-block;
+    width: calc(100% - 100px);
 }
 
 .icon-device {
@@ -18,23 +18,22 @@
 }
 
 .spinner {
-  display: inline-block;
-  opacity: 0;
-  width: 0;
-
-  -webkit-transition: opacity 0.25s, width 0.25s;
-  -moz-transition: opacity 0.25s, width 0.25s;
-  -o-transition: opacity 0.25s, width 0.25s;
-  transition: opacity 0.25s, width 0.25s;
+    display: inline-block;
+    opacity: 0;
+    width: 0;
+    -webkit-transition: opacity 0.25s, width 0.25s;
+    -moz-transition: opacity 0.25s, width 0.25s;
+    -o-transition: opacity 0.25s, width 0.25s;
+    transition: opacity 0.25s, width 0.25s;
 }
 
 .has-spinner.active {
-  cursor:progress;
+    cursor: progress;
 }
 
 .has-spinner.active .spinner {
-  opacity: 1;
-  width: auto;
+    opacity: 1;
+    width: auto;
 }
 
 .has-spinner.btn.active .spinner {
@@ -49,30 +48,30 @@
 }
 
 @-moz-keyframes spin {
-  from {
-    -moz-transform: rotate(0deg);
-  }
-  to {
-    -moz-transform: rotate(360deg);
-  }
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
 }
 
 @-webkit-keyframes spin {
-  from {
-    -webkit-transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(360deg);
-  }
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .table-working-days {
@@ -86,16 +85,13 @@
 // PANEL
 //
 //
-
 .organizations {
-
-  .panel {
-    background: transparent;
-
-      .panel-heading {
-        background: $gray-header;
-      }
-  }
+    .panel {
+        background: transparent;
+        .panel-heading {
+            background: $gray-header;
+        }
+    }
 }
 
 //
@@ -103,22 +99,29 @@
 // NAV TABS
 //
 //
-
 .nav-tabs {
-
-  li a {
-    border: 1px solid $gray-header;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 0;
-  }
-
-  li.active {
-
-    a, a:hover, a:active, a:focus {
-      background: $blue;
-      color: $white;
-      font-weight: normal;
+    li a {
+        border: 1px solid $gray-header;
+        cursor: pointer;
+        font-weight: 600;
+        margin-right: 0;
     }
-  }
+    li.active {
+        a, a:hover, a:active, a:focus {
+            background: $blue;
+            color: $white;
+            font-weight: normal;
+        }
+    }
+}
+
+.pending-invites {
+    h3 {
+        padding: 10px 20px;
+    }
+    ul {
+        li {
+            list-style: none;
+        }
+    }
 }

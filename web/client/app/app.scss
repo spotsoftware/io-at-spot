@@ -159,6 +159,10 @@ table.table {
     @include custom-button($red, $dark-red);
 }
 
+.btn.btn-invite {
+    @include custom-button($green, $dark-green);
+}
+
 .btn.btn-new {
     background: none;
     color: $gray-font;
@@ -235,11 +239,13 @@ table.table {
 // Component styles are injected through grunt
 // injector
 @import 'account/forgot/forgot.scss';
+@import 'account/join/join.scss';
 @import 'account/login/login.scss';
 @import 'account/profile/profile.scss';
 @import 'account/reset/reset.scss';
 @import 'account/signup/signup.scss';
 @import 'admin/admin.scss';
+@import 'invites/invites.scss';
 @import 'main/main.scss';
 @import 'members/members.scss';
 @import 'mixins.scss';
