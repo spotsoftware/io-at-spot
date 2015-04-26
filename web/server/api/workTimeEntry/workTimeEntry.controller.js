@@ -63,19 +63,12 @@ exports.index = function (req, res, next) {
 
     var membersFilter = [];
 
-    if (auth.ensureOrganizationAdmin()) {
-        var queryMembers = JSON.parse(req.query.members);
-        queryMembers.forEach(function (member, i) {
-            membersFilter.push({
-                _user: member
-            });
-        });
-
-    } else {
+    var queryMembers = JSON.parse(req.query.members);
+    queryMembers.forEach(function (member, i) {
         membersFilter.push({
-            _user: req.user._id
+            _user: member
         });
-    }
+    });
 
     if (membersFilter.length > 0) {
         filterConditions.push({

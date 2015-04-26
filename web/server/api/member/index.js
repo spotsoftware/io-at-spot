@@ -6,9 +6,9 @@ var auth = require('../../auth/auth.service');
 
 var router = express.Router();
 
-router.get('/api/organizations/:organizationId/members', auth.ensureOrganizationUser(), controller.index);
+router.get('/api/organizations/:organizationId/members', auth.ensureOrganizationUserMiddleware(), controller.index);
 //router.post('/api/organizations/:organizationId/members', auth.ensureOrganizationAdmin(), controller.add);
-router.put('/api/organizations/:organizationId/members/:id', auth.ensureOrganizationAdmin(), controller.update);
-router.delete('/api/organizations/:organizationId/members/:id', auth.ensureOrganizationAdmin(), controller.remove);
+router.put('/api/organizations/:organizationId/members/:id', auth.ensureOrganizationAdminMiddleware(), controller.update);
+router.delete('/api/organizations/:organizationId/members/:id', auth.ensureOrganizationAdminMiddleware(), controller.remove);
 
 module.exports = router;

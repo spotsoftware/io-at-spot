@@ -16,7 +16,7 @@ var validateJwt = expressJwt({
  * Attaches the user object to the request if authenticated
  * Otherwise returns 403
  */
-function isAuthenticated() {
+function isAuthenticatedMiddleware() {
     return compose()
         // Validate jwt
         .use(function (req, res, next) {
@@ -45,10 +45,10 @@ function isAuthenticated() {
 /**
  * Checks if the user is in organization
  */
-function ensureOrganizationUser() {
+function ensureOrganizationUserMiddleware() {
 
     return compose()
-        .use(isAuthenticated())
+        .use(isAuthenticatedMiddleware())
         .use(function ensureOrganizationUser(req, res, next) {
             var userId = req.user._id;
 
@@ -76,11 +76,11 @@ function ensureOrganizationUser() {
 /**
  * Checks if the user is one of the organization's owners
  */
-function ensureOrganizationAdmin() {
+function ensureOrganizationAdminMiddleware() {
 
 
     return compose()
-        .use(isAuthenticated())
+        .use(isAuthenticatedMiddleware())
         .use(function ensureOrganizationAdmin(req, res, next) {
 
             var userId = req.user._id;
@@ -154,9 +154,9 @@ function setTokenCookie(req, res) {
     //res.send(200);
 }
 
-exports.ensureOrganizationUser = ensureOrganizationUser;
-exports.ensureOrganizationAdmin = ensureOrganizationAdmin;
-exports.isAuthenticated = isAuthenticated;
+exports.ensureOrganizationUserMiddleware = ensureOrganizationUserMiddleware;
+exports.ensureOrganizationAdminMiddleware = ensureOrganizationAdminMiddleware;
+exports.isAuthenticatedMiddleware = isAuthenticatedMiddleware;
 //exports.hasRole = hasRole;
 exports.signToken = signToken;
 exports.verifyToken = verifyToken;

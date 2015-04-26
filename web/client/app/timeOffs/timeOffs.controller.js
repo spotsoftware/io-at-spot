@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('TimeOffsCtrl',
-        function ($scope, $http, socket, authModel, TimeOffs, $moment, $modal) {
+        function ($scope, $http, socket, authModel, TimeOffs, $moment, $modal, Members) {
 
             //var authModel = Auth.getAuthModel();
 
@@ -57,6 +57,17 @@ angular.module('ioAtSpotApp')
                         $scope.proxies.search.request();
                     }
                 });
+
+                $scope.$on('organization-updated', function (event, data) {
+                    var newOrganization = data.newOrganization;
+                    var oldOrganization = data.oldOrganization;
+
+                    if (newOrganization !== oldOrganization) {
+
+                        $scope.proxies.loadMembers();
+                        $scope.proxies.search.request();
+                    }
+                });
             };
 
             $scope.utils = new function () {
@@ -87,7 +98,7 @@ angular.module('ioAtSpotApp')
                     if (user === 'all') {
 
                         $scope.model.membersFilter = [];
-                        angular.forEach(authModel.currentOrganization.members, function (member) {
+                        angular.forEach($scope.model.members, function (member) {
                             $scope.model.membersFilter.push(member._user._id);
                         });
 
@@ -206,6 +217,18 @@ angular.module('ioAtSpotApp')
             $scope.proxies = new function () {
                 var proxies = this;
 
+                proxies.loadMembers = function () {
+                    Members.query({
+                        organizationId: authModel.currentOrganization._id
+                    }).$promise.then(
+                        function (members) {
+                            $scope.model.members = members;
+                        },
+                        function (err) {
+                            console.log(err);
+                        });
+                };
+
                 proxies.search = {
                     requestData: function () {
 
@@ -214,7 +237,8 @@ angular.module('ioAtSpotApp')
                             organizationId: authModel.currentOrganization._id,
                             page: $scope.model.page,
                             timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
-                            to: $scope.model.to
+                            to: $scope.model.to,
+                            members: JSON.stringify($scope.model.membersFilter)
                         };
                     },
                     request: function () {
@@ -346,5 +370,6 @@ angular.module('ioAtSpotApp')
             };
 
             $scope.proxies.search.request();
+            $scope.proxies.loadMembers();
 
         });

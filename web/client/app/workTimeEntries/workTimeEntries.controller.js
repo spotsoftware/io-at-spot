@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('WorkTimeEntriesCtrl',
-        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel) {
+        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel, Members) {
 
             $scope.model = new function () {
                 var model = this;
@@ -51,12 +51,13 @@ angular.module('ioAtSpotApp')
                     }
                 });
 
-                $scope.$watch('parent.currentOrganization', function (newValue, oldValue) {
-                    if (newValue != oldValue) {
+                $scope.$on('organization-updated', function (event, data) {
+                    var newOrganization = data.newOrganization;
+                    var oldOrganization = data.oldOrganization;
 
-                        console.log("org updated", authModel.currentOrganization._id);
-                        socket.unsyncUpdates('workTimeEntry', oldValue._id);
-                        socket.syncUpdates('workTimeEntry', newValue._id, function (event, item) {
+                    if (newOrganization !== oldOrganization) {
+                        socket.unsyncUpdates('workTimeEntry', oldOrganization._id);
+                        socket.syncUpdates('workTimeEntry', newOrganization._id, function (event, item) {
                             if ($scope.utils.matchFilters(item)) {
                                 //It's interesting!
                                 console.log('interesting ', item);
@@ -67,9 +68,11 @@ angular.module('ioAtSpotApp')
                             }
                         });
 
+                        $scope.proxies.loadMembers();
                         $scope.proxies.search.request();
                     }
                 });
+
             };
 
             $scope.utils = new function () {
@@ -119,7 +122,9 @@ angular.module('ioAtSpotApp')
                     if (user === 'all') {
 
                         $scope.model.membersFilter = [];
-                        angular.forEach(authModel.currentOrganization.members, function (member) {
+
+
+                        angular.forEach($scope.model.members, function (member) {
                             $scope.model.membersFilter.push(member._user._id);
                         });
 
@@ -234,6 +239,18 @@ angular.module('ioAtSpotApp')
 
             $scope.proxies = new function () {
                 var proxies = this;
+
+                proxies.loadMembers = function () {
+                    Members.query({
+                        organizationId: authModel.currentOrganization._id
+                    }).$promise.then(
+                        function (members) {
+                            $scope.model.members = members;
+                        },
+                        function (err) {
+                            console.log(err);
+                        });
+                };
 
                 proxies.search = {
                     requestData: function () {
@@ -370,6 +387,7 @@ angular.module('ioAtSpotApp')
             };
 
             $scope.proxies.search.request();
+            $scope.proxies.loadMembers();
 
             socket.syncUpdates('workTimeEntry', authModel.currentOrganization._id, function (event, item) {
                 if ($scope.utils.matchFilters(item)) {

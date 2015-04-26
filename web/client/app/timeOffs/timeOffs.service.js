@@ -13,6 +13,7 @@ angular.module('ioAtSpotApp')
                         method: 'GET',
                         params: {
                             from: '@from',
+                            members: '@members',
                             organizationId: '@organizationId',
                             page: '@page',
                             timeOffType: '@timeOffType',

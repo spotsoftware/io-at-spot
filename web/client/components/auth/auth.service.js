@@ -249,6 +249,7 @@ angular.module('ioAtSpotApp')
          */
         authService.setCurrentOrganization = function (organization) {
             if (authService.isAuthenticated()) {
+                var oldOrganization = authModel.currentOrganization;
 
                 authModel.currentUser._lastOrganization = organization._id;
                 authModel.currentOrganization = organization;
@@ -257,7 +258,10 @@ angular.module('ioAtSpotApp')
                     _lastOrganization: organization._id
                 });
 
-                $rootScope.$broadcast('organization-updated');
+                $rootScope.$broadcast('organization-updated', {
+                    newOrganization: organization,
+                    oldOrganization: oldOrganization
+                });
             }
         };
 
