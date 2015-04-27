@@ -1,17 +1,18 @@
 'use strict';
 
 angular.module('ioAtSpotApp', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'btford.socket-io',
-  'ui.router',
-  'ui.bootstrap',
+    'ngCookies',
+    'ngResource',
+    'ngSanitize',
+    'btford.socket-io',
+    'ui.router',
+    'ui.bootstrap',
     'angular-momentjs',
     'xeditable',
     'duScroll',
     'messageCenter',
-    'equals'
+    'equals',
+    'chart.js'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
         $urlRouterProvider

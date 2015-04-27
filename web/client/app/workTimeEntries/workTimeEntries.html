@@ -59,6 +59,13 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-xs-12">
+            <canvas style="height:300px; width: 100%" id="line" class="chart chart-line" data="model.chartData" labels="model.chartLabels" legend="true" series="model.chartSeries" options="model.chartOptions">
+            </canvas>
+        </div>
+    </div>
+
     <div class="row main-commands">
         <button class="btn btn-new" ng-click="actions.new()">
             Add new <span><i class="fa fa-plus"></i></span>

@@ -7,6 +7,31 @@ angular.module('ioAtSpotApp')
             $scope.model = new function () {
                 var model = this;
 
+                //Chart
+                model.chartLabels = [];
+                model.chartSeries = ['in', 'out', 'in', 'out'];
+                model.chartData = [[],
+                                   [],
+                                   [],
+                                   []];
+
+                model.chartOptions = {
+                    datasetFill: false,
+                    scaleOverride: true,
+                    scaleShowVerticalLines: false,
+                    scaleSteps: 5,
+                    scaleStepWidth: 180,
+                    scaleStartValue: 180,
+                    scaleLabel: function (point) {
+
+                        return $scope.utils.getTimeFromEndDayDiff(point.value);
+                    },
+                    customTooltips: false,
+                    multiTooltipTemplate: function (point) {
+                        return point.datasetLabel + ': ' + $scope.utils.getTimeFromEndDayDiff(point.value);
+                    }
+                };
+
                 model.workTimeEntries = [];
                 model.totalNumber = null;
                 model.page = 1;
@@ -112,7 +137,58 @@ angular.module('ioAtSpotApp')
                 utils.isCurrentOrganizationAdmin = function () {
 
                     return authModel.currentOrganization.userRole === 'admin';
-                }
+                };
+
+                utils.getTimeFromEndDayDiff = function (diff) {
+                    var minutes = ((60 * 24) - (diff)) / 60;
+
+                    var sign = minutes < 0 ? "-" : "";
+                    var min = Math.floor(Math.abs(minutes))
+                    var sec = Math.floor((Math.abs(minutes) * 60) % 60);
+                    return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+                };
+
+                utils.setupChart = function () {
+                    var days = [],
+                        data = [[],
+                                [],
+                                [],
+                                []];
+
+                    var wte = null,
+                        day = null,
+                        dayIndex = null,
+                        serieIndex = null;
+
+                    day = $moment($scope.model.workTimeEntries[$scope.model.workTimeEntries.length - 1].performedAt).startOf('day');
+                    var endDay = $moment($scope.model.workTimeEntries[0].performedAt).endOf('day');
+
+                    do {
+                        days.push(day.format('L'));
+                        for (var i = 0; i < $scope.model.chartSeries.length; i++) {
+                            data[i].push(null);
+                        }
+                    } while (day.add(1, 'days').isBefore(endDay));
+
+                    for (var i = 0; i < $scope.model.workTimeEntries.length; i++) {
+                        wte = $scope.model.workTimeEntries[i];
+
+                        dayIndex = days.indexOf($moment(wte.performedAt).format('L'));
+
+                        if (wte.workTimeEntryType === 'in') {
+                            serieIndex = data[0][dayIndex] === null ? 0 : 2;
+                        } else {
+                            serieIndex = data[1][dayIndex] === null ? 1 : 3;
+                        }
+
+                        data[serieIndex][dayIndex] = $moment(wte.performedAt).endOf('day').diff($moment(wte.performedAt), 'minutes');
+                    }
+
+                    console.log(days, data);
+
+                    $scope.model.chartLabels = days;
+                    $scope.model.chartData = data;
+                };
             };
 
 
@@ -281,6 +357,7 @@ angular.module('ioAtSpotApp')
                         $scope.model.workTimeEntries = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
 
+                        $scope.utils.setupChart();
                     },
                     errorCallback: function (error) {
                         console.log(error);
