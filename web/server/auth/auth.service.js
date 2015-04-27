@@ -123,7 +123,6 @@ function signToken(data, expiration) {
  * Verify a jwt token signed by the app secret
  */
 function verifyToken(token, callback, ignoreExpiration) {
-
     jwt.verify(token, config.secrets.session, {
         ignoreExpiration: ignoreExpiration ? ignoreExpiration : false
     }, function (err, decoded) {

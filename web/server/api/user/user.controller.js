@@ -194,15 +194,18 @@ exports.me = function (req, res, next) {
                     return next(err);
                 }
 
-                user._lastOrganization = organizations[0]._id;
+                if(organizations.length > 0){
+                    user._lastOrganization = organizations[0]._id;
+                    user.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                user.save(function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
+                        res.json(user);
+                    });
+                } else {
                     res.json(user);
-                });
+                }
             });
         } else {
             res.json(user);

@@ -73,11 +73,11 @@ angular.module('ioAtSpotApp')
                     deferred.resolve(data);
                     return cb();
                 }, function (err) {
-                    this.logout();
+                    authService.logout();
                     deferred.reject(err);
                 });
             }).error(function (err) {
-                this.logout();
+                authService.logout();
                 deferred.reject(err);
                 return cb(err);
             }.bind(this));

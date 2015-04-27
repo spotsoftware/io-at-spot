@@ -7,22 +7,25 @@
 
 var User = require('../api/user/user.model');
 var Organization = require('../api/organization/organization.model');
+var config = require('./environment');
 
-User.find({}).remove(function () {
-    User.create({
-        provider: 'local',
-        name: 'Test User',
-        email: 'test@test.com',
-        password: 'test'
-    }, {
-        provider: 'local',
-        role: 'admin',
-        name: 'Admin',
-        email: 'admin@admin.com',
-        password: 'admin'
-    }, function () {
-        console.log('finished populating users');
-    });
+User.findOne({
+    email: config.admin.email
+}, function (err, user) {
+    if (err) {
+        console.log(err);
+    }
+    if (!user) {
+        //ADD superadmin
+        User.create({
+            provider: 'local',
+            name: 'Admin',
+            email: config.admin.email,
+            password: config.admin.password
+        }, function (err, newUser) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
 });
-
-Organization.find({}).remove(function () {});

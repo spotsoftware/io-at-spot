@@ -13,5 +13,7 @@ module.exports = {
     // Control debug level for modules using visionmedia/debug
     DEBUG: '',
     GMAIL_USER: 'use-your-gmail-account',
-    GMAIL_PASSWORD: 'use-your-gmail-password'
+    GMAIL_PASSWORD: 'use-your-gmail-password',
+    ADMIN_EMAIL: 'admin@admin.com',
+    ADMIN_PASSWORD: 'admin'
 };
