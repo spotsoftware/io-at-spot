@@ -16,6 +16,7 @@ angular.module('ioAtSpotApp')
                                    []];
 
                 model.chartOptions = {
+                    bezierCurve: false,
                     datasetFill: false,
                     scaleOverride: true,
                     scaleShowVerticalLines: false,
@@ -64,6 +65,13 @@ angular.module('ioAtSpotApp')
                 });
 
                 $scope.$watch('model.page', function (newValue, oldValue) {
+                    if (newValue != oldValue) {
+
+                        $scope.proxies.search.request();
+                    }
+                });
+
+                $scope.$watch('model.itemsPerPage', function (newValue, oldValue) {
                     if (newValue != oldValue) {
 
                         $scope.proxies.search.request();
@@ -188,6 +196,10 @@ angular.module('ioAtSpotApp')
 
                     $scope.model.chartLabels = days;
                     $scope.model.chartData = data;
+                };
+
+                utils.setPageSize = function (n) {
+                    $scope.model.itemsPerPage = n;
                 };
             };
 

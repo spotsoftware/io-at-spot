@@ -61,7 +61,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <canvas style="height:300px; width: 100%" id="line" class="chart chart-line" data="model.chartData" labels="model.chartLabels" legend="true" series="model.chartSeries" options="model.chartOptions">
+            <canvas style="width: 100%" id="line" class="chart chart-line" data="model.chartData" labels="model.chartLabels" legend="true" series="model.chartSeries" options="model.chartOptions">
             </canvas>
         </div>
     </div>
@@ -92,7 +92,7 @@
 
                     </th>
                     <th>
-                        Commands
+
                     </th>
                 </tr>
             </thead>
@@ -113,7 +113,7 @@
                     <td>
                         <div class="icon-device" ng-show="{{ !item.manual }}"></div>
                     </td>
-                    <td>
+                    <td class="text-right">
                         <button role='button' class='btn btn-edit' ng-click='actions.edit(item)'>
                             <i class="fa fa-pencil"></i>EDIT
                         </button>
@@ -124,7 +124,28 @@
                 </tr>
             </tbody>
         </table>
-        <pagination total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
-        <pre>Page: {{model.page}} / {{model.numPages}}</pre>
+        <div class="row pagination-controls">
+            <div class="col-xs-6 text-left">
+                <div class="page-recap">Page: {{model.page}} / {{model.numPages}}</div>
+                <div class="page-size">Page size: &nbsp;
+                    <a ng-click="utils.setItemsPerPage(10)">10</a>&nbsp;
+                    <a ng-click="utils.setItemsPerPage(50)">50</a>&nbsp;
+                    <a ng-click="utils.setItemsPerPage(100)">100</a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 text-right">
+                <pagination class="pagination" total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
+            </div>
+        </div>
+
+
+
+        <!--
+        <div class="btn-group">
+            <label class="btn btn-primary" ng-model="model.itemsPerPage" btn-radio="10">10</label>
+            <label class="btn btn-primary" ng-model="model.itemsPerPage" btn-radio="50">50</label>
+            <label class="btn btn-primary" ng-model="model.fastPeriodFilter" btn-radio="100">100</label>
+        </div>
+-->
     </div>
 </div>
