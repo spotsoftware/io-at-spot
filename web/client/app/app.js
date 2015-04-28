@@ -47,8 +47,11 @@ angular.module('ioAtSpotApp', [
     };
 })
 
-.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS) {
+.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS, $moment) {
     // Redirect to login if route requires auth and you're not logged in
+
+    $moment.locale('it');
+
     $rootScope.$on('$stateChangeStart', function (event, next) {
         console.log('stateChangeStart');
         var authorizedRoles = next.data.authorizedRoles;
