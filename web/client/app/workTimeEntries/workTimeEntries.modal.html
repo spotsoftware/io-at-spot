@@ -13,6 +13,10 @@
     <div>
         <timepicker ng-model="model.workTimeEntry.performedAt" ng-change="dateUtils.timeChanged()" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
     </div>
+    <div class="btn-group">
+        <label class="btn btn-primary" ng-model="model.workTimeEntry.workTimeEntryType" btn-radio="'in'">in</label>
+        <label class="btn btn-primary" ng-model="model.workTimeEntry.workTimeEntryType" btn-radio="'out'">out</label>
+    </div>
 </div>
 <div class="modal-footer">
     <button class="btn btn-warning" ng-click="actions.cancel()">Cancel</button>

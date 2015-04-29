@@ -21,7 +21,7 @@ angular.module('ioAtSpotApp')
 
                     model.workTimeEntry = {
                         performedAt: performedAt.toDate(),
-                        manual: true
+                        workTimeEntryType: 'in'
                     };
                 }
 
