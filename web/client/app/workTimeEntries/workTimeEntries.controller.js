@@ -7,6 +7,9 @@ angular.module('ioAtSpotApp')
             $scope.model = new function () {
                 var model = this;
 
+                model.showChart = true;
+                model.showFilters = true;
+
                 //Chart
                 model.chartLabels = [];
                 model.chartSeries = ['in', 'out', 'in', 'out'];
@@ -168,32 +171,32 @@ angular.module('ioAtSpotApp')
                         dayIndex = null,
                         serieIndex = null;
 
-                    day = $moment($scope.model.workTimeEntries[$scope.model.workTimeEntries.length - 1].performedAt).startOf('day');
-                    var endDay = $moment($scope.model.workTimeEntries[0].performedAt).endOf('day');
+                    if ($scope.model.workTimeEntries.length > 0) {
 
-                    do {
-                        days.push(day.format('L'));
-                        for (var i = 0; i < $scope.model.chartSeries.length; i++) {
-                            data[i].push(null);
+                        day = $moment($scope.model.workTimeEntries[$scope.model.workTimeEntries.length - 1].performedAt).startOf('day');
+                        var endDay = $moment($scope.model.workTimeEntries[0].performedAt).endOf('day');
+
+                        do {
+                            days.push(day.format('L'));
+                            for (var i = 0; i < $scope.model.chartSeries.length; i++) {
+                                data[i].push(null);
+                            }
+                        } while (day.add(1, 'days').isBefore(endDay));
+
+                        for (var i = 0; i < $scope.model.workTimeEntries.length; i++) {
+                            wte = $scope.model.workTimeEntries[i];
+
+                            dayIndex = days.indexOf($moment(wte.performedAt).format('L'));
+
+                            if (wte.workTimeEntryType === 'in') {
+                                serieIndex = data[0][dayIndex] === null ? 0 : 2;
+                            } else {
+                                serieIndex = data[1][dayIndex] === null ? 1 : 3;
+                            }
+
+                            data[serieIndex][dayIndex] = $moment(wte.performedAt).endOf('day').diff($moment(wte.performedAt), 'minutes');
                         }
-                    } while (day.add(1, 'days').isBefore(endDay));
-
-                    for (var i = 0; i < $scope.model.workTimeEntries.length; i++) {
-                        wte = $scope.model.workTimeEntries[i];
-
-                        dayIndex = days.indexOf($moment(wte.performedAt).format('L'));
-
-                        if (wte.workTimeEntryType === 'in') {
-                            serieIndex = data[0][dayIndex] === null ? 0 : 2;
-                        } else {
-                            serieIndex = data[1][dayIndex] === null ? 1 : 3;
-                        }
-
-                        data[serieIndex][dayIndex] = $moment(wte.performedAt).endOf('day').diff($moment(wte.performedAt), 'minutes');
                     }
-
-                    console.log(days, data);
-
                     $scope.model.chartLabels = days;
                     $scope.model.chartData = data;
                 };
@@ -342,8 +345,6 @@ angular.module('ioAtSpotApp')
 
                 proxies.search = {
                     requestData: function () {
-
-                        console.log($scope.model.membersFilter);
 
                         return {
                             organizationId: authModel.currentOrganization._id,

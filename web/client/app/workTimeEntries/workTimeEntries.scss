@@ -6,8 +6,21 @@
 
 .filters.form-inline {
     label {
-        display: block;
+        display: inline-block;
     }
+}
+
+.toggles {
+    margin-top: -5px;
+    button {
+        font-size: 22px !important;
+    }
+}
+
+.btn-search,
+btn-type {
+    width: 100%;
+    max-width: 200px;
 }
 
 .chart-container {
