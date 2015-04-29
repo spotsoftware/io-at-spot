@@ -58,6 +58,9 @@ btn-type {
         margin-bottom: 10px;
         a {
             cursor: pointer;
+            &.active {
+                text-decoration: underline;
+            }
         }
     }
 }

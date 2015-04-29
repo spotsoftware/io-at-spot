@@ -19,6 +19,7 @@ angular.module('ioAtSpotApp')
                                    []];
 
                 model.chartOptions = {
+                    responsive: true,
                     bezierCurve: false,
                     datasetFill: false,
                     scaleOverride: true,
@@ -189,16 +190,20 @@ angular.module('ioAtSpotApp')
                             dayIndex = days.indexOf($moment(wte.performedAt).format('L'));
 
                             if (wte.workTimeEntryType === 'in') {
-                                serieIndex = data[0][dayIndex] === null ? 0 : 2;
+                                serieIndex = data[2][dayIndex] === null ? 2 : 0;
                             } else {
-                                serieIndex = data[1][dayIndex] === null ? 1 : 3;
+                                serieIndex = data[3][dayIndex] === null ? 3 : 1;
                             }
 
                             data[serieIndex][dayIndex] = $moment(wte.performedAt).endOf('day').diff($moment(wte.performedAt), 'minutes');
                         }
                     }
+
+
                     $scope.model.chartLabels = days;
                     $scope.model.chartData = data;
+
+
                 };
 
                 utils.setPageSize = function (n) {

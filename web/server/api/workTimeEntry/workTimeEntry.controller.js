@@ -114,10 +114,14 @@ exports.index = function (req, res, next) {
 // Creates a new workTimeEntry in the DB.
 exports.create = function (req, res, next) {
 
-    if (req.body.workTimeEntryType) {
-        saveEntry(req, req.body.workTimeEntryType, res);
+    var wte = new WorkTimeEntry();
+    wte._user = req.body.userId;
+    wte._organization = req.params.organizationId;
+    wte.manual = !!(req.body.workTimeEntryType); //If specified the type, user is inserting manually
+    wte.performedAt = req.body.performedAt;
+    wte.workTimeEntryType = req.body.workTimeEntryType;
 
-    } else {
+    if (!wte.workTimeEntryType) {
 
         var start = new Date(req.body.performedAt);
         start.setHours(0, 0, 0, 0);
@@ -125,56 +129,47 @@ exports.create = function (req, res, next) {
         var end = new Date(req.body.performedAt);
         end.setHours(23, 59, 59, 999);
 
-        var wte = new WorkTimeEntry();
-        wte._user = req.body.userId;
-        wte._organization = req.params.organizationId;
-        wte.manual = !!(req.body.workTimeEntryType); //If specified the type, user is inserting manually
-        wte.performedAt = req.body.performedAt;
-        wte.workTimeEntryType = req.body.workTimeEntryType;
-
-        if (!wte.workTimeEntryType) {
-
-            WorkTimeEntry
-                .find({
-                    _user: req.body.userId,
-                    _organization: req.params.organizationId,
-                    deleted: false,
-                    performedAt: {
-                        $gte: start,
-                        $lte: end
-                    }
-                })
-                .sort('-performedAt')
-                .exec(function (err, entries) {
-
-                    if (err) return next(err);
-
-                    wte.workTimeEntryType = entries.length === 0 ? 'in' : (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
-
-                    workTimeEntry.save(function (err, savedWorkTimeEntry) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        res.status(201);
-                        res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
-
-                        return res.json(savedWorkTimeEntry);
-                    });
-                });
-        } else {
-            workTimeEntry.save(function (err, savedWorkTimeEntry) {
-                if (err) {
-                    return next(err);
+        WorkTimeEntry
+            .find({
+                _user: req.body.userId,
+                _organization: req.params.organizationId,
+                deleted: false,
+                performedAt: {
+                    $gte: start,
+                    $lte: end
                 }
+            })
+            .sort('-performedAt')
+            .exec(function (err, entries) {
 
-                res.status(201);
-                res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+                if (err) return next(err);
 
-                return res.json(savedWorkTimeEntry);
+                wte.workTimeEntryType = entries.length === 0 ? 'in' : (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
+
+                workTimeEntry.save(function (err, savedWorkTimeEntry) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(201);
+                    res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+
+                    return res.json(savedWorkTimeEntry);
+                });
             });
-        }
+    } else {
+        wte.save(function (err, savedWorkTimeEntry) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(201);
+            res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+
+            return res.json(savedWorkTimeEntry);
+        });
     }
+
 };
 
 exports.detail = function (req, res, next) {

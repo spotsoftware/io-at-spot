@@ -133,24 +133,14 @@
             <div class="col-xs-6 text-left">
                 <div class="page-recap">Page: {{model.page}} / {{model.numPages}}</div>
                 <div class="page-size">Page size: &nbsp;
-                    <a ng-click="utils.setPageSize(10)">10</a>&nbsp;
-                    <a ng-click="utils.setPageSize(50)">50</a>&nbsp;
-                    <a ng-click="utils.setPageSize(100)">100</a>
+                    <a ng-click="utils.setPageSize(10)" ng-class="{ 'active' : model.itemsPerPage === 10 }">10</a>&nbsp;
+                    <a ng-click="utils.setPageSize(50)" ng-class="{ 'active' : model.itemsPerPage === 50 }">50</a>&nbsp;
+                    <a ng-click="utils.setPageSize(100)" ng-class="{ 'active' : model.itemsPerPage === 100 }">100</a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 text-right">
-                <pagination class="pagination" total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
+                <pagination class="pagination" items-per-page="model.itemsPerPage" total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
             </div>
         </div>
-
-
-
-        <!--
-        <div class="btn-group">
-            <label class="btn btn-primary" ng-model="model.itemsPerPage" btn-radio="10">10</label>
-            <label class="btn btn-primary" ng-model="model.itemsPerPage" btn-radio="50">50</label>
-            <label class="btn btn-primary" ng-model="model.fastPeriodFilter" btn-radio="100">100</label>
-        </div>
--->
     </div>
 </div>
