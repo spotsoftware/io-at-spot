@@ -151,7 +151,12 @@ exports.update = function (req, res, next) {
         if (err) {
             return next(err);
         }
-        user._lastOrganization = req.body._lastOrganization;
+        if(req.body._lastOrganization){
+            user._lastOrganization = req.body._lastOrganization;
+        }
+        if(req.body.name){
+            user.name = req.body.name;
+        }
 
         user.save(function (err) {
             if (err) {
