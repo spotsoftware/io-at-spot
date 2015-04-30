@@ -121,54 +121,16 @@ exports.create = function (req, res, next) {
     wte.performedAt = req.body.performedAt;
     wte.workTimeEntryType = req.body.workTimeEntryType;
 
-    if (!wte.workTimeEntryType) {
+    wte.save(function (err, savedWorkTimeEntry) {
+        if (err) {
+            return next(err);
+        }
 
-        var start = new Date(req.body.performedAt);
-        start.setHours(0, 0, 0, 0);
+        res.status(201);
+        res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
 
-        var end = new Date(req.body.performedAt);
-        end.setHours(23, 59, 59, 999);
-
-        WorkTimeEntry
-            .find({
-                _user: req.body.userId,
-                _organization: req.params.organizationId,
-                deleted: false,
-                performedAt: {
-                    $gte: start,
-                    $lte: end
-                }
-            })
-            .sort('-performedAt')
-            .exec(function (err, entries) {
-
-                if (err) return next(err);
-
-                wte.workTimeEntryType = entries.length === 0 ? 'in' : (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
-
-                workTimeEntry.save(function (err, savedWorkTimeEntry) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(201);
-                    res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
-
-                    return res.json(savedWorkTimeEntry);
-                });
-            });
-    } else {
-        wte.save(function (err, savedWorkTimeEntry) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(201);
-            res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
-
-            return res.json(savedWorkTimeEntry);
-        });
-    }
+        return res.json(savedWorkTimeEntry);
+    });
 
 };
 
