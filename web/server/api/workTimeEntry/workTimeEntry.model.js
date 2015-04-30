@@ -17,8 +17,7 @@ var WorkTimeEntrySchema = new BaseSchema({
     },
     performedAt: {
         type: Date,
-        default: Date.now,
-        required: true
+        default: Date.now
     },
     workTimeEntryType: {
         type: String,
@@ -33,15 +32,16 @@ var WorkTimeEntrySchema = new BaseSchema({
 });
 
 /**
- * Pre-save hook
+ * Pre-validate hook
  */
-WorkTimeEntrySchema.pre('save', function (next) {
-    //this.wasNew = this.isNew;
+WorkTimeEntrySchema.pre('validate', function (next) {
 
-    if (!this.isNew) {
+    var wte = this;
+    
+    if (!wte.isNew) {
         return next();
     } else {
-        if (!this.workTimeEntryType && !this.performedAt) {
+        if (!wte.workTimeEntryType) {
 
             var start = new Date();
             start.setHours(0, 0, 0, 0);
@@ -50,8 +50,8 @@ WorkTimeEntrySchema.pre('save', function (next) {
             end.setHours(23, 59, 59, 999);
 
             this.constructor.find({
-                    _user: this._user,
-                    _organization: this._organization,
+                    _user: wte._user,
+                    _organization: wte._organization,
                     deleted: false,
                     performedAt: {
                         $gte: start,
@@ -63,8 +63,9 @@ WorkTimeEntrySchema.pre('save', function (next) {
 
                     if (err) return next(err);
 
-                    this.workTimeEntryType = entries.length === 0 ? 'in' : (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
-
+                    wte.workTimeEntryType = entries.length === 0 ? 'in' : (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
+                    wte.manual = false;
+                
                     return next();
                 });
         } else {

@@ -126,6 +126,7 @@ io.sockets.on('connection', function (socket) {
                         organizationId: organizationId
                     }, function (err) {
                         if (err) {
+                            console.log(err);
                             return callback({
                                 responseCode: 403,
                                 message: err.message
