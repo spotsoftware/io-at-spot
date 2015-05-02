@@ -17,7 +17,8 @@ angular.module('ioAtSpotApp')
                             organizationId: '@organizationId',
                             page: '@page',
                             to: '@to',
-                            type: '@type'
+                            type: '@type',
+                            itemsPerPage: '@itemsPerPage'
                         },
                         isArray: false //returns an object (that also contains an array)
                     },

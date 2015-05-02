@@ -207,6 +207,7 @@ angular.module('ioAtSpotApp')
 
                 utils.setPageSize = function (n) {
                     $scope.model.itemsPerPage = n;
+                    $scope.actions.search();
                 };
             };
 
@@ -357,7 +358,8 @@ angular.module('ioAtSpotApp')
                             from: $scope.model.from,
                             to: $scope.model.to,
                             type: $scope.model.workTimeEntryType,
-                            members: JSON.stringify($scope.model.membersFilter)
+                            members: JSON.stringify($scope.model.membersFilter),
+                            itemsPerPage: $scope.model.itemsPerPage
                         };
                     },
                     request: function () {

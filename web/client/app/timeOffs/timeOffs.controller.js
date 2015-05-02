@@ -196,6 +196,7 @@ angular.module('ioAtSpotApp')
                     var modalInstance = $modal.open({
                         templateUrl: 'app/timeOffs/timeOffs.modal.html',
                         controller: 'TimeOffsModalCtrl',
+                        //size: 'lg',
                         resolve: {
                             timeOff: function () {
                                 return null;

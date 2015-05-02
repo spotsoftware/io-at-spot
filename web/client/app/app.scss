@@ -55,6 +55,10 @@ a:hover {
     color: $blue;
 }
 
+input[valid-number] {
+    width: 100px;
+}
+
 .page-header {
     padding: 10px 0;
     margin: 0 0 20px 0;
@@ -72,6 +76,27 @@ a:hover {
     border-color: $gray-header;
     color: $blue;
     font-weight: 600;
+}
+
+.btn-link {
+    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    @include button-variant($blue, transparent, transparent);
+}
+
+.btn-success {
+    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    @include button-variant(white, $green, transparent);
+}
+
+.btn-danger {
+    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    @include button-variant(white, $red, transparent);
+}
+
+.editable-click {
+    text-decoration: none;
+    color: $blue;
+    border-bottom: none;
 }
 
 .btn-primary:hover,
@@ -258,6 +283,75 @@ table.table {
             }
             .input-group > .form-control {
                 //width: 70%;
+            }
+        }
+    }
+}
+
+//
+//
+// MODAL
+//
+//
+.modal {
+    .modal-dialog {
+        width: 450px;
+        margin: 100px auto;
+        .modal-content {
+            .modal-header {
+                background-color: $black;
+                color: $white;
+            }
+            .modal-body {
+                background-color: $gray-background;
+                .input-group {
+                    padding: 0 15px !important;
+                }
+            }
+            .modal-footer {
+                background-color: $gray-background;
+                border-top: none;
+            }
+        }
+    }
+}
+
+//
+//
+// TIMEPICKER
+//
+//            
+table.timepicker {
+    tr {
+        td {
+            &.form-group {
+                width: 40px !important;
+            }
+            input {
+                padding: 6px 6px;
+            }
+            a {
+                padding: 0;
+                color: $blue;
+                &:hover {
+                    color: $blue;
+                }
+                &:active {
+                    color: $blue;
+                }
+                &:focus {
+                    color: $blue;
+                }
+                span.glyphicon-chevron-down {
+                    &:before {
+                        content: "\e252";
+                    }
+                }
+                span.glyphicon-chevron-up {
+                    &:before {
+                        content: "\e253";
+                    }
+                }
             }
         }
     }

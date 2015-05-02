@@ -47,7 +47,7 @@
                 From:
             </label>
             <p class="input-group">
-                <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.from" is-open="utils.fromOpened" min-date="null" max-date="model.to" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" disabled />
+                <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.from" is-open="utils.fromOpened" min-date="null" max-date="model.to" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" readonly />
                 <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="actions.dateFromOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
@@ -59,7 +59,7 @@
                 To:
             </label>
             <p class="input-group">
-                <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.to" is-open="utils.toOpened" min-date="model.from" max-date="null" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" disabled/>
+                <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.to" is-open="utils.toOpened" min-date="model.from" max-date="null" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" readonly/>
                 <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="actions.dateToOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
