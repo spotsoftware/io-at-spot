@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('WorkTimeEntriesCtrl',
-        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel, Members) {
+        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel, Members, messageCenterService) {
 
             $scope.model = new function () {
                 var model = this;
@@ -334,6 +334,7 @@ angular.module('ioAtSpotApp')
             };
 
             $scope.proxies = new function () {
+
                 var proxies = this;
 
                 proxies.loadMembers = function () {
@@ -377,8 +378,10 @@ angular.module('ioAtSpotApp')
 
                         $scope.utils.setupChart();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -406,8 +409,10 @@ angular.module('ioAtSpotApp')
                     successCallback: function () {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -444,8 +449,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -475,8 +482,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };

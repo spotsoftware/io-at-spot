@@ -6,14 +6,37 @@ $roboto-font-path: '/bower_components/roboto-fontface/fonts' !default;
 @import 'bootstrap-sass-official/assets/stylesheets/bootstrap';
 @import 'font-awesome/scss/font-awesome';
 @import 'roboto-fontface/roboto-fontface.scss';
-/**
- * App-wide Styles
- */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
 
 body {
     font-family: "Roboto";
     background-color: $gray-background;
     color: $gray-font;
+}
+
+.page {
+    height: 100%;
+    width: 100%;
+    .page-body {
+        position: absolute;
+        top: 65px;
+        bottom: $footer-height;
+        left: 0;
+        right: 0;
+    }
+    .page-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
 }
 
 h3 {
@@ -29,6 +52,7 @@ a {
 a:hover {
     color: $blue;
 }
+
 
 .page-header {
     padding: 10px 0;
@@ -240,21 +264,22 @@ table.table {
 
 // Component styles are injected through grunt
 // injector
-@import 'account/forgot/forgot.scss';
-@import 'account/join/join.scss';
-@import 'account/login/login.scss';
-@import 'account/profile/profile.scss';
-@import 'account/reset/reset.scss';
-@import 'account/signup/signup.scss';
-@import 'admin/admin.scss';
-@import 'invites/invites.scss';
-@import 'main/main.scss';
-@import 'members/members.scss';
-@import 'mixins.scss';
-@import 'organizations/organizations.scss';
-@import 'timeOffs/timeOffs.scss';
-@import 'vars.scss';
-@import 'workTimeEntries/workTimeEntries.scss';
+@import '_mixins.scss';
+@import '_vars.scss';
+@import 'account/forgot/_forgot.scss';
+@import 'account/join/_join.scss';
+@import 'account/login/_login.scss';
+@import 'account/profile/_profile.scss';
+@import 'account/reset/_reset.scss';
+@import 'account/signup/_signup.scss';
+@import 'admin/_admin.scss';
+@import 'invites/_invites.scss';
+@import 'main/_main.scss';
+@import 'members/_members.scss';
+@import 'organizations/_organizations.scss';
+@import 'timeOffs/_timeOffs.scss';
+@import 'workTimeEntries/_workTimeEntries.scss';
+@import 'footer/_footer.scss';
 @import 'modal/modal.scss';
-@import 'navbar/navbar.scss';
+@import 'navbar/_navbar.scss';
 // endinjector

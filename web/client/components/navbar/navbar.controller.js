@@ -20,12 +20,6 @@ angular.module('ioAtSpotApp')
         $scope.authModel = Auth.getAuthModel();
 
         $scope.isLoggedIn = Auth.isAuthenticated;
-        //$scope.currentUser = Auth.getCurrentUser;
-        //$scope.currentOrganization = Auth.getCurrentOrganization();
-
-
-
-        //$scope.getCurrentOrganization = Auth.getCurrentOrganization;
 
         $scope.logout = function () {
             Auth.logout();

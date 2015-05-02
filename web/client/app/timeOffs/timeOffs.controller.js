@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('TimeOffsCtrl',
-        function ($scope, $http, socket, authModel, TimeOffs, $moment, $modal, Members) {
+        function ($scope, $http, socket, authModel, TimeOffs, $moment, $modal, Members, messageCenterService) {
 
             //var authModel = Auth.getAuthModel();
 
@@ -257,8 +257,10 @@ angular.module('ioAtSpotApp')
                         $scope.model.page = pagedResult.currentPage;
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -286,8 +288,10 @@ angular.module('ioAtSpotApp')
                     successCallback: function () {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -325,8 +329,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -363,8 +369,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };
