@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('WorkTimeEntriesCtrl',
-        function ($scope, $http, socket, WorkTimeEntries, $moment, $modal) {
+        function ($scope, $http, socket, WorkTimeEntries, $moment, $modal, messageCenterService) {
 
             $scope.model = new function () {
                 var model = this;
@@ -228,6 +228,7 @@ angular.module('ioAtSpotApp')
             };
 
             $scope.proxies = new function () {
+
                 var proxies = this;
 
                 proxies.search = {
@@ -260,8 +261,10 @@ angular.module('ioAtSpotApp')
                         $scope.model.page = pagedResult.currentPage;
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -289,8 +292,10 @@ angular.module('ioAtSpotApp')
                     successCallback: function () {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -327,8 +332,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -358,8 +365,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };
