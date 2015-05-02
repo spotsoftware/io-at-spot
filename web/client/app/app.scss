@@ -357,6 +357,46 @@ table.timepicker {
     }
 }
 
+//
+.combo {
+    line-height: 3em;
+    button {
+        width: 140px;
+        text-align: left;
+        text-shadow: none;
+        font-family: inherit;
+        span:first-child {
+            width: 100px;
+            overflow: hidden;
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .caret {
+            float: right;
+            margin-top: 8px;
+        }
+    }
+    ul.dropdown-menu {
+        max-height: 176px;
+        min-width: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        > li {
+            > a {
+                cursor: pointer;
+                width: 140px;
+                overflow: hidden;
+                -ms-text-overflow: ellipsis;
+                -o-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+}
+
 // Component styles are injected through grunt
 // injector
 @import '_mixins.scss';

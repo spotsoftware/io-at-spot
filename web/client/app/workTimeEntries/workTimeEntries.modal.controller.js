@@ -1,13 +1,21 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .controller('WorkTimeEntriesModalCtrl', ['$scope', '$modalInstance', '$moment', 'Utils', 'workTimeEntry', 'organizationSettings',
-        function ($scope, $modalInstance, $moment, Utils, workTimeEntry, organizationSettings) {
+    .controller('WorkTimeEntriesModalCtrl', ['$scope', '$modalInstance', '$moment', 'Utils', 'workTimeEntry', 'organizationSettings', 'currentUser',
+        function ($scope, $modalInstance, $moment, Utils, workTimeEntry, organizationSettings, currentUser) {
 
             $scope.model = new function () {
                 var model = this;
 
                 model.isNew = workTimeEntry === null;
+
+                model.memberName = function () {
+                    if (model.isNew) {
+                        return currentUser.name;
+                    } else {
+                        return workTimeEntry._user.name;
+                    }
+                }
 
                 if (workTimeEntry) {
                     model.workTimeEntry = workTimeEntry;

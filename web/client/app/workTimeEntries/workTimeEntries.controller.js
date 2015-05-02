@@ -13,10 +13,7 @@ angular.module('ioAtSpotApp')
                 //Chart
                 model.chartLabels = [];
                 model.chartSeries = ['in', 'out', 'in', 'out'];
-                model.chartData = [[],
-                                   [],
-                                   [],
-                                   []];
+                model.chartData = null;
 
                 model.chartOptions = {
                     responsive: true,
@@ -161,17 +158,19 @@ angular.module('ioAtSpotApp')
 
                 utils.setupChart = function () {
                     var days = [],
-                        data = [[],
-                                [],
-                                [],
-                                []];
+                        data = null;
 
                     var wte = null,
                         day = null,
                         dayIndex = null,
                         serieIndex = null;
 
-                    if ($scope.model.workTimeEntries.length > 0) {
+                    if ($scope.model.workTimeEntries.length > 0 && $scope.model.membersFilter.length === 1) {
+
+                        data = [[],
+                                [],
+                                [],
+                                []];
 
                         day = $moment($scope.model.workTimeEntries[$scope.model.workTimeEntries.length - 1].performedAt).startOf('day');
                         var endDay = $moment($scope.model.workTimeEntries[0].performedAt).endOf('day');
@@ -196,13 +195,11 @@ angular.module('ioAtSpotApp')
 
                             data[serieIndex][dayIndex] = $moment(wte.performedAt).endOf('day').diff($moment(wte.performedAt), 'minutes');
                         }
-                    }
 
+                    }
 
                     $scope.model.chartLabels = days;
                     $scope.model.chartData = data;
-
-
                 };
 
                 utils.setPageSize = function (n) {
@@ -288,6 +285,9 @@ angular.module('ioAtSpotApp')
                         templateUrl: 'app/workTimeEntries/workTimeEntries.modal.html',
                         controller: 'WorkTimeEntriesModalCtrl',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             workTimeEntry: function () {
                                 var wte = {};
                                 angular.copy(workTimeEntry, wte);
@@ -316,6 +316,9 @@ angular.module('ioAtSpotApp')
                         templateUrl: 'app/workTimeEntries/workTimeEntries.modal.html',
                         controller: 'WorkTimeEntriesModalCtrl',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             workTimeEntry: function () {
                                 return null;
                             },
