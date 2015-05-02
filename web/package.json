@@ -1,5 +1,5 @@
 {
-    "name": "ciaociao",
+    "name": "io@spot",
     "version": "0.0.0",
     "main": "server/app.js",
     "dependencies": {
