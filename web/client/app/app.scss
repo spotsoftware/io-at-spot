@@ -69,15 +69,6 @@ input[valid-number] {
     background-color: $gray-header;
 }
 
-.btn-primary,
-.pagination > li > a,
-.pagination > li > span {
-    background-color: $white;
-    border-color: $gray-header;
-    color: $blue;
-    font-weight: 600;
-}
-
 .btn-link {
     // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
     @include button-variant($blue, transparent, transparent);
@@ -99,6 +90,15 @@ input[valid-number] {
     border-bottom: none;
 }
 
+.btn-primary,
+.pagination > li > a,
+.pagination > li > span {
+    background-color: $white;
+    border-color: $gray-header;
+    color: $blue;
+    font-weight: 600;
+}
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
@@ -113,6 +113,14 @@ input[valid-number] {
     background-color: $blue;
     border-color: $gray-header;
     color: $white;
+}
+
+.btn-primary {
+    &.disabled, &[disabled] {
+        background-color: #eee;
+        color: $blue;
+        border-color: $gray-header;
+    }
 }
 
 table.table {

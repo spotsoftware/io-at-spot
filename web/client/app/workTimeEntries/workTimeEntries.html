@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-3">
                 <div class="btn-group combo" dropdown is-open="utils.userDropdownOpened">
-                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()">
+                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="utils.isCurrentOrganizationAdmin()">
                         <span>{{model.membersFilterText}}</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
@@ -67,7 +67,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12" collapse="!model.showChart" ng-if="model.chartData">
-            <canvas style="width: 100%" id="line" class="chart chart-line" data="model.chartData" labels="model.chartLabels" legend="true" series="model.chartSeries" options="model.chartOptions">
+            <canvas id="line" class="chart chart-line" data="model.chartData" labels="model.chartLabels" legend="true" series="model.chartSeries" options="model.chartOptions">
             </canvas>
         </div>
     </div>

@@ -24,8 +24,10 @@ btn-type {
 }
 
 .chart-container {
+    margin: 20px;
     canvas {
         height: 200px;
+        width: 100%;
     }
 }
 
