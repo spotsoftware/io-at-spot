@@ -8,5 +8,5 @@ module.exports = {
         uri: 'mongodb://localhost/ioatspot-dev'
     },
 
-    seedDB: false
+    seedDB: true
 };

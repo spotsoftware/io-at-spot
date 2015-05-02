@@ -19,6 +19,11 @@ var MemberSchema = new Schema({
         type: String,
         enum: ['admin', 'user']
     },
+    active: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     nfc_uid: String
 });
 

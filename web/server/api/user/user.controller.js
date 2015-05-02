@@ -6,6 +6,8 @@ var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
 var Organization = require('../organization/organization.model');
 var errorBuilder = require('../../error-builder');
+var auth = require('../../auth/auth.service');
+var mailer = require('../../mailer/mailer');
 
 var validationError = function (next, err) {
     var error = new errorBuilder(err.message, 422);
@@ -35,7 +37,7 @@ exports.index = function (req, res, next) {
     if (req.query.excluded) {
         filters.push({
             _id: {
-                $nin: req.query.excluded
+                $nin: (typeof req.query.excluded !== 'string') ? req.query.excluded : [req.query.excluded]
             }
         });
     }
@@ -64,28 +66,55 @@ exports.delete = function (req, res, next) {
  * Creates a new user and assigns to it a token with 5 hours of validity.
  */
 exports.create = function (req, res, next) {
-    
-    var newUser = new User(req.body);
 
-    newUser.provider = 'local';
+    var email = req.body.email;
+    var password = req.body.password;
+    var name = req.body.name;
 
-    newUser.save(function (err, user) {
-
+    //Mail is the same
+    User.findOne({
+        email: req.body.email
+    }, function (err, user) {
         if (err) {
-            return validationError(next, err);
+            return res.json(401, {
+                message: err
+            });
         }
 
-        var token = jwt.sign({
-                _id: user._id
-            },
-            config.secrets.session, {
-                expiresInMinutes: 60 * 5
+        if (!user) {
+            return res.json(401, {
+                message: 'This user is not registered.'
+            });
+        }
+
+        if (user.active) {
+            return res.json(401, {
+                message: 'User is already active.'
+            });
+        }
+
+        //updates the password by calculating hash of the new one
+        user.password = req.body.password;
+        user.active = true;
+        user.name = req.body.name;
+
+        //save the user to db
+        user.save(function (err) {
+            if (err) {
+                return res.json(500, {
+                    message: err
+                });
+            }
+
+            res.status(201);
+            res.location('/api/users/' + user._id);
+            return res.json({
+                token: auth.signToken({
+                    _id: user._id
+                })
             });
 
-        res.status(201);
-        res.location('/api/users/' + user._id);
-
-        return res.json({ token: token });
+        });
     });
 };
 
@@ -122,7 +151,12 @@ exports.update = function (req, res, next) {
         if (err) {
             return next(err);
         }
-        user._lastOrganization = req.body._lastOrganization;
+        if(req.body._lastOrganization){
+            user._lastOrganization = req.body._lastOrganization;
+        }
+        if(req.body.name){
+            user.name = req.body.name;
+        }
 
         user.save(function (err) {
             if (err) {
@@ -165,15 +199,18 @@ exports.me = function (req, res, next) {
                     return next(err);
                 }
 
-                user._lastOrganization = organizations[0]._id;
+                if(organizations.length > 0){
+                    user._lastOrganization = organizations[0]._id;
+                    user.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                user.save(function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
+                        res.json(user);
+                    });
+                } else {
                     res.json(user);
-                });
+                }
             });
         } else {
             res.json(user);

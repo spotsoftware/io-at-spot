@@ -6,15 +6,9 @@ angular.module('ioAtSpotApp')
             .state('private', {
                 abstract: true,
                 templateUrl: 'app/app.html',
-                controller: 'PrivateCtrl',
+                //controller: 'PrivateCtrl',
                 data: {
                     authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
-                },
-                resolve: {
-                    authModel: ['Auth',
-                    function (Auth) {
-                            return Auth.getAuthModel().$promise;
-                    }]
                 }
             });
     });

@@ -63,19 +63,12 @@ exports.index = function (req, res, next) {
 
     var membersFilter = [];
 
-    if (auth.ensureOrganizationAdmin()) {
-        var queryMembers = JSON.parse(req.query.members);
-        queryMembers.forEach(function (member, i) {
-            membersFilter.push({
-                _user: member
-            });
-        });
-
-    } else {
+    var queryMembers = JSON.parse(req.query.members);
+    queryMembers.forEach(function (member, i) {
         membersFilter.push({
-            _user: req.user._id
+            _user: member
         });
-    }
+    });
 
     if (membersFilter.length > 0) {
         filterConditions.push({
@@ -117,20 +110,18 @@ exports.index = function (req, res, next) {
     });
 };
 
-/**
- * A private function to store a brand new worktime entry on the DB.
- */
-function saveEntry(req, type, res) {
 
-    var workTimeEntry = new WorkTimeEntry();
+// Creates a new workTimeEntry in the DB.
+exports.create = function (req, res, next) {
 
-    workTimeEntry.workTimeEntryType = type;
-    workTimeEntry._user = req.body.userId;
-    workTimeEntry._organization = req.params.organizationId;
-    workTimeEntry.manual = req.body.manual;
-    workTimeEntry.performedAt = req.body.performedAt;
+    var wte = new WorkTimeEntry();
+    wte._user = req.body.userId;
+    wte._organization = req.params.organizationId;
+    wte.manual = !!(req.body.workTimeEntryType); //If specified the type, user is inserting manually
+    wte.performedAt = req.body.performedAt;
+    wte.workTimeEntryType = req.body.workTimeEntryType;
 
-    workTimeEntry.save(function (err, savedWorkTimeEntry) {
+    wte.save(function (err, savedWorkTimeEntry) {
         if (err) {
             return next(err);
         }
@@ -140,38 +131,7 @@ function saveEntry(req, type, res) {
 
         return res.json(savedWorkTimeEntry);
     });
-}
 
-// Creates a new workTimeEntry in the DB.
-exports.create = function (req, res, next) {
-
-    if (req.body.workTimeEntryType) {
-        saveEntry(req, req.body.workTimeEntryType, res);
-
-    } else {
-        var today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        WorkTimeEntry
-            .find({
-                _user: req.body.userId,
-                _organization: req.params.organizationId,
-                deleted: false,
-                performedAt: {
-                    $gte: today
-                }
-            })
-            .sort('-performedAt')
-            .exec(function (err, entries) {
-
-                if (err) return next(err);
-
-                var type = entries.length === 0 ? 'in' :
-                    (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
-
-                saveEntry(req, type, res);
-            });
-    }
 };
 
 exports.detail = function (req, res, next) {

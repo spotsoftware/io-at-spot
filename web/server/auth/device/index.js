@@ -25,7 +25,7 @@ router.post('/', function (req, res, next) {
                 return res.send(403);
             }
 
-            var token = auth.signToken(organization._id);
+            var token = auth.signToken({_id:organization._id});
 
             res.json({
                 token: token

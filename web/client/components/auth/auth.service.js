@@ -33,8 +33,9 @@ angular.module('ioAtSpotApp')
                 authModel.currentUser = user;
 
                 Organizations.query().$promise.then(function (organizations) {
-                    authModel.currentOrganization = getCurrentOrganization(organizations);
 
+                    authModel.currentOrganization = getCurrentOrganization(organizations.organizations);
+                    //console.log('balblbalbla', authModel.currentOrganization);
                     deferred.resolve(authModel);
 
                 }, function (err) {
@@ -72,11 +73,11 @@ angular.module('ioAtSpotApp')
                     deferred.resolve(data);
                     return cb();
                 }, function (err) {
-                    this.logout();
+                    authService.logout();
                     deferred.reject(err);
                 });
             }).error(function (err) {
-                this.logout();
+                authService.logout();
                 deferred.reject(err);
                 return cb(err);
             }.bind(this));
@@ -150,6 +151,13 @@ angular.module('ioAtSpotApp')
 
         authService.isAuthenticated = function () {
             return !!(authModel.currentUser._id);
+        };
+
+
+        authService.signUp = function (data) {
+            return User.create(data, function (data) {
+                $cookieStore.put('token', data.token);
+            });
         };
 
         /**
@@ -229,6 +237,10 @@ angular.module('ioAtSpotApp')
             return authModel;
         };
 
+        authService.updateAuthModel = function () {
+            authModel.$promise = populateModel();
+        };
+
 
         /**
          * Sets selected organization
@@ -237,6 +249,7 @@ angular.module('ioAtSpotApp')
          */
         authService.setCurrentOrganization = function (organization) {
             if (authService.isAuthenticated()) {
+                var oldOrganization = authModel.currentOrganization;
 
                 authModel.currentUser._lastOrganization = organization._id;
                 authModel.currentOrganization = organization;
@@ -245,7 +258,10 @@ angular.module('ioAtSpotApp')
                     _lastOrganization: organization._id
                 });
 
-                $rootScope.$broadcast('organization-updated');
+                $rootScope.$broadcast('organization-updated', {
+                    newOrganization: organization,
+                    oldOrganization: oldOrganization
+                });
             }
         };
 

@@ -68,19 +68,20 @@ exports.index = function (req, res, next) {
         _user: req.user._id
     });
 
-    //Only if the user is the owner of the organization
-    if (auth.ensureOrganizationAdmin() && req.query.members && req.query.members.length > 0) {
-        array.forEach(req.query.members.length, function (el, i) {
+    var membersFilter = [];
 
-            membersFilter.push({
-                _user: el._user
-            });
+    var queryMembers = JSON.parse(req.query.members);
+    queryMembers.forEach(function (member, i) {
+        membersFilter.push({
+            _user: member
+        });
+    });
+
+    if (membersFilter.length > 0) {
+        filterConditions.push({
+            $or: membersFilter
         });
     }
-
-    filterConditions.push({
-        $or: membersFilter
-    });
 
     TimeOff.aggregate([
         {
@@ -195,7 +196,7 @@ exports.create = function (req, res, next) {
         }
 
         res.status(201);
-        res.location('/api/organizations/'+ organizationId +'/timeOffs/' + savedTimeOff._id);
+        res.location('/api/organizations/' + organizationId + '/timeOffs/' + savedTimeOff._id);
 
         return res.json(savedTimeOff);
     });

@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .factory('Members', ['$resource',
+    .factory('Invites', ['$resource',
         function ($resource) {
             return $resource(
-                '/api/organizations/:organizationId/members/:id', {
+                '/api/organizations/:organizationId/invites/:id', {
                     organizationId: '@organizationId',
                     id: '@id'
                 }, {
@@ -12,7 +12,15 @@ angular.module('ioAtSpotApp')
                         method: 'GET',
                         isArray: true
                     },
-                    update: {
+                    detail: {
+                        method: 'GET',
+                        isArray: false
+                    },
+                    add: {
+                        method: 'POST',
+                        isArray: false
+                    },
+                    accept: {
                         method: 'PUT',
                         isArray: false
                     },

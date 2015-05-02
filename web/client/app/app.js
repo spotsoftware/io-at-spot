@@ -1,17 +1,18 @@
 'use strict';
 
 angular.module('ioAtSpotApp', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'btford.socket-io',
-  'ui.router',
-  'ui.bootstrap',
+    'ngCookies',
+    'ngResource',
+    'ngSanitize',
+    'btford.socket-io',
+    'ui.router',
+    'ui.bootstrap',
     'angular-momentjs',
     'xeditable',
     'duScroll',
     'messageCenter',
-    'equals'
+    'equals',
+    'chart.js'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
         $urlRouterProvider
@@ -46,8 +47,11 @@ angular.module('ioAtSpotApp', [
     };
 })
 
-.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS) {
+.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS, $moment) {
     // Redirect to login if route requires auth and you're not logged in
+
+    $moment.locale('it');
+
     $rootScope.$on('$stateChangeStart', function (event, next) {
         console.log('stateChangeStart');
         var authorizedRoles = next.data.authorizedRoles;

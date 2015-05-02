@@ -1,15 +1,17 @@
 $icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 $fa-font-path: "/bower_components/font-awesome/fonts";
+$roboto-font-path: '/bower_components/roboto-fontface/fonts' !default;
 @import 'vars.scss';
 @import 'mixins.scss';
 @import 'bootstrap-sass-official/assets/stylesheets/bootstrap';
 @import 'font-awesome/scss/font-awesome';
+@import 'roboto-fontface/roboto-fontface.scss';
 /**
  * App-wide Styles
  */
 
 body {
-    //font-family: "Roboto";
+    font-family: "Roboto";
     background-color: $gray-background;
     color: $gray-font;
 }
@@ -159,6 +161,10 @@ table.table {
     @include custom-button($red, $dark-red);
 }
 
+.btn.btn-invite {
+    @include custom-button($green, $dark-green);
+}
+
 .btn.btn-new {
     background: none;
     color: $gray-font;
@@ -235,11 +241,13 @@ table.table {
 // Component styles are injected through grunt
 // injector
 @import 'account/forgot/forgot.scss';
+@import 'account/join/join.scss';
 @import 'account/login/login.scss';
 @import 'account/profile/profile.scss';
 @import 'account/reset/reset.scss';
 @import 'account/signup/signup.scss';
 @import 'admin/admin.scss';
+@import 'invites/invites.scss';
 @import 'main/main.scss';
 @import 'members/members.scss';
 @import 'mixins.scss';
