@@ -28,13 +28,18 @@ angular.module('ioAtSpotApp')
 
                 model.timeOffTypes = organizationSettings.timeOffTypes;
 
+                model.datepickerOptions = {
+                    startingDay: 1
+                };
             };
 
             $scope.utils = new function () {
                 var utils = this;
 
                 utils.disabled = function (date, mode) {
-                    return organizationSettings.workingDays[date.getDay()].active === false;
+                    var day = date.getDay();
+
+                    return organizationSettings.workingDays[day - 1 < 0 ? 6 : day - 1].active === false;
                 };
 
                 utils.datepickerOpened = false;
