@@ -289,8 +289,6 @@ angular.module('ioAtSpotApp')
                 authorizedRoles = [authorizedRoles];
             }
 
-            console.log(authModel.currentUser.role);
-
             return (authService.isAuthenticated() &&
                 authorizedRoles.indexOf(authModel.currentUser.role) !== -1);
         };
