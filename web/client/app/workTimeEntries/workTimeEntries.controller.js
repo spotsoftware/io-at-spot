@@ -28,7 +28,6 @@ angular.module('ioAtSpotApp')
                     scaleStepWidth: 180,
                     scaleStartValue: 180,
                     scaleLabel: function (point) {
-
                         return $scope.utils.getTimeFromEndDayDiff(point.value);
                     },
                     customTooltips: false,

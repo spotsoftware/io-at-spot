@@ -30,8 +30,10 @@ body {
         bottom: $footer-height;
         left: 0;
         right: 0;
+        overflow: auto;
     }
     .page-footer {
+        background: $gray-header;
         position: absolute;
         bottom: 0;
         left: 0;
