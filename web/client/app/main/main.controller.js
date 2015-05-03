@@ -12,7 +12,7 @@ angular.module('ioAtSpotApp')
 
         $scope.actions = {
 
-            search: function () {
+            searchInvitations: function () {
                 Organizations.query({}, {}).$promise.then(
                     function (data) {
                         if (data.invites && data.invites.length > 0) {
@@ -27,6 +27,11 @@ angular.module('ioAtSpotApp')
             }
         }
 
-        $scope.actions.search();
+        // let the page loading be faster
+        $scope.$on('$viewContentLoaded', function () {
+            if($scope.model.isLoggedIn()) {
+                $scope.actions.searchInvitations();
+            }
+        });
 
     });
