@@ -13,7 +13,16 @@ app.directive('validNumber', function () {
                 if (angular.isUndefined(val)) {
                     var val = '';
                 }
-                var clean = val.replace(/[^0-9]+/g, '');
+
+                var clean = val.replace(/[^0-9\.]/g, '');
+                var decimalCheck = clean.split('.');
+
+                if (!angular.isUndefined(decimalCheck[1])) {
+                    decimalCheck[1] = decimalCheck[1].slice(0, 1);
+                    decimalCheck[1] = decimalCheck[1].replace(/[^0|5]/g, '');
+                    clean = decimalCheck[0] + '.' + decimalCheck[1];
+                }
+
                 if (val !== clean) {
                     ngModelCtrl.$setViewValue(clean);
                     ngModelCtrl.$render();
