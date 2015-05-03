@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-3">
                 <div class="btn-group combo" dropdown is-open="utils.userDropdownOpened">
-                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="utils.isCurrentOrganizationAdmin()">
+                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()">
                         <span>{{model.membersFilterText}}</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
@@ -132,7 +132,7 @@
         </table>
         <div class="row pagination-controls">
             <div class="col-xs-6 text-left">
-                <div class="page-recap">Page: {{model.page}} / {{model.numPages}}</div>
+                <!--                <div class="page-recap">Page: {{model.page}} / {{model.numPages}}</div>-->
                 <div class="page-size">Page size: &nbsp;
                     <a ng-click="utils.setPageSize(10)" ng-class="{ 'active' : model.itemsPerPage === 10 }">10</a>&nbsp;
                     <a ng-click="utils.setPageSize(50)" ng-class="{ 'active' : model.itemsPerPage === 50 }">50</a>&nbsp;

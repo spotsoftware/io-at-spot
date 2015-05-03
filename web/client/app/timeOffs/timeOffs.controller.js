@@ -15,6 +15,8 @@ angular.module('ioAtSpotApp')
                 model.maxPaginationSize = 5;
                 model.itemsPerPage = 10;
 
+                model.showFilters = true;
+
                 model.day = new Date();
 
                 model.fastPeriodFilter = null;
@@ -88,7 +90,12 @@ angular.module('ioAtSpotApp')
                 utils.isCurrentOrganizationAdmin = function () {
 
                     return authModel.currentOrganization.userRole === 'admin';
-                }
+                };
+
+                utils.setPageSize = function (n) {
+                    $scope.model.itemsPerPage = n;
+                    $scope.actions.search();
+                };
             };
 
 
@@ -169,6 +176,9 @@ angular.module('ioAtSpotApp')
                         templateUrl: 'app/timeOffs/timeOffs.modal.html',
                         controller: 'TimeOffsModalCtrl',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             timeOff: function () {
                                 var to = {};
                                 angular.copy(timeOff, to);
@@ -198,6 +208,9 @@ angular.module('ioAtSpotApp')
                         controller: 'TimeOffsModalCtrl',
                         //size: 'lg',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             timeOff: function () {
                                 return null;
                             },
@@ -239,7 +252,8 @@ angular.module('ioAtSpotApp')
                             page: $scope.model.page,
                             timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
                             to: $scope.model.to,
-                            members: JSON.stringify($scope.model.membersFilter)
+                            members: JSON.stringify($scope.model.membersFilter),
+                            itemsPerPage: $scope.model.itemsPerPage
                         };
                     },
                     request: function () {

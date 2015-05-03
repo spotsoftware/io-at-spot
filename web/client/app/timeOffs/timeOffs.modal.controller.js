@@ -1,13 +1,21 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .controller('TimeOffsModalCtrl', ['$scope', '$modalInstance', '$moment', 'Utils', 'timeOff', 'organizationSettings',
-        function ($scope, $modalInstance, $moment, Utils, timeOff, organizationSettings) {
+    .controller('TimeOffsModalCtrl', ['$scope', '$modalInstance', '$moment', 'Utils', 'timeOff', 'organizationSettings', 'currentUser',
+        function ($scope, $modalInstance, $moment, Utils, timeOff, organizationSettings, currentUser) {
 
             $scope.model = new function () {
                 var model = this;
 
                 model.isNew = timeOff === null;
+
+                model.memberName = function () {
+                    if (model.isNew) {
+                        return currentUser.name;
+                    } else {
+                        return workTimeEntry._user.name;
+                    }
+                }
 
                 if (timeOff) {
                     model.timeOff = timeOff;
