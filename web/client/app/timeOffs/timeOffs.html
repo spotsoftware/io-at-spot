@@ -1,7 +1,10 @@
 <div class="container table-list">
-    <h2 class="title">Time Offs<div class="pull-right toggles">
-        <button class="btn btn-primary" ng-model="model.showFilters" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
-    </div></h2>
+    <h2 class="title">Time Offs
+        <div class="pull-right toggles">
+            <button class="btn btn-primary" ng-model="model.showFilters" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
+            <button class="btn btn-primary" type="button" decimal-separator="." field-separator=";" add-bom="true" ng-csv="utils.getExportData()" csv-header="utils.getExportHeader()" filename="timeoffs.csv"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+        </div>
+    </h2>
 
     <div collapse="!model.showFilters">
         <div class="row filters">
