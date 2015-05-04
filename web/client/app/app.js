@@ -12,7 +12,8 @@ angular.module('ioAtSpotApp', [
     'duScroll',
     'messageCenter',
     'equals',
-    'chart.js'
+    'chart.js',
+    'ngCsv'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
         $urlRouterProvider

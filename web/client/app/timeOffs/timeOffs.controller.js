@@ -96,6 +96,29 @@ angular.module('ioAtSpotApp')
                     $scope.model.itemsPerPage = n;
                     $scope.actions.search();
                 };
+                
+                utils.getExportData = function(){
+                    var data = [];
+                    for(var i=0; i<$scope.model.timeOffs.length; i++){
+
+                        data.push({
+                            name: $scope.model.timeOffs[i]._user.name,
+                            date: $moment($scope.model.timeOffs[i].performedAt).format('L'),
+                            type: $scope.model.timeOffs[i].timeOffType,
+                            amount: $scope.model.timeOffs[i].amount
+                        });
+                    }
+                    
+                    return data;
+                };
+                
+                utils.getExportHeader = function(){
+                    return ['Name', 'Date', 'Type', 'Amount'];
+                };
+                
+                utils.getExportFileName = function(){
+                    return 'timeoffs.csv';
+                };
             };
 
 
