@@ -15,9 +15,3 @@ $btnGithubBackgroundHighlight: #ccc;
 .btn-github {
     @include button-variant($btnTextAlt, $btnGithubBackground, $btnGithubBackgroundHighlight);
 }
-
-.login-page {
-    .login-form {
-        background: $gray-background;
-    }
-}
