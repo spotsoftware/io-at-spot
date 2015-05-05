@@ -48,7 +48,7 @@ angular.module('ioAtSpotApp', [
     };
 })
 
-.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS, $moment) {
+.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS, $moment, $state) {
     // Redirect to login if route requires auth and you're not logged in
 
     $moment.locale('it');

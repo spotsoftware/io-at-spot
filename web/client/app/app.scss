@@ -84,7 +84,14 @@ input[valid-number] {
     @include button-variant(white, $red, transparent);
 }
 
-.editable-click {
+.editable-buttons {
+    .btn-primary {
+        @include button-variant(white, $green, transparent);
+    }
+}
+
+.editable-click,
+a.editable-click{
     text-decoration: none;
     color: $blue;
     border-bottom: none;
@@ -366,15 +373,24 @@ table.timepicker {
 }
 
 //
+//
+// COMBOBOX
+//
+//      
 .combo {
     line-height: 3em;
     button {
-        width: 140px;
+        width: 160px;
         text-align: left;
         text-shadow: none;
         font-family: inherit;
+        
+        span {
+            display: inline-block;
+        }
+        
         span:first-child {
-            width: 100px;
+            width: 120px;
             overflow: hidden;
             -ms-text-overflow: ellipsis;
             -o-text-overflow: ellipsis;
@@ -387,14 +403,14 @@ table.timepicker {
         }
     }
     ul.dropdown-menu {
-        max-height: 176px;
+        max-height: 196px;
         min-width: 0;
         overflow-y: auto;
         overflow-x: hidden;
         > li {
             > a {
                 cursor: pointer;
-                width: 140px;
+                width: 160px;
                 overflow: hidden;
                 -ms-text-overflow: ellipsis;
                 -o-text-overflow: ellipsis;

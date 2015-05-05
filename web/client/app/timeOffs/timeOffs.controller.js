@@ -148,29 +148,29 @@ angular.module('ioAtSpotApp')
                 },
 
                 lastMonth: function () {
-                    $scope.model.from = $moment().subtract('month', 1).startOf('month');
-                    $scope.model.to = $moment().subtract('month', 1).endOf('month');
+                    $scope.model.from = $moment().subtract('month', 1).startOf('month').toDate();
+                    $scope.model.to = $moment().subtract('month', 1).endOf('month').toDate();
 
                     $scope.actions.search();
                 },
 
                 lastWeek: function () {
-                    $scope.model.from = $moment().subtract('week', 1).startOf('week');
-                    $scope.model.to = $moment().subtract('week', 1).endOf('week');
+                    $scope.model.from = $moment().subtract('week', 1).startOf('week').toDate();
+                    $scope.model.to = $moment().subtract('week', 1).endOf('week').toDate();
 
                     $scope.actions.search();
                 },
 
                 thisMonth: function () {
-                    $scope.model.from = $moment().startOf('month');
-                    $scope.model.to = $moment().endOf('month');
+                    $scope.model.from = $moment().startOf('month').toDate();
+                    $scope.model.to = $moment().endOf('month').toDate();
 
                     $scope.actions.search();
                 },
 
                 thisWeek: function () {
-                    $scope.model.from = $moment().startOf('week');
-                    $scope.model.to = $moment().endOf('week');
+                    $scope.model.from = $moment().startOf('week').toDate();
+                    $scope.model.to = $moment().endOf('week').toDate();
 
                     $scope.actions.search();
                 },
