@@ -2,7 +2,7 @@
 </div>
 <div class="container join-page">
     <div class="row">
-        <div class="col-sm-6 col-sm-offset-3 floating-form">
+        <div class="col-xs-10 col-sm-6  col-xs-offset-1 col-sm-offset-3 floating-form">
             <h1>Join io@spot!</h1>
             <h3 class="top-detached bottom-detached">You received an invitation from <strong>{{ model.organization.name }}</strong></h3>
 
@@ -48,7 +48,7 @@
                 </div>
 
                 <div ng-if="!model.isAuthenticated">
-                    <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                    <button class="btn btn-primary btn-lg btn-login" type="submit">
                         <span>Sign up</span>
                     </button>
                 </div>
