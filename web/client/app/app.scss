@@ -25,19 +25,36 @@ body {
     height: 100%;
     width: 100%;
     .page-body {
-        position: absolute;
-        top: 65px;
-        bottom: $footer-height;
-        left: 0;
-        right: 0;
-        overflow: auto;
+        min-height: calc(100% - 115px);
+        // default blurred background for main pages
+        .background {
+            @include blur(3px);
+            background-image: url('../../assets/images/landing-bg.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 100%;
+            z-index: -1;
+            &:before {
+                @include opacity(0.4);
+                background: $blue;
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+            }
+        }
     }
     .page-footer {
         background: $gray-header;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
     }
 }
 
@@ -91,7 +108,7 @@ input[valid-number] {
 }
 
 .editable-click,
-a.editable-click{
+a.editable-click {
     text-decoration: none;
     color: $blue;
     border-bottom: none;
@@ -384,11 +401,9 @@ table.timepicker {
         text-align: left;
         text-shadow: none;
         font-family: inherit;
-        
         span {
             display: inline-block;
         }
-        
         span:first-child {
             width: 120px;
             overflow: hidden;
@@ -422,39 +437,9 @@ table.timepicker {
 }
 
 .floating-form {
-    margin-top: 100px;
+    margin-top: 5%;
     border-radius: 8px;
     background: $gray-background;
-}
-
-// default blurred background for main pages
-.page-body-content {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    .background {
-        @include blur(2px);
-        background-image: url('../../assets/images/landing-bg.jpg');
-        background-attachment: fixed;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        &:before {
-            @include opacity(0.4);
-            background: $blue;
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            left: 0;
-        }
-    }
 }
 
 // Component styles are injected through grunt
