@@ -11,7 +11,6 @@
 }
 
 .toggles {
-    margin-top: -5px;
     button {
         font-size: 22px !important;
     }
@@ -55,9 +54,9 @@ btn-type {
         margin: 10px 0;
     }
     .page-size {
-        line-height: 16px;
+        line-height: 32px;
         display: inline-block;
-        margin-bottom: 10px;
+        margin: 10px 0;
         a {
             cursor: pointer;
             &.active {

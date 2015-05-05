@@ -225,8 +225,14 @@ table.table {
 
 .btn-group,
 .btn-group-vertical {
-    > .btn {
-        min-width: 90px;
+    label {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    @media (min-width: 768px) {
+        > .btn {
+            min-width: 90px;
+        }
     }
 }
 
@@ -291,8 +297,20 @@ table.table {
 //
 .title {
     box-shadow: 0 4px 2px -2px $gray-shadow;
+    padding: 10px 0;
     margin: 0;
-    padding: 20px;
+    > * {
+        margin: 5px 0;
+    }
+    h2 {
+        line-height: 45px;
+        margin: 0;
+    }
+    @media (max-width: 768px) {
+        .toggles {
+            float: left !important;
+        }
+    }
 }
 
 //
