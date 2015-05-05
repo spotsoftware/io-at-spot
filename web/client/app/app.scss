@@ -345,7 +345,7 @@ table.table {
 //
 .modal {
     .modal-dialog {
-        width: 450px;
+        max-width: 450px;
         margin: 100px auto;
         .modal-content {
             .modal-header {

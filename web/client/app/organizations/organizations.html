@@ -16,9 +16,9 @@
     </div>
 
     <div class="row main-commands">
-      <button class="btn btn-new" ng-click="actions.new()">
-        Organizations <span><i class="fa fa-plus"></i></span>
-      </button>
+        <button class="btn btn-new" ng-click="actions.new()">
+            Organizations <span><i class="fa fa-plus"></i></span>
+        </button>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -79,12 +79,12 @@
                                             </div>
                                         </div>
                                         <div class="row form-group" ng-show="utils.currentUserIsAdmin(org)">
-                                          <div class="col-sm-6 col-md-4">
-                                              <p class="input-group">
-                                                  <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
-                                                  <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
-                                              </p>
-                                          </div>
+                                            <div class="col-sm-6 col-md-4">
+                                                <p class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
+                                                    <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -165,9 +165,9 @@
                         </tabset>
                     </div>
                     <div class="col-xs-12 text-right">
-                      <div class="col-xs-12">
-                        <button class="btn btn-danger" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
-                      </div>
+                        <div class="col-xs-12">
+                            <button class="btn btn-danger" ng-show="utils.currentUserIsAdmin(org)" ng-click="actions.deleteOrganization(org)">Delete Organization</button>
+                        </div>
                     </div>
                 </div>
             </div>

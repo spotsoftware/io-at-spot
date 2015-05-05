@@ -3,14 +3,14 @@
 </div>
 <div class="modal-body form-horizontal">
     <div class="form-group">
-        <label class="col-sm-3 control-label">Member:</label>
-        <div class="col-sm-8">
+        <label class="col-xs-3 control-label">Member:</label>
+        <div class="col-xs-8 ">
             <input type="text" class="form-control" value="{{model.memberName()}}" readonly/>
         </div>
     </div>
     <div class="form-group top-detached">
-        <label class="col-sm-3 control-label">Date:</label>
-        <div class="input-group col-sm-8">
+        <label class="col-xs-3 control-label">Date:</label>
+        <div class="input-group col-xs-8">
             <input type="text" class="form-control" datepicker-options="model.datepickerOptions" datepicker-popup="dd MMMM yyyy" ng-model="model.workTimeEntry.performedAt" min-date="null" is-open="dateUtils.opened" max-date="dateUtils.today" date-disabled="dateUtils.disabled(date, mode)" ng-required="true" close-text="Close" readonly/>
             <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="actions.dateOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -18,14 +18,14 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 control-label top-detached">Time:</label>
-        <div class="col-sm-8 btn-group">
+        <label class="col-xs-3 control-label top-detached">Time:</label>
+        <div class="col-xs-8 btn-group">
             <timepicker class="timepicker" ng-model="model.workTimeEntry.performedAt" ng-change="dateUtils.timeChanged()" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
         </div>
     </div>
     <div class="form-group top-detached">
-        <label class="col-sm-3 control-label">Type:</label>
-        <div class="col-sm-8 btn-group">
+        <label class="col-xs-3 control-label">Type:</label>
+        <div class="col-xs-8 btn-group">
             <label class="btn btn-primary" ng-model="model.workTimeEntry.workTimeEntryType" btn-radio="'in'">in</label>
             <label class="btn btn-primary" ng-model="model.workTimeEntry.workTimeEntryType" btn-radio="'out'">out</label>
         </div>

@@ -4,14 +4,14 @@
 
 <div class="modal-body form-horizontal">
     <div class="form-group">
-        <label class="col-sm-3 control-label">Member:</label>
-        <div class="col-sm-8">
+        <label class="col-xs-3 control-label">Member:</label>
+        <div class="col-xs-8">
             <input type="text" class="form-control" value="{{model.memberName()}}" readonly/>
         </div>
     </div>
     <div class="form-group top-detached">
-        <label class="col-sm-3 control-label">Date:</label>
-        <div class="input-group col-sm-8">
+        <label class="col-xs-3 control-label">Date:</label>
+        <div class="input-group col-xs-8">
             <input type="text" class="form-control" datepicker-options="model.datepickerOptions" datepicker-popup="dd MMMM yyyy" ng-model="model.timeOff.performedAt" is-open="utils.datepickerOpened" min-date="null" max-date="utils.today" date-disabled="utils.disabled(date, mode)" ng-required="true" close-text="Close" readonly/>
             <span class="input-group-btn">
               <button type="button" class="btn btn-default" ng-click="actions.dateOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -19,8 +19,8 @@
         </div>
     </div>
     <div class="form-group top-detached">
-        <label class="col-sm-3 control-label">Type:</label>
-        <div class="col-sm-8 btn-group combo" dropdown is-open="utils.dropdownOpened">
+        <label class="col-xs-3 control-label">Type:</label>
+        <div class="col-xs-8 btn-group combo" dropdown is-open="utils.dropdownOpened">
             <button type="button" class="btn btn-primary dropdown-toggle">
                 <span>{{model.timeOff.timeOffType}}</span><span class="caret"></span>
             </button>
@@ -32,8 +32,8 @@
         </div>
     </div>
     <div class="form-group top-detached">
-        <label class="col-sm-3 control-label">Amount:</label>
-        <div class="col-sm-8">
+        <label class="col-xs-3 control-label">Amount:</label>
+        <div class="col-xs-8">
             <input class="form-control" type="text" ng-model="model.timeOff.amount" valid-number />
         </div>
     </div>
