@@ -21,6 +21,10 @@ body {
     color: $gray-font;
 }
 
+body.modal-open {
+    overflow: auto;
+}
+
 .page {
     height: 100%;
     width: 100%;
@@ -87,17 +91,14 @@ input[valid-number] {
 }
 
 .btn-link {
-    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
     @include button-variant($blue, transparent, transparent);
 }
 
 .btn-success {
-    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
     @include button-variant(white, $green, transparent);
 }
 
 .btn-danger {
-    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
     @include button-variant(white, $red, transparent);
 }
 
