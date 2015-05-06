@@ -92,12 +92,8 @@ angular.module('ioAtSpotApp')
                         socket.unsyncUpdates('workTimeEntry', oldOrganization._id);
                         socket.syncUpdates('workTimeEntry', newOrganization._id, function (event, item) {
                             if ($scope.utils.matchFilters(item)) {
-                                //It's interesting!
-                                console.log('interesting ', item);
-
+                                // it's an interesting update
                                 $scope.proxies.search.request();
-                            } else {
-                                console.log('not interesting', item);
                             }
                         });
 
@@ -167,10 +163,7 @@ angular.module('ioAtSpotApp')
 
                     if ($scope.model.workTimeEntries.length > 0 && $scope.model.membersFilter.length === 1) {
 
-                        data = [[],
-                                [],
-                                [],
-                                []];
+                        data = [[], [], [], []];
 
                         day = $moment($scope.model.workTimeEntries[$scope.model.workTimeEntries.length - 1].performedAt).startOf('day');
                         var endDay = $moment($scope.model.workTimeEntries[0].performedAt).endOf('day');
@@ -329,7 +322,6 @@ angular.module('ioAtSpotApp')
                     }).result.then(function (workTimeEntry) {
                         //callback function
                         $scope.proxies.create.request(workTimeEntry);
-
                     }, function () {
 
                     });
@@ -348,7 +340,9 @@ angular.module('ioAtSpotApp')
                             $scope.model.members = members;
                         },
                         function (err) {
-                            console.log(err);
+                            messageCenterService.add('danger', err.data.error, {
+                                timeout: 3000
+                            });
                         });
                 };
 
@@ -367,15 +361,10 @@ angular.module('ioAtSpotApp')
                     },
                     request: function () {
                         WorkTimeEntries.query(proxies.search.requestData(), {}).$promise.then(
-                            function (pagedResult) {
-                                proxies.search.successCallback(pagedResult);
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.search.successCallback,
+                            proxies.search.errorCallback);
                     },
                     successCallback: function (pagedResult) {
-
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.workTimeEntries = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
@@ -403,14 +392,10 @@ angular.module('ioAtSpotApp')
                                 organizationId: authModel.currentOrganization._id
                             },
                             proxies.create.requestData(workTimeEntry)).$promise.then(
-                            function (pagedResult) {
-                                proxies.create.successCallback();
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.create.successCallback,
+                            proxies.search.errorCallback);
                     },
-                    successCallback: function () {
+                    successCallback: function (pagedResult) {
                         proxies.search.request();
                     },
                     errorCallback: function (err) {
@@ -473,9 +458,7 @@ angular.module('ioAtSpotApp')
                             function () {
                                 proxies.delete.successCallback(workTimeEntry);
                             },
-                            function (err) {
-                                proxies.delete.errorCallback(err);
-                            });
+                            proxies.delete.errorCallback);
                     },
                     successCallback: function (workTimeEntry) {
 
@@ -484,7 +467,6 @@ angular.module('ioAtSpotApp')
                         } else {
                             $scope.actions.search();
                         }
-
                     },
                     errorCallback: function (err) {
                         messageCenterService.add('danger', err.data.error, {
@@ -500,11 +482,7 @@ angular.module('ioAtSpotApp')
             socket.syncUpdates('workTimeEntry', authModel.currentOrganization._id, function (event, item) {
                 if ($scope.utils.matchFilters(item)) {
                     //It's interesting!
-                    console.log('interesting ', item);
-
                     $scope.proxies.search.request();
-                } else {
-                    console.log('not interesting', item);
                 }
             });
 

@@ -96,10 +96,10 @@ angular.module('ioAtSpotApp')
                     $scope.model.itemsPerPage = n;
                     $scope.actions.search();
                 };
-                
-                utils.getExportData = function(){
+
+                utils.getExportData = function () {
                     var data = [];
-                    for(var i=0; i<$scope.model.timeOffs.length; i++){
+                    for (var i = 0; i < $scope.model.timeOffs.length; i++) {
 
                         data.push({
                             name: $scope.model.timeOffs[i]._user.name,
@@ -108,15 +108,15 @@ angular.module('ioAtSpotApp')
                             amount: $scope.model.timeOffs[i].amount
                         });
                     }
-                    
+
                     return data;
                 };
-                
-                utils.getExportHeader = function(){
+
+                utils.getExportHeader = function () {
                     return ['Name', 'Date', 'Type', 'Amount'];
                 };
-                
-                utils.getExportFileName = function(){
+
+                utils.getExportFileName = function () {
                     return 'timeoffs.csv';
                 };
             };
@@ -262,7 +262,9 @@ angular.module('ioAtSpotApp')
                             $scope.model.members = members;
                         },
                         function (err) {
-                            console.log(err);
+                            messageCenterService.add('danger', err.data.error, {
+                                timeout: 3000
+                            });
                         });
                 };
 
@@ -281,19 +283,13 @@ angular.module('ioAtSpotApp')
                     },
                     request: function () {
                         TimeOffs.query(proxies.search.requestData(), {}).$promise.then(
-                            function (pagedResult) {
-                                proxies.search.successCallback(pagedResult);
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.search.successCallback,
+                            proxies.search.errorCallback);
                     },
                     successCallback: function (pagedResult) {
-
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.timeOffs = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
-
                     },
                     errorCallback: function (err) {
                         messageCenterService.add('danger', err.data.error, {
@@ -316,12 +312,8 @@ angular.module('ioAtSpotApp')
                                 organizationId: authModel.currentOrganization._id
                             },
                             proxies.create.requestData(timeOff)).$promise.then(
-                            function () {
-                                proxies.create.successCallback();
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.create.successCallback,
+                            proxies.create.errorCallback);
                     },
                     successCallback: function () {
                         proxies.search.request();
@@ -342,18 +334,16 @@ angular.module('ioAtSpotApp')
                         }
                     },
                     request: function (timeOff) {
-                        console.log('edit', timeOff);
+
                         TimeOffs.update({
                                 organizationId: authModel.currentOrganization._id,
                                 timeOffId: timeOff._id
                             },
                             proxies.edit.requestData(timeOff)).$promise.then(
-                            function (timeOff) {
+                            function () {
                                 proxies.edit.successCallback(timeOff);
                             },
-                            function (err) {
-                                proxies.edit.errorCallback(err);
-                            });
+                            proxies.edit.errorCallback);
                     },
                     successCallback: function (timeOff) {
 
@@ -387,25 +377,14 @@ angular.module('ioAtSpotApp')
                             function () {
                                 proxies.delete.successCallback(timeOff);
                             },
-                            function (err) {
-                                proxies.delete.errorCallback(err);
-                            });
+                            proxies.delete.errorCallback);
                     },
                     successCallback: function (timeOff) {
-
-                        //                        for (var i = 0; i < $scope.model.timeOffs.length; i++) {
-                        //                            if ($scope.model.timeOffs[i]._id === timeOff._id) {
-                        //                                $scope.model.timeOffs.splice(i, 1);
-                        //                                break;
-                        //                            }
-                        //                        }
-
                         if ($scope.model.timeOffs.length === 1 && $scope.model.page > 1) {
                             $scope.model.page -= 1;
                         } else {
                             $scope.actions.search();
                         }
-
                     },
                     errorCallback: function (err) {
                         messageCenterService.add('danger', err.data.error, {
@@ -417,5 +396,4 @@ angular.module('ioAtSpotApp')
 
             $scope.proxies.search.request();
             $scope.proxies.loadMembers();
-
         });

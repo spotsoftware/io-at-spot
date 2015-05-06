@@ -15,7 +15,6 @@ angular.module('ioAtSpotApp')
          };
 
          $scope.$on('organization-updated', function () {
-             //console.log('updated org', authModel.currentOrganization);
              //Apparently useless, is necessary to trigger parent scope update in children.. uiRouter BUG?
              $scope.parent.currentOrganization = authModel.currentOrganization;
          });*/

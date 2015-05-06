@@ -122,12 +122,17 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (searchText, searchField) {
                         return Users.query($scope.proxies.searchUsers.requestData(searchText, searchField), {}).$promise.then(
-                            function (data) {
-                                return $scope.proxies.searchUsers.successCallback(data);
-                            });
+                            $scope.proxies.searchUsers.successCallback,
+                            $scope.proxies.searchUsers.errorCallback
+                        );
                     },
                     successCallback: function (users) {
                         return users;
+                    },
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 }
             };
@@ -135,6 +140,5 @@ angular.module('ioAtSpotApp')
             $scope.$watch('model.organization', function (value) {
                 $scope.actions.loadInvites();
             });
-            //
 
         });

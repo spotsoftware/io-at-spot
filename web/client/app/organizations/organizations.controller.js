@@ -195,24 +195,18 @@ angular.module('ioAtSpotApp')
                         }
                     },
                     request: function (organization) {
-                        Organization.create({
-
-                            },
+                        Organization.create({},
                             proxies.create.requestData(organization)).$promise.then(
-                            function (organization) {
-                                proxies.create.successCallback(organization);
-                            },
-                            function (err) {
-                                messageCenterService.add('danger', err.data.error, {
-                                    timeout: 3000
-                                });
-                            });
+                            proxies.create.successCallback,
+                            proxies.create.errorCallback);
                     },
-                    successCallback: function () {
+                    successCallback: function (organization) {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };
