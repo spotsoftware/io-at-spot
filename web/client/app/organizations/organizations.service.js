@@ -39,7 +39,7 @@ angular.module('ioAtSpotApp')
                         isArray: false
                     },
                     readUid: {
-                        url: '/api/organizations/:organizationId/readuid',
+                        url: '/api/organizations/:organizationId/uid',
                         params: {
                             organizationId: '@organizationId'
                         },
