@@ -1,13 +1,21 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .controller('WorkTimeEntriesModalCtrl', ['$scope', '$modalInstance', '$moment', 'Utils', 'workTimeEntry', 'organizationSettings',
-        function ($scope, $modalInstance, $moment, Utils, workTimeEntry, organizationSettings) {
+    .controller('WorkTimeEntriesModalCtrl', ['$scope', '$modalInstance', '$moment', 'Utils', 'workTimeEntry', 'organizationSettings', 'currentUser',
+        function ($scope, $modalInstance, $moment, Utils, workTimeEntry, organizationSettings, currentUser) {
 
             $scope.model = new function () {
                 var model = this;
 
                 model.isNew = workTimeEntry === null;
+
+                model.memberName = function () {
+                    if (model.isNew) {
+                        return currentUser.name;
+                    } else {
+                        return workTimeEntry._user.name;
+                    }
+                }
 
                 if (workTimeEntry) {
                     model.workTimeEntry = workTimeEntry;
@@ -21,7 +29,7 @@ angular.module('ioAtSpotApp')
 
                     model.workTimeEntry = {
                         performedAt: performedAt.toDate(),
-                        manual: true
+                        workTimeEntryType: 'in'
                     };
                 }
 
@@ -30,13 +38,19 @@ angular.module('ioAtSpotApp')
                         model.workTimeEntry.performedAt = oldValue;
                     }
                 });
+
+                model.datepickerOptions = {
+                    startingDay: 1
+                };
             };
 
             $scope.dateUtils = new function () {
                 var utils = this;
 
                 utils.disabled = function (date, mode) {
-                    return organizationSettings.workingDays[date.getDay()].active === false;
+                    var day = date.getDay();
+
+                    return organizationSettings.workingDays[day - 1 < 0 ? 6 : day - 1].active === false;
                 };
 
                 utils.opened = false;

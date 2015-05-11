@@ -174,7 +174,7 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
 
     private void connectToDevice() {
 
-        stopScan();
+        //stopScan();
 
         //Obtain the discovered device to connect with
         Log.i(TAG, "Connecting to " + this.mDevice.getName());
@@ -315,6 +315,7 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
             gatt.discoverServices();
             mMessageHandler.sendMessage(Message.obtain(null, DoorKeeperApplication.MessageConstants.MSG_PROGRESS, "Discovering Services..."));
         } else if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED) {
+
                     /*
                      * If at any point we disconnect, send a message to clear the weather values
                      * out of the UI
@@ -335,6 +336,14 @@ public class BleHelper extends BluetoothGattCallback implements IBleHelper, Blue
                      */
             gatt.close();
             gatt.disconnect();
+            mHandler.sendMessage(Message.obtain(null, DoorKeeperApplication.MessageConstants.MSG_DISMISS, "Disconnected..."));
+            //startScan();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startScan();
+                }
+            });
         }
     }
 

@@ -1,38 +1,120 @@
-$icon-font-path:"/bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
- $fa-font-path:"/bower_components/font-awesome/fonts";
+$icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+$fa-font-path: "/bower_components/font-awesome/fonts";
+$roboto-font-path: '/bower_components/roboto-fontface/fonts' !default;
 @import 'vars.scss';
 @import 'mixins.scss';
-@import 'bootstrap-sass-official/vendor/assets/stylesheets/bootstrap';
+@import 'bootstrap-sass-official/assets/stylesheets/bootstrap';
 @import 'font-awesome/scss/font-awesome';
-
-/**
- * App-wide Styles
- */
+@import 'roboto-fontface/roboto-fontface.scss';
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
 
 body {
     font-family: "Roboto";
     background-color: $gray-background;
     color: $gray-font;
 }
+
+body.modal-open {
+    overflow: auto;
+}
+
+.page {
+    height: 100%;
+    width: 100%;
+    .page-body {
+        min-height: calc(100% - 115px);
+        // default blurred background for main pages
+        .background {
+            @include blur(3px);
+            background-image: url('../../assets/images/landing-bg.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 100%;
+            z-index: -1;
+            &:before {
+                @include opacity(0.4);
+                background: $blue;
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+            }
+        }
+    }
+    .page-footer {
+        background: $gray-header;
+    }
+}
+
 h3 {
     margin: 10px 0;
     font-weight: 300;
     font-size: 26px;
 }
+
 a {
     color: $blue;
 }
+
 a:hover {
     color: $blue;
 }
+
+input[valid-number] {
+    width: 100px;
+}
+
 .page-header {
     padding: 10px 0;
     margin: 0 0 20px 0;
     box-shadow: 0px 2px 1px $gray-header;
 }
+
 .panel-default > .panel-heading {
     background-color: $gray-header;
 }
+
+.btn-link {
+    @include button-variant($blue, transparent, transparent);
+}
+
+.btn-success {
+    @include button-variant(white, $green, transparent);
+}
+
+.btn-danger {
+    @include button-variant(white, $red, transparent);
+}
+
+.editable-buttons {
+    .btn-primary {
+        @include button-variant(white, $green, transparent);
+    }
+}
+
+.editable-click,
+a.editable-click {
+    text-decoration: none;
+    color: $blue;
+    border-bottom: none;
+}
+
 .btn-primary,
 .pagination > li > a,
 .pagination > li > span {
@@ -41,6 +123,7 @@ a:hover {
     color: $blue;
     font-weight: 600;
 }
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
@@ -56,6 +139,15 @@ a:hover {
     border-color: $gray-header;
     color: $white;
 }
+
+.btn-primary {
+    &.disabled, &[disabled] {
+        background-color: #eee;
+        color: $blue;
+        border-color: $gray-header;
+    }
+}
+
 table.table {
     > tbody {
         > tr {
@@ -73,45 +165,55 @@ table.table {
         padding: 8px 0 8px 22px;
     }
 }
+
 .input-group-btn {
     > .btn {
         height: 34px;
     }
 }
+
 .vertically-ontop {
     vertical-align: top;
 }
+
 .bottom-detached {
     margin-bottom: 20px;
 }
+
 .top-detached {
     margin-top: 20px;
 }
+
 .browsehappy {
     margin: 0.2em 0;
     background: #ccc;
     color: #000;
     padding: 0.2em 0;
 }
+
 .pointer {
     cursor: pointer;
 }
+
 .tab-content {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
+
 .icon-device {
     background-image: url('../assets/images/icon_device.png');
     background-size: 24px 24px;
     height: 24px;
     width: 24px;
 }
+
 .old-password-form.form-inline {
     .form-group {
         margin: 0;
     }
 }
+
 .messages {
     position: fixed;
     z-index: 1001;
@@ -121,23 +223,37 @@ table.table {
     width: 400px;
     text-align: center;
 }
+
 .btn-group,
 .btn-group-vertical {
-    > .btn {
-        min-width: 90px;
+    label {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    @media (min-width: 768px) {
+        > .btn {
+            min-width: 90px;
+        }
     }
 }
+
 //
 //
 // CUSTOM BUTTONS
 //
 //
- .btn.btn-edit {
+.btn.btn-edit {
     @include custom-button($green, $dark-green);
 }
+
 .btn.btn-delete {
     @include custom-button($red, $dark-red);
 }
+
+.btn.btn-invite {
+    @include custom-button($green, $dark-green);
+}
+
 .btn.btn-new {
     background: none;
     color: $gray-font;
@@ -174,22 +290,36 @@ table.table {
         }
     }
 }
+
 //
 //
 // TITLE
 //
 //
- .title {
+.title {
     box-shadow: 0 4px 2px -2px $gray-shadow;
+    padding: 10px 0;
     margin: 0;
-    padding: 20px;
+    > * {
+        margin: 5px 0;
+    }
+    h2 {
+        line-height: 45px;
+        margin: 0;
+    }
+    @media (max-width: 768px) {
+        .toggles {
+            float: left !important;
+        }
+    }
 }
+
 //
 //
 // TABLE LIST DATA
 //
 //
- .table-list {
+.table-list {
     .main-commands {
         padding: 20px 10px;
         margin: 0;
@@ -204,26 +334,152 @@ table.table {
             }
             .input-group > .form-control {
                 //width: 70%;
-
             }
         }
     }
 }
+
+//
+//
+// MODAL
+//
+//
+.modal {
+    .modal-dialog {
+        max-width: 450px;
+        margin: 100px auto;
+        .modal-content {
+            .modal-header {
+                background-color: $black;
+                color: $white;
+            }
+            .modal-body {
+                background-color: $gray-background;
+                .input-group {
+                    padding: 0 15px !important;
+                }
+            }
+            .modal-footer {
+                background-color: $gray-background;
+                border-top: none;
+            }
+        }
+    }
+}
+
+//
+//
+// TIMEPICKER
+//
+//            
+table.timepicker {
+    tr {
+        td {
+            &.form-group {
+                width: 40px !important;
+            }
+            input {
+                padding: 6px 6px;
+            }
+            a {
+                padding: 0;
+                color: $blue;
+                &:hover {
+                    color: $blue;
+                }
+                &:active {
+                    color: $blue;
+                }
+                &:focus {
+                    color: $blue;
+                }
+                span.glyphicon-chevron-down {
+                    &:before {
+                        content: "\e252";
+                    }
+                }
+                span.glyphicon-chevron-up {
+                    &:before {
+                        content: "\e253";
+                    }
+                }
+            }
+        }
+    }
+}
+
+//
+//
+// COMBOBOX
+//
+//      
+.combo {
+    line-height: 3em;
+    button {
+        width: 160px;
+        text-align: left;
+        text-shadow: none;
+        font-family: inherit;
+        span {
+            display: inline-block;
+        }
+        span:first-child {
+            width: 120px;
+            overflow: hidden;
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .caret {
+            float: right;
+            margin-top: 8px;
+        }
+    }
+    ul.dropdown-menu {
+        max-height: 196px;
+        min-width: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        > li {
+            > a {
+                cursor: pointer;
+                width: 160px;
+                overflow: hidden;
+                -ms-text-overflow: ellipsis;
+                -o-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+}
+
+.floating-form {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    border-radius: 8px;
+    background: $gray-background;
+}
+
 // Component styles are injected through grunt
 // injector
-@import 'account/forgot/forgot.scss';
-@import 'account/login/login.scss';
-@import 'account/profile/profile.scss';
-@import 'account/reset/reset.scss';
-@import 'account/signup/signup.scss';
-@import 'admin/admin.scss';
-@import 'main/main.scss';
-@import 'members/members.scss';
-@import 'mixins.scss';
-@import 'organizations/organizations.scss';
-@import 'timeOffs/timeOffs.scss';
-@import 'vars.scss';
-@import 'workTimeEntries/workTimeEntries.scss';
+@import '_mixins.scss';
+@import '_vars.scss';
+@import 'account/forgot/_forgot.scss';
+@import 'account/join/_join.scss';
+@import 'account/login/_login.scss';
+@import 'account/profile/_profile.scss';
+@import 'account/reset/_reset.scss';
+@import 'account/signup/_signup.scss';
+@import 'admin/_admin.scss';
+@import 'invites/_invites.scss';
+@import 'main/_main.scss';
+@import 'members/_members.scss';
+@import 'organizations/_organizations.scss';
+@import 'timeOffs/_timeOffs.scss';
+@import 'workTimeEntries/_workTimeEntries.scss';
+@import 'footer/_footer.scss';
 @import 'modal/modal.scss';
-@import 'navbar/navbar.scss';
+@import 'navbar/_navbar.scss';
 // endinjector

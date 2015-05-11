@@ -1,86 +1,96 @@
 <div class="container table-list">
-    <h2 class="title">Review time offs</h2>
-
-    <div class="row filters">
-
-        <div class="btn-group col-md-5">
-            <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'lm'" uncheckable>Last month</label>
-            <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'lw'" uncheckable>Last week</label>
-            <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tm'" uncheckable>This month</label>
-            <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tw'" uncheckable>This week</label>
+    <div class="row title">
+        <div class="col-xs-12 col-sm-8">
+            <h2>Time Offs</h2>
         </div>
-
-        <div class="col-md-2 btn-group" dropdown is-open="utils.userDropdownOpened">
-            <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!parent.isCurrentOrganizationAdmin()">
-                {{model.membersFilterText}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="member in parent.currentOrganization.members">
-                    <a class="pointer" ng-click="actions.memberFilterChange(member._user)" href>{{member._user.name}}</a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a class="pointer" ng-click="actions.memberFilterChange('all') " href>All</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="col-md-1 btn-group" dropdown is-open="utils.dropdownOpened">
-            <button type="button" class="btn btn-primary dropdown-toggle">
-                {{model.timeOffTypeFilter}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="timeOffType in model.timeOffTypes">
-                    <a ng-click="actions.timeOffTypeChange(timeOffType)">{{timeOffType}}</a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a ng-click="actions.timeOffTypeChange('All')">All</a>
-                </li>
-            </ul>
+        <div class="col-xs-12 col-sm-4">
+            <div class="pull-right toggles">
+                <button class="btn btn-primary" ng-model="model.showFilters" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+                </button>
+                <button class="btn btn-primary" type="button" decimal-separator="." field-separator=";" add-bom="true" ng-csv="utils.getExportData()" csv-header="utils.getExportHeader()" filename="timeoffs.csv"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="row filters form-inline">
-        <div class="col-xs-12 col-sm-5 col-lg-4 form-group">
-            <label>
-                From:
-            </label>
-            <p class="input-group">
-                <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.from" is-open="utils.fromOpened" min-date="null" max-date="model.to" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" disabled />
-                <span class="input-group-btn">
+    <div collapse="!model.showFilters">
+        <div class="row filters">
+
+            <div class="btn-group col-md-5">
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'lm'" uncheckable>Last month</label>
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'lw'" uncheckable>Last week</label>
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tm'" uncheckable>This month</label>
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tw'" uncheckable>This week</label>
+            </div>
+
+            <div class="col-md-3">
+                <div class="btn-group combo" dropdown is-open="utils.userDropdownOpened">
+                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()">
+                        <span>{{model.membersFilterText}}</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="member in model.members">
+                            <a class="pointer" ng-click="actions.memberFilterChange(member._user)" href>{{member._user.name}}</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="pointer" ng-click="actions.memberFilterChange('all') " href>All</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="btn-group combo" dropdown is-open="utils.dropdownOpened">
+                    <button type="button" class="btn btn-primary dropdown-toggle">
+                        <span>{{model.timeOffTypeFilter}}</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="timeOffType in model.timeOffTypes">
+                            <a ng-click="actions.timeOffTypeChange(timeOffType)">{{timeOffType}}</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a ng-click="actions.timeOffTypeChange('All')">All</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row filters form-inline">
+            <div class="col-xs-12 col-sm-5 col-lg-4 form-group">
+                <label>
+                    From:
+                </label>
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.from" is-open="utils.fromOpened" min-date="null" max-date="model.to" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" readonly />
+                    <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="actions.dateFromOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
-            </p>
-        </div>
+                </p>
+            </div>
 
-        <div class="col-xs-12 col-sm-5 col-lg-4 form-group">
-            <label>
-                To:
-            </label>
-            <p class="input-group">
-                <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.to" is-open="utils.toOpened" min-date="model.from" max-date="null" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" disabled/>
-                <span class="input-group-btn">
+            <div class="col-xs-12 col-sm-5 col-lg-4 form-group">
+                <label>
+                    To:
+                </label>
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.to" is-open="utils.toOpened" min-date="model.from" max-date="null" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" readonly/>
+                    <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="actions.dateToOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
-            </p>
-        </div>
+                </p>
+            </div>
 
-        <div class="col-xs-4 col-sm-2 form-group">
-            <button class="btn btn-primary" ng-click="actions.search()">Search</button>
+            <div class="col-xs-4 col-sm-2 form-group">
+                <button class="btn btn-primary btn-search" ng-click="actions.search()">Search</button>
+            </div>
         </div>
     </div>
-
-    <!-- <div class="row">
-
-    </div>
-    <div class="row form-inline">
-
-    </div> -->
 
     <div class="row main-commands">
         <button class="btn btn-new" ng-click="actions.new()">
-            Add new time offs <span><i class="fa fa-plus"></i></span>
+            Add new <span><i class="fa fa-plus"></i></span>
         </button>
     </div>
 
@@ -92,7 +102,7 @@
                         Name
                     </th>
                     <th>
-                        Performed at
+                        Date
                     </th>
                     <th>
                         Time off type
@@ -101,7 +111,6 @@
                         Amount
                     </th>
                     <th>
-                        Commands
                     </th>
                 </tr>
             </thead>
@@ -111,7 +120,7 @@
                         {{ item._user.name }}
                     </td>
                     <td>
-                        {{ item.performedAt | date:'HH:mm:ss - dd/MM/yyyy' }}
+                        {{ item.performedAt | date: 'shortDate' }}
                     </td>
                     <td>
                         {{ item.timeOffType }}
@@ -119,7 +128,7 @@
                     <td>
                         {{ item.amount }}
                     </td>
-                    <td>
+                    <td class="text-right">
                         <button role='button' class='btn btn-edit' ng-click='actions.edit(item)'>
                             <i class="fa fa-pencil"></i>EDIT
                         </button>
@@ -130,7 +139,19 @@
                 </tr>
             </tbody>
         </table>
-        <pagination total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
-        <pre>Page: {{model.page}} / {{model.numPages}}</pre>
+    </div>
+    <div class="row pagination-controls">
+        <div class="col-xs-12 col-sm-6 text-left">
+            <!--                <div class="page-recap">Page: {{model.page}} / {{model.numPages}}</div>-->
+            <pagination class="pagination pagination-sm" items-per-page="model.itemsPerPage" total-items="model.totalNumber" ng-model="model.page" max-size="model.maxPaginationSize" boundary-links="true" rotate="false" num-pages="model.numPages"></pagination>
+        </div>
+        <div class="col-xs-12 col-sm-6 text-right">
+            <div class="page-size">Page size: &nbsp;
+                <a ng-click="utils.setPageSize(10)" ng-class="{ 'active' : model.itemsPerPage === 10 }">10</a>&nbsp;
+                <a ng-click="utils.setPageSize(50)" ng-class="{ 'active' : model.itemsPerPage === 50 }">50</a>&nbsp;
+                <a ng-click="utils.setPageSize(100)" ng-class="{ 'active' : model.itemsPerPage === 100 }">100</a>
+            </div>
+
+        </div>
     </div>
 </div>

@@ -18,6 +18,7 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css" />
     <link rel="stylesheet" href="bower_components/roboto-fontface/roboto-fontface.css" />
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -31,15 +32,13 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+
     <div class="messages">
         <mc-messages></mc-messages>
     </div>
 
     <!-- Add your site or application content here -->
-    <div ui-view="">
-
-    </div>
-
+    <div class="page" ui-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
@@ -78,6 +77,9 @@
     <script src="bower_components/angular-momentjs/angular-momentjs.js"></script>
     <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
     <script src="bower_components/angular-scroll/angular-scroll.js"></script>
+    <script src="bower_components/Chart.js/Chart.js"></script>
+    <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="bower_components/ng-csv/build/ng-csv.min.js"></script>
     <!-- endbower -->
     <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -87,16 +89,19 @@
     <!-- injector:js -->
     <script src="app/account/account.js"></script>
     <script src="app/account/forgot/forgot.controller.js"></script>
+    <script src="app/account/join/join.controller.js"></script>
     <script src="app/account/login/login.controller.js"></script>
     <script src="app/account/profile/profile.controller.js"></script>
     <script src="app/account/reset/reset.controller.js"></script>
+    <script src="app/account/settings/settings.controller.js"></script>
     <script src="app/account/signup/signup.controller.js"></script>
     <script src="app/admin/admin.controller.js"></script>
     <script src="app/admin/admin.js"></script>
+    <script src="app/invites/invites.controller.js"></script>
+    <script src="app/invites/invites.service.js"></script>
     <script src="app/main/main.controller.js"></script>
     <script src="app/main/main.js"></script>
     <script src="app/members/members.controller.js"></script>
-    <script src="app/members/members.js"></script>
     <script src="app/members/members.service.js"></script>
     <script src="app/organizations/newOrganization.modal.controller.js"></script>
     <script src="app/organizations/organizations.controller.js"></script>
@@ -129,10 +134,12 @@
     <script src="components/password/password.modal.controller.js"></script>
     <script src="components/socket/socket.service.js"></script>
     <script src="components/utils/utils.service.js"></script>
+    <script src="components/valid-number/valid-number.js"></script>
     <!-- endinjector -->
     <!-- endbuild -->
 
     <script src="bower_components/angular-i18n/angular-locale_it-it.js"></script>
+    <script src="bower_components/momentjs/locale/it.js"></script>
 </body>
 
 </html>

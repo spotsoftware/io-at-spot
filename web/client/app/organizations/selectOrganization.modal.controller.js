@@ -5,7 +5,7 @@ angular.module('ioAtSpotApp')
         function ($scope, $modalInstance, organizations, selectedOrganization) {
 
             //Show user's organizations
-            $scope.organizations = organizations;
+            $scope.organizations = organizations.organizations;
 
             //Selects current organization
             $scope.select = function (organization) {

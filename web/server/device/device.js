@@ -66,12 +66,14 @@ function addWorkTimeEntry(data, callback) {
 
     workTimeEntry._user = data.userId;
     workTimeEntry._organization = data.organizationId;
+    
+    /*
     workTimeEntry.workTimeEntryType = 'in'; //AUTO-GUESS
     workTimeEntry.manual = false;
-
     if (data.performedAt) {
         workTimeEntry.performedAt = data.performedAt;
     }
+    */
 
     workTimeEntry.save(function (err, savedWorkTimeEntry) {
 
@@ -124,6 +126,7 @@ io.sockets.on('connection', function (socket) {
                         organizationId: organizationId
                     }, function (err) {
                         if (err) {
+                            console.log(err);
                             return callback({
                                 responseCode: 403,
                                 message: err.message

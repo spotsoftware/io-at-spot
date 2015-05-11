@@ -10,9 +10,9 @@ angular.module('ioAtSpotApp')
 
             if (form.$valid) {
                 Auth.login({
-                    email: $scope.user.email,
-                    password: $scope.user.password
-                })
+                        email: $scope.user.email,
+                        password: $scope.user.password
+                    })
                     .then(function () {
                         // Logged in, redirect to home
                         $state.go('public.main');

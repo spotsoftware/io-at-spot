@@ -1,12 +1,11 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .config(function ($stateProvider, USER_ROLES) {
+    .config(function ($stateProvider) {
         $stateProvider
-            .state('private.admin', {
+            .state('admin', {
                 url: '/admin',
                 templateUrl: 'app/admin/admin.html',
-                controller: 'AdminCtrl',
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.editor]
+                controller: 'AdminCtrl'
             });
     });

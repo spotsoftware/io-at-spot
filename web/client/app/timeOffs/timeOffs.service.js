@@ -13,10 +13,12 @@ angular.module('ioAtSpotApp')
                         method: 'GET',
                         params: {
                             from: '@from',
+                            members: '@members',
                             organizationId: '@organizationId',
                             page: '@page',
                             timeOffType: '@timeOffType',
-                            to: '@to'
+                            to: '@to',
+                            itemsPerPage: '@itemsPerPage'
                         },
                         isArray: false //returns an object (that also contains an array)
                     },

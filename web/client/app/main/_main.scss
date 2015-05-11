@@ -1,0 +1,58 @@
+.thing-form {
+    margin: 20px 0;
+}
+
+.landing-page {
+    color: #F5F5F5;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    .welcome h1 {
+        font-size: 60px;
+        line-height: 1;
+    }
+    .welcome h2 {
+        font-size: 21px;
+        font-weight: 300;
+        margin: 30px 0;
+    }
+    .welcome img {
+        height: 80px;
+    }
+    .downloads {
+        margin-top: 40px;
+        a {
+            display: inline-block;
+        }
+        img {
+            height: 50px;
+        }
+    }
+}
+/* Small Devices, Tablets */
+
+@media only screen and (min-width: 768px) {
+    .landing-page {
+        padding: 30px 15px;
+        .welcome {
+            h1 {
+                font-size: 100px;
+            }
+            h2 {
+                font-size: 30px;
+            }
+        }
+        .downloads {
+            margin-top: 100px;
+            img {
+                height: 80px;
+            }
+        }
+    }
+}
+
+.footer {
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 70px;
+    border-top: 1px solid #E5E5E5;
+}

@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('OrganizationsCtrl',
-        function ($scope, $http, socket, Users, Members, Organizations, Auth, $modal, $document, messageCenterService) {
+        function ($scope, $http, socket, Users, Members, Invites, Organizations, Auth, $modal, $document, messageCenterService) {
 
             $scope.model = new function () {
                 var model = this;
@@ -14,10 +14,42 @@ angular.module('ioAtSpotApp')
 
             $scope.actions = {
 
+                acceptInvite: function (invite) {
+                    Invites.accept({
+                        id: invite._id,
+                        organizationId: invite.organization._id
+                    }, {}).$promise.then(
+                        function (data) {
+                            Auth.updateAuthModel();
+                            $scope.actions.search();
+                        },
+                        function (err) {
+                            messageCenterService.add('danger', err.data.error, {
+                                timeout: 3000
+                            });
+                        });
+                },
+
+                removeInvite: function (invite) {
+                    Invites.remove({
+                        id: invite._id,
+                        organizationId: invite.organization._id
+                    }, {}).$promise.then(
+                        function (data) {
+                            $scope.actions.search();
+                        },
+                        function (err) {
+                            messageCenterService.add('danger', err.data.error, {
+                                timeout: 3000
+                            });
+                        });
+                },
+
                 search: function () {
                     Organizations.query({}, {}).$promise.then(
-                        function (organizations) {
-                            $scope.model.organizations = organizations;
+                        function (data) {
+                            $scope.model.organizations = data.organizations;
+                            $scope.model.invites = data.invites;
                         },
                         function (err) {
                             messageCenterService.add('danger', err.data.error, {
@@ -59,9 +91,9 @@ angular.module('ioAtSpotApp')
                         }, {
                             name: organization.name,
                             logo: organization.logo,
-                            members: organization.members
+                            //members: organization.members
                         }).$promise.then(function (organization) {
-                            $scope.model.organizations.push(organization);
+                            $scope.actions.search();
                             setTimeout(function () {
                                 var orgElement = document.getElementById(organization._id);
                                 $document.scrollToElementAnimated(angular.element(orgElement));
@@ -79,7 +111,7 @@ angular.module('ioAtSpotApp')
                         logo: organization.logo,
                         settings: organization.settings
                     }).$promise.then(function () {
-                            if ($scope.parent.currentOrganization._id === organization._id) {
+                            if (Auth.getAuthModel().currentOrganization._id === organization._id) {
                                 Auth.setCurrentOrganization(organization);
                             }
                         },
@@ -145,15 +177,10 @@ angular.module('ioAtSpotApp')
 
             $scope.utils = {
                 isMemberCurrentUser: function (member) {
-                    return member._user._id === $scope.parent.currentUser._id;
+                    return member._user._id === Auth.getAuthModel().currentUser._id;
                 },
                 currentUserIsAdmin: function (organization) {
-                    for (var i = 0; i < organization.members.length; i++) {
-                        if (organization.members[i]._user._id === $scope.parent.currentUser._id && organization.members[i].role === 'admin') {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return organization.userRole === 'admin';
                 },
                 readingUid: false
             };
@@ -168,24 +195,18 @@ angular.module('ioAtSpotApp')
                         }
                     },
                     request: function (organization) {
-                        Organization.create({
-
-                            },
+                        Organization.create({},
                             proxies.create.requestData(organization)).$promise.then(
-                            function (organization) {
-                                proxies.create.successCallback(organization);
-                            },
-                            function (err) {
-                                messageCenterService.add('danger', err.data.error, {
-                                    timeout: 3000
-                                });
-                            });
+                            proxies.create.successCallback,
+                            proxies.create.errorCallback);
                     },
-                    successCallback: function () {
+                    successCallback: function (organization) {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };

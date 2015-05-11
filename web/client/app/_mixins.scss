@@ -1,0 +1,33 @@
+@mixin custom-button($primary-color,
+$secondary-color,
+$font-color: $white) {
+    background: $primary-color;
+    color: $font-color;
+    padding: 0 12px 0 0;
+    &:hover, &:active, &:focus {
+        background: $secondary-color;
+        outline: none;
+        outline-offset: -2px;
+    }
+    i {
+        background: $secondary-color;
+        padding: 6px;
+        margin-right: 12px;
+    }
+}
+
+@mixin blur($blur-dim: 1px) {
+    -webkit-filter: blur($blur-dim);
+    -moz-filter: blur($blur-dim);
+    -o-filter: blur($blur-dim);
+    -ms-filter: blur($blur-dim);
+    filter: blur($blur-dim);
+}
+
+@mixin opacity($opacity: 0.5) {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity * 100})";
+    filter: alpha(opacity=$opacity * 100);
+    -moz-opacity: $opacity;
+    -khtml-opacity: $opacity;
+    opacity: $opacity;
+}

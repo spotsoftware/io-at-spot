@@ -17,7 +17,7 @@ angular.module('ioAtSpotApp')
                     id: 'me'
                 }
             },
-            save: {
+            create: {
                 url: '/api/users/',
                 method: 'POST'
             }

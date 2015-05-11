@@ -2,10 +2,36 @@
 
 angular.module('ioAtSpotApp')
     .controller('WorkTimeEntriesCtrl',
-        function ($scope, $http, socket, WorkTimeEntries, $moment, $modal) {
+        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel, Members, messageCenterService) {
 
             $scope.model = new function () {
                 var model = this;
+
+                model.showChart = true;
+                model.showFilters = true;
+
+                //Chart
+                model.chartLabels = [];
+                model.chartSeries = ['in', 'out', 'in', 'out'];
+                model.chartData = null;
+
+                model.chartOptions = {
+                    responsive: true,
+                    bezierCurve: false,
+                    datasetFill: false,
+                    scaleOverride: true,
+                    scaleShowVerticalLines: false,
+                    scaleSteps: 5,
+                    scaleStepWidth: 180,
+                    scaleStartValue: 180,
+                    scaleLabel: function (point) {
+                        return $scope.utils.getTimeFromEndDayDiff(point.value);
+                    },
+                    customTooltips: false,
+                    multiTooltipTemplate: function (point) {
+                        return point.datasetLabel + ': ' + $scope.utils.getTimeFromEndDayDiff(point.value);
+                    }
+                };
 
                 model.workTimeEntries = [];
                 model.totalNumber = null;
@@ -14,8 +40,8 @@ angular.module('ioAtSpotApp')
                 model.itemsPerPage = 10;
 
                 model.fastPeriodFilter = null;
-                model.membersFilter = [$scope.parent.currentUser._id];
-                model.membersFilterText = $scope.parent.currentUser.name;
+                model.membersFilter = [authModel.currentUser._id];
+                model.membersFilterText = authModel.currentUser.name;
                 model.workTimeEntryType = null;
                 model.from = null;
                 model.to = null;
@@ -45,31 +71,37 @@ angular.module('ioAtSpotApp')
                     }
                 });
 
+                $scope.$watch('model.itemsPerPage', function (newValue, oldValue) {
+                    if (newValue != oldValue) {
+
+                        $scope.proxies.search.request();
+                    }
+                });
+
                 $scope.$watch('model.workTimeEntryType', function (newValue, oldValue) {
                     if (newValue != oldValue) {
                         $scope.proxies.search.request();
                     }
                 });
 
-                $scope.$watch('parent.currentOrganization', function (newValue, oldValue) {
-                    if (newValue != oldValue) {
+                $scope.$on('organization-updated', function (event, data) {
+                    var newOrganization = data.newOrganization;
+                    var oldOrganization = data.oldOrganization;
 
-                        console.log("org updated", $scope.parent.currentOrganization._id);
-                        socket.unsyncUpdates('workTimeEntry', oldValue._id);
-                        socket.syncUpdates('workTimeEntry', newValue._id, function (event, item) {
+                    if (newOrganization !== oldOrganization) {
+                        socket.unsyncUpdates('workTimeEntry', oldOrganization._id);
+                        socket.syncUpdates('workTimeEntry', newOrganization._id, function (event, item) {
                             if ($scope.utils.matchFilters(item)) {
-                                //It's interesting!
-                                console.log('interesting ', item);
-
+                                // it's an interesting update
                                 $scope.proxies.search.request();
-                            } else {
-                                console.log('not interesting', item);
                             }
                         });
 
+                        $scope.proxies.loadMembers();
                         $scope.proxies.search.request();
                     }
                 });
+
             };
 
             $scope.utils = new function () {
@@ -105,6 +137,68 @@ angular.module('ioAtSpotApp')
 
                 utils.fromOpened = false;
                 utils.toOpened = false;
+
+                utils.isCurrentOrganizationAdmin = function () {
+
+                    return authModel.currentOrganization.userRole === 'admin';
+                };
+
+                utils.getTimeFromEndDayDiff = function (diff) {
+                    var minutes = ((60 * 24) - (diff)) / 60;
+
+                    var sign = minutes < 0 ? "-" : "";
+                    var min = Math.floor(Math.abs(minutes))
+                    var sec = Math.floor((Math.abs(minutes) * 60) % 60);
+                    return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+                };
+
+                utils.setupChart = function () {
+                    var days = [],
+                        data = null;
+
+                    var wte = null,
+                        day = null,
+                        dayIndex = null,
+                        serieIndex = null;
+
+                    if ($scope.model.workTimeEntries.length > 0 && $scope.model.membersFilter.length === 1) {
+
+                        data = [[], [], [], []];
+
+                        day = $moment($scope.model.workTimeEntries[$scope.model.workTimeEntries.length - 1].performedAt).startOf('day');
+                        var endDay = $moment($scope.model.workTimeEntries[0].performedAt).endOf('day');
+
+                        do {
+                            days.push(day.format('L'));
+                            for (var i = 0; i < $scope.model.chartSeries.length; i++) {
+                                data[i].push(null);
+                            }
+                        } while (day.add(1, 'days').isBefore(endDay));
+
+                        for (var i = 0; i < $scope.model.workTimeEntries.length; i++) {
+                            wte = $scope.model.workTimeEntries[i];
+
+                            dayIndex = days.indexOf($moment(wte.performedAt).format('L'));
+
+                            if (wte.workTimeEntryType === 'in') {
+                                serieIndex = data[2][dayIndex] === null ? 2 : 0;
+                            } else {
+                                serieIndex = data[3][dayIndex] === null ? 3 : 1;
+                            }
+
+                            data[serieIndex][dayIndex] = $moment(wte.performedAt).endOf('day').diff($moment(wte.performedAt), 'minutes');
+                        }
+
+                    }
+
+                    $scope.model.chartLabels = days;
+                    $scope.model.chartData = data;
+                };
+
+                utils.setPageSize = function (n) {
+                    $scope.model.itemsPerPage = n;
+                    $scope.actions.search();
+                };
             };
 
 
@@ -114,7 +208,9 @@ angular.module('ioAtSpotApp')
                     if (user === 'all') {
 
                         $scope.model.membersFilter = [];
-                        angular.forEach($scope.parent.currentOrganization.members, function (member) {
+
+
+                        angular.forEach($scope.model.members, function (member) {
                             $scope.model.membersFilter.push(member._user._id);
                         });
 
@@ -182,13 +278,16 @@ angular.module('ioAtSpotApp')
                         templateUrl: 'app/workTimeEntries/workTimeEntries.modal.html',
                         controller: 'WorkTimeEntriesModalCtrl',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             workTimeEntry: function () {
                                 var wte = {};
                                 angular.copy(workTimeEntry, wte);
                                 return wte;
                             },
                             organizationSettings: function () {
-                                return $scope.parent.currentOrganization.settings
+                                return authModel.currentOrganization.settings
                             }
                         }
                     }).result.then(function (workTimeEntry) {
@@ -210,17 +309,19 @@ angular.module('ioAtSpotApp')
                         templateUrl: 'app/workTimeEntries/workTimeEntries.modal.html',
                         controller: 'WorkTimeEntriesModalCtrl',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             workTimeEntry: function () {
                                 return null;
                             },
                             organizationSettings: function () {
-                                return $scope.parent.currentOrganization.settings
+                                return authModel.currentOrganization.settings
                             }
                         }
                     }).result.then(function (workTimeEntry) {
                         //callback function
                         $scope.proxies.create.request(workTimeEntry);
-
                     }, function () {
 
                     });
@@ -228,47 +329,59 @@ angular.module('ioAtSpotApp')
             };
 
             $scope.proxies = new function () {
+
                 var proxies = this;
+
+                proxies.loadMembers = function () {
+                    Members.query({
+                        organizationId: authModel.currentOrganization._id
+                    }).$promise.then(
+                        function (members) {
+                            $scope.model.members = members;
+                        },
+                        function (err) {
+                            messageCenterService.add('danger', err.data.error, {
+                                timeout: 3000
+                            });
+                        });
+                };
 
                 proxies.search = {
                     requestData: function () {
 
-                        console.log($scope.model.membersFilter);
-
                         return {
-                            organizationId: $scope.parent.currentOrganization._id,
+                            organizationId: authModel.currentOrganization._id,
                             page: $scope.model.page,
                             from: $scope.model.from,
                             to: $scope.model.to,
                             type: $scope.model.workTimeEntryType,
-                            members: JSON.stringify($scope.model.membersFilter)
+                            members: JSON.stringify($scope.model.membersFilter),
+                            itemsPerPage: $scope.model.itemsPerPage
                         };
                     },
                     request: function () {
                         WorkTimeEntries.query(proxies.search.requestData(), {}).$promise.then(
-                            function (pagedResult) {
-                                proxies.search.successCallback(pagedResult);
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.search.successCallback,
+                            proxies.search.errorCallback);
                     },
                     successCallback: function (pagedResult) {
-
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.workTimeEntries = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
 
+                        $scope.utils.setupChart();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
                 proxies.create = {
                     requestData: function (workTimeEntry) {
                         return {
-                            userId: $scope.parent.currentUser._id,
+                            userId: authModel.currentUser._id,
                             workTimeEntryType: workTimeEntry.workTimeEntryType,
                             manual: workTimeEntry.manual,
                             performedAt: workTimeEntry.performedAt
@@ -276,21 +389,19 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (workTimeEntry) {
                         WorkTimeEntries.create({
-                                organizationId: $scope.parent.currentOrganization._id
+                                organizationId: authModel.currentOrganization._id
                             },
                             proxies.create.requestData(workTimeEntry)).$promise.then(
-                            function (pagedResult) {
-                                proxies.create.successCallback();
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.create.successCallback,
+                            proxies.search.errorCallback);
                     },
-                    successCallback: function () {
+                    successCallback: function (pagedResult) {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -304,7 +415,7 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (workTimeEntry) {
                         WorkTimeEntries.update({
-                                organizationId: $scope.parent.currentOrganization._id,
+                                organizationId: authModel.currentOrganization._id,
                                 workTimeEntryId: workTimeEntry._id
                             },
                             proxies.edit.requestData(workTimeEntry)).$promise.then(
@@ -327,8 +438,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -338,16 +451,14 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (workTimeEntry) {
                         WorkTimeEntries.delete({
-                                organizationId: $scope.parent.currentOrganization._id,
+                                organizationId: authModel.currentOrganization._id,
                                 workTimeEntryId: workTimeEntry._id
                             },
                             proxies.delete.requestData(workTimeEntry)).$promise.then(
                             function () {
                                 proxies.delete.successCallback(workTimeEntry);
                             },
-                            function (err) {
-                                proxies.delete.errorCallback(err);
-                            });
+                            proxies.delete.errorCallback);
                     },
                     successCallback: function (workTimeEntry) {
 
@@ -356,29 +467,27 @@ angular.module('ioAtSpotApp')
                         } else {
                             $scope.actions.search();
                         }
-
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };
 
             $scope.proxies.search.request();
+            $scope.proxies.loadMembers();
 
-            socket.syncUpdates('workTimeEntry', $scope.parent.currentOrganization._id, function (event, item) {
+            socket.syncUpdates('workTimeEntry', authModel.currentOrganization._id, function (event, item) {
                 if ($scope.utils.matchFilters(item)) {
                     //It's interesting!
-                    console.log('interesting ', item);
-
                     $scope.proxies.search.request();
-                } else {
-                    console.log('not interesting', item);
                 }
             });
 
             $scope.$on('$destroy', function () {
-                socket.unsyncUpdates('workTimeEntry', $scope.parent.currentOrganization._id);
+                socket.unsyncUpdates('workTimeEntry', authModel.currentOrganization._id);
             });
 
         });

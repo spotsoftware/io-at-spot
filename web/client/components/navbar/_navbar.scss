@@ -33,9 +33,9 @@
         line-height: 30px;
         font-size: 24px;
         color: $white;
-    }
-    .navbar-brand:hover {
-        color: $white;
+        &:hover, &:active, &:focus {
+            color: $white;
+        }
     }
     .navbar-nav {
         > .open {
@@ -43,7 +43,9 @@
                 background-color: transparent;
                 color: $blue;
             }
-            > a:hover, > a:focus, > a:active {
+            > a:hover,
+            > a:focus,
+            > a:active {
                 background-color: transparent;
                 color: $blue;
             }
@@ -54,7 +56,9 @@
                 color: $white;
                 line-height: 35px;
             }
-            > a:hover, > a:focus, > a:active {
+            > a:hover,
+            > a:focus,
+            > a:active {
                 color: $white;
             }
             > p.navbar-text {
@@ -68,7 +72,9 @@
                     > a {
                         color: $white !important;
                     }
-                    > a:hover, > a:focus, > a:active {
+                    > a:hover,
+                    > a:focus,
+                    > a:active {
                         background-color: transparent;
                         color: $blue !important;
                         cursor: pointer !important;
@@ -81,7 +87,9 @@
                 color: $blue;
                 background-color: transparent;
             }
-            > a:hover, > a:focus, > a:active {
+            > a:hover,
+            > a:focus,
+            > a:active {
                 color: $blue;
                 background-color: transparent;
             }

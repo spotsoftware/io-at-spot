@@ -43,7 +43,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="it.spot.io.doorkeeper.activities.LoggedInActivity"
-            android:label="@string/app_title" />
+            android:label="@string/app_title"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="it.spot.io.doorkeeper.activities.LogInActivity"
             android:label="@string/app_title"></activity>

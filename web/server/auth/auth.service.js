@@ -16,7 +16,7 @@ var validateJwt = expressJwt({
  * Attaches the user object to the request if authenticated
  * Otherwise returns 403
  */
-function isAuthenticated() {
+function isAuthenticatedMiddleware() {
     return compose()
         // Validate jwt
         .use(function (req, res, next) {
@@ -43,39 +43,22 @@ function isAuthenticated() {
 }
 
 /**
- * Checks if the user role meets the minimum requirements of the route
-
-function hasRole(roleRequired) {
-    if (!roleRequired) throw new Error('Required role needs to be set');
-
-    return compose()
-        .use(isAuthenticated())
-        .use(function meetsRequirements(req, res, next) {
-            if (config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf(roleRequired)) {
-                next();
-            } else {
-                res.send(403);
-            }
-        });
-} */
-
-/**
  * Checks if the user is in organization
  */
-function ensureOrganizationUser() {
+function ensureOrganizationUserMiddleware() {
 
     return compose()
-        .use(isAuthenticated())
+        .use(isAuthenticatedMiddleware())
         .use(function ensureOrganizationUser(req, res, next) {
             var userId = req.user._id;
 
             var organizationId = new mongoose.Types.ObjectId(req.params["organizationId"]);
-            console.log(organizationId);
+
             Organization.findById(organizationId, function (err, organization) {
                 if (!err) {
                     var found = false;
                     organization.members.forEach(function (member) {
-                        if (member._user.equals(userId)) {
+                        if (member._user.equals(userId) && member.active) {
                             found = true;
                             next();
                         }
@@ -93,11 +76,11 @@ function ensureOrganizationUser() {
 /**
  * Checks if the user is one of the organization's owners
  */
-function ensureOrganizationAdmin() {
+function ensureOrganizationAdminMiddleware() {
 
 
     return compose()
-        .use(isAuthenticated())
+        .use(isAuthenticatedMiddleware())
         .use(function ensureOrganizationAdmin(req, res, next) {
 
             var userId = req.user._id;
@@ -108,7 +91,7 @@ function ensureOrganizationAdmin() {
                 if (!err) {
                     var found = false;
                     organization.members.forEach(function (member) {
-                        if (member._user.equals(userId) && member.role == "admin") {
+                        if (member._user.equals(userId) && member.active && member.role == "admin") {
                             found = true;
                             next();
                         }
@@ -127,11 +110,9 @@ function ensureOrganizationAdmin() {
 /**
  * Returns a jwt token signed by the app secret
  */
-function signToken(id, expiration) {
+function signToken(data, expiration) {
 
-    var signedToken = jwt.sign({
-        _id: id
-    }, config.secrets.session, {
+    var signedToken = jwt.sign(data, config.secrets.session, {
         expiresInMinutes: expiration ? expiration : 60 * 5
     });
 
@@ -141,10 +122,10 @@ function signToken(id, expiration) {
 /**
  * Verify a jwt token signed by the app secret
  */
-function verifyToken(token, callback) {
-
-    console.log('token='+token, 'session='+config.secrets.session);
-    jwt.verify(token, config.secrets.session, function (err, decoded) {
+function verifyToken(token, callback, ignoreExpiration) {
+    jwt.verify(token, config.secrets.session, {
+        ignoreExpiration: ignoreExpiration ? ignoreExpiration : false
+    }, function (err, decoded) {
         if (err) {
             console.log('error', err);
             return callback(err);
@@ -158,17 +139,23 @@ function verifyToken(token, callback) {
  * Set token cookie directly for oAuth strategies
  */
 function setTokenCookie(req, res) {
-    if (!req.user) return res.json(404, {
-        message: 'Something went wrong, please try again.'
+    if (!req.user) {
+        return res.json(404, {
+            message: 'Something went wrong, please try again.'
+        });
+    }
+    var token = signToken({
+        _id: req.user._id
     });
-    var token = signToken(req.user._id);
     res.cookie('token', JSON.stringify(token));
+    //console.log(req);
     res.redirect('/');
+    //res.send(200);
 }
 
-exports.ensureOrganizationUser = ensureOrganizationUser;
-exports.ensureOrganizationAdmin = ensureOrganizationAdmin;
-exports.isAuthenticated = isAuthenticated;
+exports.ensureOrganizationUserMiddleware = ensureOrganizationUserMiddleware;
+exports.ensureOrganizationAdminMiddleware = ensureOrganizationAdminMiddleware;
+exports.isAuthenticatedMiddleware = isAuthenticatedMiddleware;
 //exports.hasRole = hasRole;
 exports.signToken = signToken;
 exports.verifyToken = verifyToken;
