@@ -23,14 +23,6 @@
             android:orientation="vertical"
             android:background="@drawable/border_bottom_white">
 
-            <EditText
-                android:id="@+id/txtIp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:layout_marginBottom="@dimen/margin_4"
-                android:text="192.168.100.45" />
-
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/plus_sign_in_button"
                 android:layout_width="match_parent"

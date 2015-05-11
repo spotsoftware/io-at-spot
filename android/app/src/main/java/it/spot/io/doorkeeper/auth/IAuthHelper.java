@@ -29,6 +29,4 @@ public interface IAuthHelper {
     public void googleRevokeAccess();
 
     public void googleResolution(final int result, final Intent intent);
-
-    public void setupServerIpAddress(final String address);
 }

@@ -42,11 +42,6 @@ public class SplashActivity extends Activity implements IGoogleAuthListener {
 
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
 
-        this.mAddress = sharedPref.getString(DoorKeeperApplication.SHARED_PREFERENCE_IP_KEY, "");
-        if (this.mAddress != "") {
-            this.mAuthenticationHelper.setupServerIpAddress(this.mAddress);
-        }
-
         new Handler().postDelayed(new Runnable() {
 
             @Override

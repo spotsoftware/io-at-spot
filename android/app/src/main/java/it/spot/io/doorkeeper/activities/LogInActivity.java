@@ -3,12 +3,9 @@ package it.spot.io.doorkeeper.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,8 +18,6 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
-
-import java.util.regex.Pattern;
 
 import it.spot.io.doorkeeper.DoorKeeperApplication;
 import it.spot.io.doorkeeper.R;
@@ -50,12 +45,6 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
     private EditText mPasswordView;
     private Button mEmailSignInButton;
     private SignInButton mPlusSignInButton;
-    private EditText mTxtIp;
-    private static final Pattern FINAL_IP_ADDRESS = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
-
-    private static final Pattern PARTIAL_IP_ADDRESS =
-            Pattern.compile("^((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])\\.){0,3}" +
-                    "((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])){0,1}$");
 
     private View mLoginFormView;
 
@@ -69,6 +58,7 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
         this.setContentView(R.layout.activity_log_in);
 
         this.mPlusSignInButton = (SignInButton) this.findViewById(R.id.plus_sign_in_button);
+        this.mPlusSignInButton.setEnabled(true);
         if (this.areGooglePlayServicesSupported()) {
             this.mPlusSignInButton.setOnClickListener(new OnClickListener() {
 
@@ -83,43 +73,10 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
             this.mPlusSignInButton.setVisibility(View.GONE);
         }
 
-        this.mTxtIp = (EditText) findViewById(R.id.txtIp);
-        this.mTxtIp.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            private String mPreviousText = "";
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (PARTIAL_IP_ADDRESS.matcher(s).matches()) {
-                    mPreviousText = s.toString();
-
-                    if (FINAL_IP_ADDRESS.matcher(s).matches()) {
-                        mEmailSignInButton.setEnabled(true);
-                        mPlusSignInButton.setEnabled(true);
-                        mAuthenticationHelper.setupServerIpAddress(s.toString());
-
-                    } else {
-                        mEmailSignInButton.setEnabled(false);
-                        mPlusSignInButton.setEnabled(false);
-                    }
-                } else {
-                    s.replace(0, s.length(), mPreviousText);
-                }
-            }
-        });
-
         this.initializeLoginForm();
 
         this.mAuthenticationHelper = new AuthHelper();
         this.mAuthenticationHelper.setupGoogleAuthentication(this, this, AuthHelper.PLUS_REQUEST_CODE);
-        this.mAuthenticationHelper.setupServerIpAddress(this.mTxtIp.getText().toString());
 
         SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
 
@@ -130,19 +87,13 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
             editor.commit();
             this.mAuthenticationHelper.googleLogout();
         }
-
-        String address = sharedPref.getString(DoorKeeperApplication.SHARED_PREFERENCE_IP_KEY, "");
-        if (address != "") {
-            this.mTxtIp.setText(address);
-            this.mAuthenticationHelper.setupServerIpAddress(address);
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
 
         if (requestCode == AuthHelper.PLUS_REQUEST_CODE && responseCode == RESULT_OK) {
-            mAuthenticationHelper.googleResolution(responseCode, intent);
+            this.mAuthenticationHelper.googleResolution(responseCode, intent);
         } else if (requestCode == AuthHelper.PLUS_REQUEST_CODE && responseCode != Activity.RESULT_OK) {
             // If we've got an error we can't resolve, we're no longer in the midst of signing
             // in, so we can stop the progress spinner.
@@ -173,6 +124,7 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
         });
 
         this.mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        this.mEmailSignInButton.setEnabled(true);
         this.mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -293,7 +245,6 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
         SharedPreferences sharedPref = getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(DoorKeeperApplication.SHARED_PREFERENCE_TOKEN_KEY, user.getToken());
-        editor.putString(DoorKeeperApplication.SHARED_PREFERENCE_IP_KEY, mTxtIp.getText().toString());
         editor.commit();
 
         Intent intent = new Intent(this, LoggedInActivity.class);
