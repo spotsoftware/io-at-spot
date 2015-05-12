@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
@@ -26,4 +27,6 @@
 
     <dimen name="clock_width">100dp</dimen>
     <dimen name="clock_height">100dp</dimen>
+
+    <dimen name="widget_margin">@dimen/margin_2</dimen>
 </resources>
