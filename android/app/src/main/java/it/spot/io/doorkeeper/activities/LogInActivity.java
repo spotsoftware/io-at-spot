@@ -78,13 +78,18 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
         this.mAuthenticationHelper = new AuthHelper();
         this.mAuthenticationHelper.setupGoogleAuthentication(this, this, AuthHelper.PLUS_REQUEST_CODE);
 
-        SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
-
+        // checks logout
         final Bundle extras = this.getIntent().getExtras();
         if (extras != null && extras.getBoolean("logout")) {
+            // clears the shared preferences
+            SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString(DoorKeeperApplication.SHARED_PREFERENCE_TOKEN_KEY, "");
+            editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, "");
+            editor.putString(ILoggedUser.PREF_LOGGED_USER_NAME, "");
+            editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
+            editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "");
             editor.commit();
+            // disconnects the user
             this.mAuthenticationHelper.googleLogout();
         }
     }
@@ -237,24 +242,25 @@ public class LogInActivity extends BaseActivity implements IGoogleAuthListener {
 
     /**
      * This method handles the login flow completion.</br>
-     * No need to check error presence, this code gets executed only in the successful case.
+     * No need to check error presence, this code gets executed only in the successful case.<br/>
+     * The data of the logged user gets stored within shared preferences and directly passed to the next activity.
      *
-     * @param user the model mapping the logged user's data
+     * @param user the logged user model
      */
     private void onLoginCompleted(final ILoggedUser user) {
-        SharedPreferences sharedPref = getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(DoorKeeperApplication.SHARED_PREFERENCE_TOKEN_KEY, user.getToken());
+
+        final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, user.getId());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_NAME, user.getName());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN, user.getToken());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, user.getEmail());
         editor.commit();
 
-        Intent intent = new Intent(this, LoggedInActivity.class);
-        intent.putExtra("token", user.getToken());
-        intent.putExtra("email", user.getEmail());
-        intent.putExtra("name", user.getName());
-        intent.putExtra("id", user.getId());
-
-        startActivity(intent);
-        finish();
+        final Intent intent = new Intent(this, LoggedInActivity.class);
+        intent.putExtra(LoggedInActivity.EXTRA_LOGGED_USER, user);
+        this.startActivity(intent);
+        this.finish();
     }
 
     // }

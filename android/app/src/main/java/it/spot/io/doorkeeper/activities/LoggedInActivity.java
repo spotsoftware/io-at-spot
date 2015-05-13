@@ -3,7 +3,9 @@ package it.spot.io.doorkeeper.activities;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
@@ -22,16 +24,18 @@ import android.widget.Toast;
 
 import it.spot.io.doorkeeper.DoorKeeperApplication;
 import it.spot.io.doorkeeper.R;
-import it.spot.io.doorkeeper.proximity.ble.IBleHelper;
-import it.spot.io.doorkeeper.proximity.nfc.INfcHelper;
-import it.spot.io.doorkeeper.proximity.ble.BleHelper;
-import it.spot.io.doorkeeper.proximity.ble.IBleListener;
-import it.spot.io.doorkeeper.proximity.nfc.INfcListener;
-import it.spot.io.doorkeeper.proximity.nfc.NfcHelper;
 import it.spot.io.doorkeeper.model.ILoggedUser;
 import it.spot.io.doorkeeper.model.LoggedUser;
+import it.spot.io.doorkeeper.proximity.ble.BleHelper;
+import it.spot.io.doorkeeper.proximity.ble.IBleHelper;
+import it.spot.io.doorkeeper.proximity.ble.IBleListener;
+import it.spot.io.doorkeeper.proximity.nfc.INfcHelper;
+import it.spot.io.doorkeeper.proximity.nfc.INfcListener;
+import it.spot.io.doorkeeper.proximity.nfc.NfcHelper;
 
 public class LoggedInActivity extends BaseActivity implements IBleListener, INfcListener {
+
+    public static final String EXTRA_LOGGED_USER = "logged_user";
 
     private static final String TAG = "LoggedInActivity";
 
@@ -52,6 +56,8 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         super.onCreate(savedInstanceState);
 
         this.setContentView(R.layout.activity_logged_in);
+
+        Log.e("LOGGEDINACTIVITY", "" + this.getIntent().getAction());
 
         this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
         this.mOpenButton.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +86,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         this.mProgressDialog.setIndeterminate(true);
         this.mProgressDialog.setCancelable(false);
 
-        this.getUser();
+        this.getLoggedUser();
     }
 
     @Override
@@ -213,16 +219,25 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         finish();
     }
 
-    private void getUser() {
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            final String id = extras.getString("id");
-            final String token = extras.getString("token");
-            final String email = extras.getString("email");
-            final String name = extras.getString("name");
+    /**
+     * Tries to resolve the currently logged user.
+     */
+    private void getLoggedUser() {
 
-            this.mLoggedUser = new LoggedUser(id, name, token, email);
-            this.mNameTextView.setText(name);
+        final Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey(EXTRA_LOGGED_USER)) {
+            // this means we are coming from other app activities
+            this.mLoggedUser = extras.getParcelable(EXTRA_LOGGED_USER);
+            this.mNameTextView.setText(this.mLoggedUser.getName());
+        } else {
+            // this means that the application has been awakened by NFC intent filter
+            final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+            this.mLoggedUser = new LoggedUser(
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_ID, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_NAME, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "")
+            );
         }
     }
 

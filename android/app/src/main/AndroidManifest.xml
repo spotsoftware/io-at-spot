@@ -43,12 +43,21 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="it.spot.io.doorkeeper.activities.LoggedInActivity"
-            android:label="@string/app_title"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"/>
+            android:label="@string/app_title"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/it.spot.io.doorkeeper" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="it.spot.io.doorkeeper.activities.LogInActivity"
-            android:label="@string/app_title"></activity>
+            android:label="@string/app_title" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -70,7 +79,8 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/app_widget_info" />
         </receiver>
     </application>
