@@ -5,18 +5,18 @@ package it.spot.io.doorkeeper.proximity;
  */
 public interface IProximityServiceHelper {
 
-    public boolean adapterIsOff();
+    boolean adapterIsOff();
 
     /**
      * This method allows to know the state of the system service wrapped by the helper.
      *
      * @return a {@code boolean} which indicates if the system service is active or not.
      */
-    public boolean isActive();
+    boolean isActive();
 
-    public void stop();
+    void stop();
 
-    public void pause();
+    void pause();
 
-    public void resume();
+    void resume();
 }

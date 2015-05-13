@@ -3,7 +3,9 @@ package it.spot.io.doorkeeper.activities;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
@@ -22,16 +24,18 @@ import android.widget.Toast;
 
 import it.spot.io.doorkeeper.DoorKeeperApplication;
 import it.spot.io.doorkeeper.R;
-import it.spot.io.doorkeeper.proximity.ble.IBleHelper;
-import it.spot.io.doorkeeper.proximity.nfc.INfcHelper;
-import it.spot.io.doorkeeper.proximity.ble.BleHelper;
-import it.spot.io.doorkeeper.proximity.ble.IBleListener;
-import it.spot.io.doorkeeper.proximity.nfc.INfcListener;
-import it.spot.io.doorkeeper.proximity.nfc.NfcHelper;
 import it.spot.io.doorkeeper.model.ILoggedUser;
 import it.spot.io.doorkeeper.model.LoggedUser;
+import it.spot.io.doorkeeper.proximity.ble.BleHelper;
+import it.spot.io.doorkeeper.proximity.ble.IBleHelper;
+import it.spot.io.doorkeeper.proximity.ble.IBleListener;
+import it.spot.io.doorkeeper.proximity.nfc.INfcHelper;
+import it.spot.io.doorkeeper.proximity.nfc.INfcListener;
+import it.spot.io.doorkeeper.proximity.nfc.NfcHelper;
 
 public class LoggedInActivity extends BaseActivity implements IBleListener, INfcListener {
+
+    public static final String EXTRA_LOGGED_USER = "logged_user";
 
     private static final String TAG = "LoggedInActivity";
 
@@ -53,17 +57,9 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
 
         this.setContentView(R.layout.activity_logged_in);
 
-        this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
-        this.mOpenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBLEHelper.readSignature();
-                mOpenButton.setEnabled(false);
-            }
-        });
         this.mMarkCheckbox = (CheckBox) this.findViewById(R.id.chk_mark);
-
         this.mNameTextView = (TextView) this.findViewById(R.id.name);
+        this.getLoggedUser();
 
         /*
          * Bluetooth in Android 4.3 is accessed via the BluetoothManager, rather than
@@ -72,15 +68,27 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         BluetoothManager btManager = (BluetoothManager) this.getSystemService(BLUETOOTH_SERVICE);
         this.mBLEHelper = new BleHelper(this, btManager.getAdapter(), this, this.mMessageHandler);
 
-
         NfcManager nfcManager = (NfcManager) this.getSystemService(NFC_SERVICE);
         this.mNfcHelper = new NfcHelper(this, this, nfcManager.getDefaultAdapter());
+
+        if (!this.mNfcHelper.adapterIsOff() && !this.mNfcHelper.isP2PDisabled()) {
+            if (this.handleNFCIntent(this.getIntent())) {
+
+            }
+        }
+
+        this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
+        this.mOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBLEHelper.readSignature();
+                mOpenButton.setEnabled(false);
+            }
+        });
 
         this.mProgressDialog = new ProgressDialog(this);
         this.mProgressDialog.setIndeterminate(true);
         this.mProgressDialog.setCancelable(false);
-
-        this.getUser();
     }
 
     @Override
@@ -133,21 +141,13 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     @Override
     protected void onStop() {
         super.onStop();
-
         this.mBLEHelper.stop();
     }
 
     @Override
     protected void onNewIntent(final Intent intent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            if (!this.mNfcHelper.isP2PStarted()) {
-                Log.w(TAG, "Reading signature" + this.mNfcHelper.readSignature(intent));
-
-                this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
-            } else {
-                Log.w(TAG, "Reading result");
-                Toast.makeText(this, this.mNfcHelper.readAuthenticationResult(intent), Toast.LENGTH_LONG).show();
-            }
+        if (!this.handleNFCIntent(intent)) {
+            super.onNewIntent(intent);
         }
     }
 
@@ -188,7 +188,6 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     @Override
     public void onBLEReadSignatureCompleted(byte[] result) {
         //TODO: Check for signature
-
         this.mBLEHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
     }
 
@@ -204,36 +203,81 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
 
     // }
 
-    // { Private methods
+    // { INfcListener implementation
 
-    private void logout() {
-        Intent intent = new Intent(LoggedInActivity.this, LogInActivity.class);
-        intent.putExtra("logout", true);
-        startActivity(intent);
-        finish();
-    }
-
-    private void getUser() {
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            final String id = extras.getString("id");
-            final String token = extras.getString("token");
-            final String email = extras.getString("email");
-            final String name = extras.getString("name");
-
-            this.mLoggedUser = new LoggedUser(id, name, token, email);
-            this.mNameTextView.setText(name);
-        }
+    @Override
+    public void onSendTokenCompleted() {
+        Log.i(TAG, "send completed");
     }
 
     // }
 
-    // { Private classes
+    // { Private methods
+
+    /**
+     * If the intent comes from an NFC source this method tries to handle it,
+     * otherwise it doesn't affect the intent and does nothing.
+     *
+     * @param intent the intent to handle
+     * @return {@code true} if intent was handled, {@code false} otherwise
+     */
+    private boolean handleNFCIntent(final Intent intent) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            if (!this.mNfcHelper.isP2PStarted()) {
+                Log.w(TAG, "Reading signature" + this.mNfcHelper.readSignature(intent));
+
+                this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
+            } else {
+                Log.w(TAG, "Reading result");
+                Toast.makeText(this, this.mNfcHelper.readAuthenticationResult(intent), Toast.LENGTH_LONG).show();
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Goes back to the LogInActivity and achieves the logout.
+     */
+    private void logout() {
+        Intent intent = new Intent(this, LogInActivity.class);
+        intent.putExtra("logout", true);
+        this.startActivity(intent);
+        this.finish();
+    }
+
+    /**
+     * Tries to resolve the currently logged user.
+     */
+    private void getLoggedUser() {
+
+        final Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey(EXTRA_LOGGED_USER)) {
+            // this means we are coming from other app activities
+            this.mLoggedUser = extras.getParcelable(EXTRA_LOGGED_USER);
+        } else {
+            // this means that the application has been awakened by NFC intent filter
+            final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+            this.mLoggedUser = new LoggedUser(
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_ID, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_NAME, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "")
+            );
+        }
+
+        this.mNameTextView.setText(this.mLoggedUser.getName());
+    }
+
+    // }
+
+    // { Inner classes
 
     /*
      * We have a Handler to process event results on the main thread
      */
-    private Handler mMessageHandler = new Handler() {
+    private final Handler mMessageHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
@@ -250,11 +294,6 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
             }
         }
     };
-
-    @Override
-    public void onSendTokenCompleted() {
-        Log.i(TAG, "send completed");
-    }
 
     // }
 
