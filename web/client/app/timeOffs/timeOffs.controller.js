@@ -124,6 +124,26 @@ angular.module('ioAtSpotApp')
 
             $scope.actions = {
 
+                import: function () {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'app/timeOffs/timeOffs.import.modal.html',
+                        controller: 'TimeOffsImportModalCtrl',
+                        size: 'lg',
+                        resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
+                            organizationSettings: function () {
+                                return authModel.currentOrganization.settings
+                            }
+                        }
+                    }).result.then(function (timeOff) {
+                        
+
+                    }, function () {
+
+                    });
+                },
                 memberFilterChange: function (user) {
                     if (user === 'all') {
 
