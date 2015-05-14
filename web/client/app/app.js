@@ -13,7 +13,7 @@ angular.module('ioAtSpotApp', [
     'messageCenter',
     'equals',
     'chart.js',
-    'ngCsv'
+    'ngCsv',
 ])
     .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
         $urlRouterProvider

@@ -1,0 +1,122 @@
+<div class="modal-header">
+    <h3 class="modal-title">Import Time Offs</h3>
+</div>
+
+<div class="modal-body">
+
+    <div ng-show="model.step === 0">
+        <button type="button" class="btn btn-primary" ng-click="actions.selectFile()">Select csv file...</button>
+        <input id="timeOffsFileInput" type="file" on-read-file="actions.readCompleted($fileContent)" accept=".csv" />
+
+    </div>
+    <div ng-show="model.step === 1">
+        <div class="form-horizontal">
+            <div class="form-group top-detached">
+                <label class="col-xs-3 control-label">Email:</label>
+                <div class="col-xs-8 btn-group combo" dropdown is-open="utils.emailDropdownOpened">
+                    <button type="button" class="btn btn-primary dropdown-toggle">
+                        <span>{{model.fields[model.email]}}</span><span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="field in model.fields">
+                            <a ng-click="actions.selectEmail(field)">{{field}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group top-detached">
+                <label class="col-xs-3 control-label">Date:</label>
+                <div class="col-xs-8 btn-group combo" dropdown is-open="utils.dateDropdownOpened">
+                    <button type="button" class="btn btn-primary dropdown-toggle">
+                        <span>{{model.fields[model.date]}}</span><span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="field in model.fields">
+                            <a ng-click="actions.selectDate(field)">{{field}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group top-detached">
+                <label class="col-xs-3 control-label">Amount:</label>
+                <div class="col-xs-8 btn-group combo" dropdown is-open="utils.amountDropdownOpened">
+                    <button type="button" class="btn btn-primary dropdown-toggle">
+                        <span>{{model.fields[model.amount]}}</span><span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="field in model.fields">
+                            <a ng-click="actions.selectAmount(field)">{{field}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group top-detached">
+                <label class="col-xs-3 control-label">ExternalId:</label>
+                <div class="col-xs-8 btn-group combo" dropdown is-open="utils.externalIdDropdownOpened">
+                    <button type="button" class="btn btn-primary dropdown-toggle">
+                        <span>{{model.fields[model.externalId]}}</span><span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="field in model.fields">
+                            <a ng-click="actions.selectExternalId(field)">{{field}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="model.step === 2">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        ExternalId
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in model.rows | limitTo:5">
+                    <td>
+                        {{row[model.externalId]}}
+                    </td>
+                    <td>
+                        {{row[model.email]}}
+                    </td>
+                    <td>
+                        {{row[model.date]}}
+                    </td>
+                    <td>
+                        {{row[model.amount]}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="actions.next()">Next</button>
+</div>
