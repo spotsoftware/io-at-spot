@@ -44,6 +44,8 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
 
     private ILoggedUser mLoggedUser;
 
+    private boolean mHandledNfcOnStartup;
+
     private Button mOpenButton;
     private CheckBox mMarkCheckbox;
     private ProgressDialog mProgressDialog;
@@ -57,83 +59,91 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
 
         this.setContentView(R.layout.activity_logged_in);
 
+        this.mLoggedUser = this.retrieveLoggedUser();
+
+        if (this.mLoggedUser.getToken().isEmpty()) {
+            final Intent intent = new Intent(this, LogInActivity.class);
+            this.startActivity(intent);
+            this.finish();
+            return;
+        }
+
         this.mMarkCheckbox = (CheckBox) this.findViewById(R.id.chk_mark);
         this.mNameTextView = (TextView) this.findViewById(R.id.name);
-        this.getLoggedUser();
-
-        /*
-         * Bluetooth in Android 4.3 is accessed via the BluetoothManager, rather than
-         * the old static BluetoothAdapter.getInstance()
-         */
-        BluetoothManager btManager = (BluetoothManager) this.getSystemService(BLUETOOTH_SERVICE);
-        this.mBLEHelper = new BleHelper(this, btManager.getAdapter(), this, this.mMessageHandler);
+        this.mNameTextView.setText(this.mLoggedUser.getName());
 
         NfcManager nfcManager = (NfcManager) this.getSystemService(NFC_SERVICE);
         this.mNfcHelper = new NfcHelper(this, this, nfcManager.getDefaultAdapter());
 
-        if (!this.mNfcHelper.adapterIsOff() && !this.mNfcHelper.isP2PDisabled()) {
-            if (this.handleNFCIntent(this.getIntent())) {
+        this.mHandledNfcOnStartup = this.handleNFCIntent(this.getIntent());
 
-            }
+        if (!this.mHandledNfcOnStartup) {
+            // initializes bluetooth low energy helper
+            BluetoothManager btManager = (BluetoothManager) this.getSystemService(BLUETOOTH_SERVICE);
+            this.mBLEHelper = new BleHelper(this, btManager.getAdapter(), this, this.mMessageHandler);
+
+            // otherwise not useful
+            this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
+            this.mOpenButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBLEHelper.readSignature();
+                    mOpenButton.setEnabled(false);
+                }
+            });
+
+            this.mProgressDialog = new ProgressDialog(this);
+            this.mProgressDialog.setIndeterminate(true);
+            this.mProgressDialog.setCancelable(false);
         }
-
-        this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
-        this.mOpenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBLEHelper.readSignature();
-                mOpenButton.setEnabled(false);
-            }
-        });
-
-        this.mProgressDialog = new ProgressDialog(this);
-        this.mProgressDialog.setIndeterminate(true);
-        this.mProgressDialog.setCancelable(false);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        /*
-         * We need to enforce that Bluetooth is first enabled, and take the
-         * user to settings to enable it if they have not done so.
-         */
-        if (this.mBLEHelper.adapterIsOff()) {
-            //Bluetooth is disabled
-            final Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            this.startActivity(enableBtIntent);
-            return;
+        if (!this.mHandledNfcOnStartup) {
+            // enables Bluetooth Low Energy if needed
+            if (this.mBLEHelper.adapterIsOff()) {
+                //Bluetooth is disabled
+                final Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                this.startActivity(enableBtIntent);
+                return;
+            }
+
+            this.mBLEHelper.resume();
+
+            // enables NFC if needed
+            if (this.mNfcHelper.adapterIsOff()) {
+                final Intent enableNfcIntent = new Intent(Settings.ACTION_NFC_SETTINGS);
+                this.startActivity(enableNfcIntent);
+                return;
+            }
+
+            // enables NFC peer-to-peer if needed
+            if (this.mNfcHelper.isP2PDisabled()) {
+                final Intent enableNfcIntent = new Intent(Settings.ACTION_NFCSHARING_SETTINGS);
+                this.startActivity(enableNfcIntent);
+                return;
+            }
+
+            this.mNfcHelper.resume();
         }
-
-        this.mBLEHelper.resume();
-
-        if (this.mNfcHelper.adapterIsOff()) {
-            final Intent enableNfcIntent = new Intent(Settings.ACTION_NFC_SETTINGS);
-            this.startActivity(enableNfcIntent);
-            return;
-        }
-
-        if (this.mNfcHelper.isP2PDisabled()) {
-            final Intent enableNfcIntent = new Intent(Settings.ACTION_NFCSHARING_SETTINGS);
-            this.startActivity(enableNfcIntent);
-            return;
-        }
-
-        this.mNfcHelper.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        this.mProgressDialog.dismiss();
+        if (this.mProgressDialog != null) {
+            this.mProgressDialog.dismiss();
+        }
 
-        if (this.mBLEHelper.isActive()) {
+        if (this.mBLEHelper != null && this.mBLEHelper.isActive()) {
             this.mBLEHelper.pause();
         }
 
-        if (this.mNfcHelper.isActive()) {
+        if (this.mNfcHelper != null && this.mNfcHelper.isActive()) {
             this.mNfcHelper.pause();
         }
     }
@@ -141,7 +151,10 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     @Override
     protected void onStop() {
         super.onStop();
-        this.mBLEHelper.stop();
+
+        if (this.mBLEHelper != null) {
+            this.mBLEHelper.stop();
+        }
     }
 
     @Override
@@ -208,6 +221,10 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     @Override
     public void onSendTokenCompleted() {
         Log.i(TAG, "send completed");
+
+        if (this.mHandledNfcOnStartup) {
+            this.finish();
+        }
     }
 
     // }
@@ -224,7 +241,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     private boolean handleNFCIntent(final Intent intent) {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             if (!this.mNfcHelper.isP2PStarted()) {
-                Log.w(TAG, "Reading signature" + this.mNfcHelper.readSignature(intent));
+                Log.w(TAG, "Reading signature " + this.mNfcHelper.readSignature(intent));
 
                 this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
             } else {
@@ -250,24 +267,22 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     /**
      * Tries to resolve the currently logged user.
      */
-    private void getLoggedUser() {
+    private ILoggedUser retrieveLoggedUser() {
 
         final Bundle extras = getIntent().getExtras();
         if (extras != null && extras.containsKey(EXTRA_LOGGED_USER)) {
             // this means we are coming from other app activities
-            this.mLoggedUser = extras.getParcelable(EXTRA_LOGGED_USER);
+            return extras.getParcelable(EXTRA_LOGGED_USER);
         } else {
             // this means that the application has been awakened by NFC intent filter
             final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
-            this.mLoggedUser = new LoggedUser(
+            return new LoggedUser(
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_ID, ""),
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_NAME, ""),
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, ""),
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "")
             );
         }
-
-        this.mNameTextView.setText(this.mLoggedUser.getName());
     }
 
     // }
