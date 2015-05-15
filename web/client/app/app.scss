@@ -184,6 +184,10 @@ table.table {
     margin-top: 20px;
 }
 
+.left-detached {
+    margin-left: 20px;
+}
+
 .browsehappy {
     margin: 0.2em 0;
     background: #ccc;
@@ -346,7 +350,7 @@ table.table {
 //
 .modal {
     .modal-dialog {
-        max-width: 450px;
+        width: 450px;
         margin: 100px auto;
         .modal-content {
             .modal-header {
@@ -364,6 +368,9 @@ table.table {
                 border-top: none;
             }
         }
+    }
+    .modal-lg {
+        width: 700px;
     }
 }
 
@@ -413,7 +420,7 @@ table.timepicker {
 // INPUT FILE 
 //
 //
-input[type=file]{
+input[type=file] {
     display: none;
 }
 

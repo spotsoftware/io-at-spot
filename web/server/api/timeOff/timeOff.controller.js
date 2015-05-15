@@ -159,7 +159,67 @@ exports.index = function (req, res, next) {
     });
 };
 
+exports.batch = function (req, res, next) {
+
+    Organization
+        .findById(req.params.organizationId)
+        .populate('members._user')
+        .exec(function (err, organization) {
+
+            if (err) {
+                return next(err);
+            }
+
+            if (!organization) {
+                return next(new errorBuilder("organization not found", 404));
+            }
+
+            var items = req.body.timeOffs;
+
+            var newTimeOffs = [];
+            for (var i = 0; i < items.length; i++) {
+                TimeOff.findOne({
+                    externalId: items[i].externalId
+                }, function (err, timeOff) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (!timeOff) {
+                        //If timeOff is not existing
+                        var memberFound = false;
+                        for (var j = 0; j < organization.members.length && !memberFound; j++) {
+                            if (organization.members[j]._user.email === items[i].email) {
+                                memberFound = true;
+
+                                var newTimeOff = new TimeOff();
+
+                                newTimeOff._user = organization.members[j]._user;
+                                newTimeOff._organization = organization._id;
+                                newTimeOff.amount = items[i].amount;
+                                newTimeOff.timeOffType = items[i].timeOffType;
+                                newTimeOff.performedAt = items[i].performedAt;
+
+
+                                newTimeOffs.push(newTimeOff);
+                            }
+                        }
+                    }
+                });
+            }
+
+            TimeOff.collection.insert(newTimeOffs, {
+                continueOnError: 1
+            }, function (err, documents) {
+                return res.json(200);
+            });
+        });
+
+};
+
 exports.detail = function (req, res, next) {
+
+    var organizationId = req.params.organizationId;
 
     TimeOff.findById(req.param.id, function (err, timeOff) {
 

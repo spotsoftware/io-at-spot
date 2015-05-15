@@ -12,7 +12,8 @@ angular.module('ioAtSpotApp')
                     reader.onload = function (onLoadEvent) {
                         scope.$apply(function () {
                             fn(scope, {
-                                $fileContent: onLoadEvent.target.result
+                                $fileContent: onLoadEvent.target.result,
+                                $fileName: element.val().replace(/^.*[\\\/]/, '')
                             });
                         });
                     };

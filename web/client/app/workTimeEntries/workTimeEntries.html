@@ -31,8 +31,8 @@
                 <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tw'" uncheckable>This week</label>
             </div>
             <div class="col-xs-8 col-md-3">
-                <div class="btn-group combo" dropdown is-open="utils.userDropdownOpened">
-                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()">
+                <div class="btn-group combo" dropdown>
+                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()" dropdown-toggle>
                         <span>{{model.membersFilterText}}</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">

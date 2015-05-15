@@ -28,8 +28,8 @@
                         {{ authModel.currentUser.name }}<span ng-if="authModel.currentOrganization">@</span><a class="pointer" ng-click="selectOrganization()">{{ authModel.currentOrganization.name }}</a>
                     </p>
                 </li>
-                <li ng-show="isLoggedIn()" ng-class="{active: isActive('/settings')}" class="dropdown pointer">
-                    <a class="dropdown-toggle" data-toggle="dropdown">
+                <li ng-show="isLoggedIn()" ng-class="{active: isActive('/settings')}" class="dropdown pointer" dropdown>
+                    <a class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle>
                         <span class="glyphicon glyphicon-cog"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
