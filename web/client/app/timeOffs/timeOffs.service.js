@@ -45,6 +45,14 @@ angular.module('ioAtSpotApp')
                             timeOffId: '@timeOffId'
                         },
                         isArray: false
+                    },
+                    batch: {
+                        url: '/api/organizations/:organizationId/timeOffs/batch',
+                        method: 'POST',
+                        params: {
+                            organizationId: '@organizationId'
+                        },
+                        isArray: false
                     }
                 });
     }]);

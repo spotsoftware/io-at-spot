@@ -37,75 +37,6 @@
         </div>
     </div>
     <div ng-show="model.step === 1">
-        <div class="form-horizontal">
-            <div class="form-group top-detached">
-                <label class="control-label">Email:</label>
-                <div class="btn-group combo" dropdown>
-                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                        <span>{{model.fields[model.email]}}</span><span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="field in model.fields">
-                            <a ng-click="actions.selectEmail(field)">{{field}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="form-group top-detached">
-                <label class="col-xs-3 control-label">Date:</label>
-                <div class="col-xs-8 btn-group combo" dropdown>
-                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                        <span>{{model.fields[model.date]}}</span><span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="field in model.fields">
-                            <a ng-click="actions.selectDate(field)">{{field}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="form-group top-detached">
-                <label class="col-xs-3 control-label">Amount:</label>
-                <div class="col-xs-8 btn-group combo" dropdown>
-                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                        <span>{{model.fields[model.amount]}}</span><span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="field in model.fields">
-                            <a ng-click="actions.selectAmount(field)">{{field}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="form-group top-detached">
-                <label class="col-xs-3 control-label">ExternalId:</label>
-                <div class="col-xs-8 btn-group combo" dropdown>
-                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                        <span>{{model.fields[model.externalId]}}</span><span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="field in model.fields">
-                            <a ng-click="actions.selectExternalId(field)">{{field}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="form-group top-detached">
-                <label class="col-xs-3 control-label">Type:</label>
-                <div class="col-xs-8 btn-group combo" dropdown>
-                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                        <span>{{model.fields[model.type]}}</span><span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="field in model.fields">
-                            <a ng-click="actions.selectType(field)">{{field}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div ng-show="model.step === 2">
         <table class="table">
             <thead>
                 <tr>
@@ -125,23 +56,85 @@
                         Type
                     </th>
                 </tr>
+                <tr>
+                    <th>
+                        <div class="btn-group combo" dropdown>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                <span>{{model.fields[model.externalId]}}</span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="field in model.fields">
+                                    <a ng-click="actions.selectExternalId(field)">{{field}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="btn-group combo" dropdown>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                <span>{{model.fields[model.email]}}</span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="field in model.fields">
+                                    <a ng-click="actions.selectEmail(field)">{{field}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="btn-group combo" dropdown>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                <span>{{model.fields[model.date]}}</span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="field in model.fields">
+                                    <a ng-click="actions.selectDate(field)">{{field}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="btn-group combo" dropdown>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                <span>{{model.fields[model.amount]}}</span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="field in model.fields">
+                                    <a ng-click="actions.selectAmount(field)">{{field}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="btn-group combo" dropdown>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                <span>{{model.fields[model.type]}}</span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="field in model.fields">
+                                    <a ng-click="actions.selectType(field)">{{field}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="row in model.rows | limitTo:5">
+                <tr ng-repeat="dataRow in model.data | limitTo:5">
                     <td>
-                        {{row[model.externalId]}}
+                        {{dataRow[model.externalId]}}
                     </td>
                     <td>
-                        {{row[model.email]}}
+                        {{dataRow[model.email]}}
                     </td>
                     <td>
-                        {{row[model.date]}}
+                        {{dataRow[model.date]}}
                     </td>
                     <td>
-                        {{row[model.amount]}}
+                        {{dataRow[model.amount]}}
                     </td>
                     <td>
-                        {{row[model.type]}}
+                        {{dataRow[model.type]}}
                     </td>
                 </tr>
                 <tr>
@@ -167,6 +160,7 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="actions.prev()" ng-disabled="!utils.prevEnabled()">&lt; Previous</button>
-    <button class="btn btn-primary" ng-click="actions.next()" ng-disabled="!utils.nextEnabled()">Next &gt;</button>
+    <button class="btn btn-primary" ng-click="actions.prev()" ng-disabled="!utils.prevEnabled()">&lt; Back</button>
+    <button class="btn btn-primary" ng-click="actions.next()" ng-if="model.step === 0" ng-disabled="!utils.nextEnabled()">Next &gt;</button>
+    <button class="btn btn-success" ng-click="actions.startImport()" ng-if="model.step === 1" ng-disabled="!utils.importEnabled()">Import <span class="glyphicon glyphicon-cloud-upload"></span></button>
 </div>

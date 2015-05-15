@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .controller('TimeOffsImportModalCtrl', ['$scope', '$modalInstance', '$timeout', '$moment', 'Utils', 'organizationSettings', 'currentUser',
-        function ($scope, $modalInstance, $timeout, $moment, Utils, organizationSettings, currentUser) {
+    .controller('TimeOffsImportModalCtrl', ['$scope', '$modalInstance', '$timeout', '$moment', 'Utils', 'organizationSettings', 'currentUser', 'currentUser', 'TimeOffs',
+        function ($scope, $modalInstance, $timeout, $moment, Utils, organizationSettings, currentUser, TimeOffs) {
 
             $scope.model = new function () {
                 var model = this;
@@ -10,6 +10,7 @@ angular.module('ioAtSpotApp')
                 model.step = 0;
                 model.fileName = '';
                 model.rows = [];
+                model.data = [];
                 model.fields = [];
                 model.contentPreview = '';
                 model.separatorChar = ';';
@@ -34,13 +35,17 @@ angular.module('ioAtSpotApp')
                         return $scope.model.rows.length > 0;
                     case 1:
                         return false;
-                    case 2:
-                        return false;
                     }
                 };
 
-                utils.emailDropdownOpened = true;
-
+                utils.importEnabled = function () {
+                    return $scope.model.step === 1 &&
+                        $scope.model.externalId !== null &&
+                        $scope.model.email !== null &&
+                        $scope.model.date !== null &&
+                        $scope.model.amount !== null &&
+                        $scope.model.type !== null;
+                };
             };
 
             $scope.actions = new function () {
@@ -75,12 +80,17 @@ angular.module('ioAtSpotApp')
 
                 actions.parseCSV = function () {
                     var rows = $scope.model.rows;
+                    var data = [];
+
                     for (var i = 0; i < rows.length; i++) {
-                        rows[i] = rows[i].split($scope.model.separatorChar);
+                        rows[i].replace(/\n/g, '');
+                        if(rows[i] !== ''){
+                            data.push(rows[i].split($scope.model.separatorChar));
+                        }
                     }
-
-                    $scope.model.fields = rows.shift();
-
+console.log(data);
+                    $scope.model.fields = data.shift();
+                    $scope.model.data = data;
                 };
 
                 actions.selectFile = function () {
@@ -113,6 +123,77 @@ angular.module('ioAtSpotApp')
 
                 actions.selectType = function (text) {
                     $scope.model.type = $scope.model.fields.indexOf(text);
+                };
+
+                actions.startImport = function () {
+                    var externalId,
+                        email,
+                        date,
+                        amount,
+                        type,
+                        valid = true,
+                        itemsToPost = [];
+
+                    var err = {
+                        ex: null,
+                        msg: '',
+                        index: -1
+                    };
+
+                    for (var i = 0; i < $scope.model.data.length && valid; i++) {
+                        externalId = $scope.model.data[i][$scope.model.externalId];
+                        email = $scope.model.data[i][$scope.model.email];
+                        date = $scope.model.data[i][$scope.model.date];
+                        amount = $scope.model.data[i][$scope.model.amount];
+                        type = $scope.model.data[i][$scope.model.type];
+
+                        console.log(externalId, email, date, amount, type);
+
+                        //Begin validation
+                        if (!email.match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/)) {
+                            err.msg += 'invalid email ' + email;
+                            err.ex = 'invalid mail';
+                            valid = false;
+                        } else {
+                            try {
+
+                                amount = parseFloat(amount.replace(',', '.'));
+                                date = new Date(date);
+
+                                var item = {
+                                    externalId: externalId,
+                                    email: email,
+                                    date: date,
+                                    amount: amount,
+                                    type: type
+                                }
+
+                                itemsToPost.push(item);
+
+                            } catch (e) {
+                                valid = false;
+
+                                err.ex = e;
+                                err.msg += 'invalid parsing \n';
+                                err.index = i;
+                            }
+                        }
+                    }
+
+                    if (valid) {
+                        console.log(itemsToPost);
+                        /*
+                        TimeOffs.batch({
+                            organizationId: authModel.currentOrganization._id
+                        }, itemsToPost).$promise.then(function () {
+                            $modalInstance.close();
+                        }, function (err) {
+                            console.log(err);
+                        });
+                        */
+                    } else {
+                        console.log('err', err);
+                    }
                 };
             };
 
