@@ -69,11 +69,16 @@ angular.module('ioAtSpotApp', [
     $rootScope.$on('$stateChangeSuccess', function (event, next) {
 
         var authorizedRoles = next.data.authorizedRoles;
-        if (authorizedRoles && !Auth.isAuthorized(authorizedRoles)) {
 
-            $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-            console.log('unauthorizad', authorizedRoles);
-            $state.go("public.login");
+        if (authorizedRoles) {
+            Auth.isAuthorized(authorizedRoles, function (result) {
+
+                if (!result) {
+                    $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+                    console.log('unauthorizad', authorizedRoles);
+                    $state.go("public.login");
+                }
+            });
         }
     });
 
