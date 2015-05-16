@@ -14,6 +14,7 @@ angular.module('ioAtSpotApp', [
     'equals',
     'chart.js',
     'ngCsv',
+    'cgBusy'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
         $urlRouterProvider

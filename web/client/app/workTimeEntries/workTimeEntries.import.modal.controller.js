@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('ioAtSpotApp')
-    .controller('TimeOffsImportModalCtrl', ['$scope', '$modalInstance', '$timeout', '$moment', 'currentOrganization', 'currentUser', 'TimeOffs', 'messageCenterService',
-        function ($scope, $modalInstance, $timeout, $moment, currentOrganization, currentUser, TimeOffs, messageCenterService) {
+    .controller('WorkTimeEntriesImportModalCtrl', ['$scope', '$modalInstance', '$timeout', '$moment', 'currentOrganization', 'currentUser', 'WorkTimeEntries', 'messageCenterService',
+        function ($scope, $modalInstance, $timeout, $moment, currentOrganization, currentUser, WorkTimeEntries, messageCenterService) {
 
             $scope.model = new function () {
                 var model = this;
@@ -44,7 +44,6 @@ angular.module('ioAtSpotApp')
                         $scope.model.externalId !== null &&
                         $scope.model.email !== null &&
                         $scope.model.date !== null &&
-                        $scope.model.amount !== null &&
                         $scope.model.type !== null;
                 };
             };
@@ -63,7 +62,6 @@ angular.module('ioAtSpotApp')
 
                 actions.prev = function () {
                     $scope.model.step--;
-
                 };
 
                 actions.readCompleted = function (fileName, fileContent) {
@@ -97,7 +95,7 @@ angular.module('ioAtSpotApp')
                 actions.selectFile = function () {
 
                     $timeout(function () {
-                        var elem = angular.element('#timeOffsFileInput');
+                        var elem = angular.element('#workTimeEntriesFileInput');
                         elem.trigger('click');
                     }, 1);
                 };
@@ -114,10 +112,6 @@ angular.module('ioAtSpotApp')
                     $scope.model.date = $scope.model.fields.indexOf(text);
                 };
 
-                actions.selectAmount = function (text) {
-                    $scope.model.amount = $scope.model.fields.indexOf(text);
-                };
-
                 actions.selectExternalId = function (text) {
                     $scope.model.externalId = $scope.model.fields.indexOf(text);
                 };
@@ -130,7 +124,6 @@ angular.module('ioAtSpotApp')
                     var externalId,
                         email,
                         date,
-                        amount,
                         type,
                         valid = true,
                         itemsToPost = [];
@@ -145,7 +138,6 @@ angular.module('ioAtSpotApp')
                         externalId = $scope.model.data[i][$scope.model.externalId];
                         email = $scope.model.data[i][$scope.model.email];
                         date = $scope.model.data[i][$scope.model.date];
-                        amount = $scope.model.data[i][$scope.model.amount];
                         type = $scope.model.data[i][$scope.model.type];
 
                         //Begin validation
@@ -156,14 +148,12 @@ angular.module('ioAtSpotApp')
                         } else {
                             try {
 
-                                amount = parseFloat(amount.replace(',', '.'));
                                 date = new Date(date);
 
                                 var item = {
                                     externalId: externalId,
                                     email: email,
                                     date: date,
-                                    amount: amount,
                                     type: type
                                 }
 
@@ -180,7 +170,7 @@ angular.module('ioAtSpotApp')
                     }
 
                     if (valid) {
-                        $scope.model.importPromise = TimeOffs.batch({
+                        $scope.model.importPromise = WorkTimeEntries.batch({
                             organizationId: currentOrganization._id
                         }, {
                             items: itemsToPost

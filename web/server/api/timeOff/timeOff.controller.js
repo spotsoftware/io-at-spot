@@ -1,7 +1,9 @@
 'use strict';
 
+var async = require('async');
 var _ = require('lodash');
 var TimeOff = require('./timeOff.model');
+var Organization = require('../organization/organization.model');
 var mongoose = require('mongoose');
 var auth = require('../../auth/auth.service');
 var errorBuilder = require('../../error-builder');
@@ -83,53 +85,9 @@ exports.index = function (req, res, next) {
         });
     }
 
-    TimeOff.aggregate([
-        {
-            $match: {
-                $and: filterConditions
-            }
-        },
-        {
-            $group: {
-                _id: "$_user",
-                totalAmount: {
-                    $sum: '$amount'
-                },
-                count: {
-                    $sum: 1
-                }
-            }
-        }
-    ], function (err, results) {
-        if (err) {
-            return next(err);
-        }
-
-        var aggregatedData = {
-            userAggregatedData: [],
-            totalCount: 0,
-            totalAmount: 0
-        };
-
-        if (results.length > 0) {
-
-            console.log(results);
-
-            for (var i = 0; i < results.length; i++) {
-
-                var userAggregatedData = {};
-
-                userAggregatedData.user = results[i]._id;
-                userAggregatedData.count = results[i].count;
-                userAggregatedData.totalAmount = Math.round(results[i].totalAmount);
-
-                aggregatedData.userAggregatedData.push(userAggregatedData);
-                aggregatedData.totalCount += userAggregatedData.count;
-                aggregatedData.totalAmount += userAggregatedData.totalAmount;
-            }
-        }
-
-        //non scala: http://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js/23640287#23640287
+    TimeOff.count({
+        $and: filterConditions
+    }, function (err, count) {
         TimeOff
             .find({
                 $and: filterConditions
@@ -138,25 +96,97 @@ exports.index = function (req, res, next) {
             .sort('-performedAt')
             .skip((page - 1) * itemsPerPage).limit(itemsPerPage)
             .exec(function (err, timeOffs) {
-
                 if (err) {
                     return next(err);
                 }
 
                 var pagedResult = {
                     items: timeOffs,
-                    total: aggregatedData.totalCount,
-                    pages: Math.ceil(aggregatedData.totalCount / itemsPerPage),
+                    total: count,
+                    pages: Math.ceil(count / itemsPerPage),
                     currentPage: page,
-                    itemsPerPage: itemsPerPage,
-                    amountTime: aggregatedData.totalAmount
+                    itemsPerPage: itemsPerPage
                 };
 
                 return res.json(pagedResult);
-
             });
 
     });
+
+    /*
+        TimeOff.aggregate([
+            {
+                $match: {
+                    $and: filterConditions
+                }
+            },
+            {
+                $group: {
+                    _id: "$_user",
+                    totalAmount: {
+                        $sum: '$amount'
+                    },
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ], function (err, results) {
+            if (err) {
+                return next(err);
+            }
+
+            var aggregatedData = {
+                userAggregatedData: [],
+                totalCount: 0,
+                totalAmount: 0
+            };
+
+            if (results.length > 0) {
+
+                console.log(results);
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var userAggregatedData = {};
+
+                    userAggregatedData.user = results[i]._id;
+                    userAggregatedData.count = results[i].count;
+                    userAggregatedData.totalAmount = Math.round(results[i].totalAmount);
+
+                    aggregatedData.userAggregatedData.push(userAggregatedData);
+                    aggregatedData.totalCount += userAggregatedData.count;
+                    aggregatedData.totalAmount += userAggregatedData.totalAmount;
+                }
+            }
+
+            //non scala: http://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js/23640287#23640287
+            TimeOff
+                .find({
+                    $and: filterConditions
+                })
+                .populate('_user')
+                .sort('-performedAt')
+                .skip((page - 1) * itemsPerPage).limit(itemsPerPage)
+                .exec(function (err, timeOffs) {
+
+                    if (err) {
+                        return next(err);
+                    }
+
+                    var pagedResult = {
+                        items: timeOffs,
+                        total: aggregatedData.totalCount,
+                        pages: Math.ceil(aggregatedData.totalCount / itemsPerPage),
+                        currentPage: page,
+                        itemsPerPage: itemsPerPage,
+                        amountTime: aggregatedData.totalAmount
+                    };
+
+                    return res.json(pagedResult);
+
+                });
+        });*/
 };
 
 exports.batch = function (req, res, next) {
@@ -174,47 +204,63 @@ exports.batch = function (req, res, next) {
                 return next(new errorBuilder("organization not found", 404));
             }
 
-            var items = req.body.timeOffs;
+            var items = req.body.items;
 
             var newTimeOffs = [];
-            for (var i = 0; i < items.length; i++) {
+
+            async.each(items, function (item, callback) {
                 TimeOff.findOne({
-                    externalId: items[i].externalId
+                    externalId: item.externalId
                 }, function (err, timeOff) {
                     if (err) {
-                        return next(err);
-                    }
+                        callback(err);
+                    } else {
 
-                    if (!timeOff) {
-                        //If timeOff is not existing
-                        var memberFound = false;
-                        for (var j = 0; j < organization.members.length && !memberFound; j++) {
-                            if (organization.members[j]._user.email === items[i].email) {
-                                memberFound = true;
+                        if (!timeOff) {
+                            //if timeOff is not existing
+                            var memberFound = false;
+                            for (var j = 0; j < organization.members.length && !memberFound; j++) {
 
-                                var newTimeOff = new TimeOff();
+                                if (organization.members[j]._user.email === item.email) {
+                                    memberFound = true;
 
-                                newTimeOff._user = organization.members[j]._user;
-                                newTimeOff._organization = organization._id;
-                                newTimeOff.amount = items[i].amount;
-                                newTimeOff.timeOffType = items[i].timeOffType;
-                                newTimeOff.performedAt = items[i].performedAt;
+                                    var newTimeOff = {};
 
+                                    newTimeOff._user = organization.members[j]._user._id;
+                                    newTimeOff._organization = organization._id;
+                                    newTimeOff.amount = item.amount;
+                                    newTimeOff.timeOffType = item.type;
+                                    newTimeOff.performedAt = new Date(item.date);
+                                    newTimeOff.externalId = item.externalId;
+                                    newTimeOff.deleted = false;
+                                    newTimeOff.active = true;
 
-                                newTimeOffs.push(newTimeOff);
+                                    newTimeOffs.push(newTimeOff);
+                                }
                             }
                         }
+
+                        callback();
                     }
                 });
-            }
-
-            TimeOff.collection.insert(newTimeOffs, {
-                continueOnError: 1
-            }, function (err, documents) {
-                return res.json(200);
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                if (newTimeOffs.length > 0) {
+                    TimeOff.collection.insert(newTimeOffs, {
+                        continueOnError: 1
+                    }, function (err, documents) {
+                        if (err) {
+                            return next(err);
+                        }
+                        return res.json(200);
+                    });
+                } else {
+                    return res.json(200);
+                }
             });
         });
-
 };
 
 exports.detail = function (req, res, next) {
@@ -297,12 +343,21 @@ exports.destroy = function (req, res, next) {
         if (!timeOff) {
             return next(new errorBuilder("time off not found", 404));
         }
-        timeOff.deleted = true;
-        timeOff.save(function (err) {
-            if (err) {
-                return next(err);
-            }
-            return res.send(204);
-        });
+        if (!timeOff.externalId) {
+            timeOff.deleted = true;
+            timeOff.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send(204);
+            });
+        } else {
+            timeOff.remove(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send(204);
+            });
+        }
     });
 };

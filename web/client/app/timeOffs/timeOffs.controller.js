@@ -133,15 +133,21 @@ angular.module('ioAtSpotApp')
                             currentUser: function () {
                                 return authModel.currentUser;
                             },
-                            organizationSettings: function () {
-                                return authModel.currentOrganization.settings
+                            currentOrganization: function () {
+                                return authModel.currentOrganization;
                             }
                         }
-                    }).result.then(function (timeOff) {
-                        
+                    }).result.then(function () {
 
-                    }, function () {
+                        messageCenterService.add('success', 'Import completed successfully.', {
+                            timeout: 3000
+                        });
 
+                        $scope.actions.search();
+                    }, function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     });
                 },
                 memberFilterChange: function (user) {
@@ -279,6 +285,7 @@ angular.module('ioAtSpotApp')
                         organizationId: authModel.currentOrganization._id
                     }).$promise.then(
                         function (members) {
+
                             $scope.model.members = members;
                         },
                         function (err) {
@@ -310,6 +317,7 @@ angular.module('ioAtSpotApp')
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.timeOffs = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
+                        console.log(pagedResult);
                     },
                     errorCallback: function (err) {
                         messageCenterService.add('danger', err.data.error, {
