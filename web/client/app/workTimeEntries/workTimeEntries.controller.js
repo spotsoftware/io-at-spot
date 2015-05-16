@@ -393,7 +393,6 @@ angular.module('ioAtSpotApp')
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.workTimeEntries = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
-                        console.log(pagedResult);
                         $scope.utils.setupChart();
                     },
                     errorCallback: function (err) {

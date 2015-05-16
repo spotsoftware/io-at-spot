@@ -317,7 +317,6 @@ angular.module('ioAtSpotApp')
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.timeOffs = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
-                        console.log(pagedResult);
                     },
                     errorCallback: function (err) {
                         messageCenterService.add('danger', err.data.error, {
