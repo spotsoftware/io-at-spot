@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  BaseVC.h
 //  IoAtSpot
 //
 //  Created by Luca Giorgetti on 25/05/15.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface BaseVC : UIViewController
 
 @end
-

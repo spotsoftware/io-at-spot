@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7531" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TextInputView">
+            <connections>
+                <outlet property="contentView" destination="iN0-l3-epB" id="pyk-oh-qve"/>
+                <outlet property="imageView" destination="3Re-qX-uX0" id="3CU-vJ-aXN"/>
+                <outlet property="txtInput" destination="tC5-YB-jtm" id="XVo-UH-o2A"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="40"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Re-qX-uX0">
+                    <rect key="frame" x="0.0" y="8" width="25" height="25"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="25" id="aIr-Ud-HCY"/>
+                        <constraint firstAttribute="width" constant="25" id="oMw-GU-hGk"/>
+                    </constraints>
+                </imageView>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="tC5-YB-jtm">
+                    <rect key="frame" x="33" y="5" width="559" height="27"/>
+                    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="POq-4i-43p">
+                    <rect key="frame" x="0.0" y="39" width="600" height="1"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="bQ3-4S-zlb"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="POq-4i-43p" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Qea-Wv-RXr"/>
+                <constraint firstAttribute="trailing" secondItem="POq-4i-43p" secondAttribute="trailing" id="d0q-Hd-z8o"/>
+                <constraint firstAttribute="trailing" secondItem="tC5-YB-jtm" secondAttribute="trailing" constant="8" id="gah-Pw-DJ2"/>
+                <constraint firstItem="tC5-YB-jtm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="nMU-PM-B88"/>
+                <constraint firstItem="3Re-qX-uX0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="tIC-JN-evU"/>
+                <constraint firstItem="POq-4i-43p" firstAttribute="top" secondItem="tC5-YB-jtm" secondAttribute="bottom" constant="7" id="uUC-aD-gSv"/>
+                <constraint firstAttribute="bottom" secondItem="POq-4i-43p" secondAttribute="bottom" id="vxo-eh-3VY"/>
+                <constraint firstItem="tC5-YB-jtm" firstAttribute="leading" secondItem="3Re-qX-uX0" secondAttribute="trailing" constant="8" id="wOE-Ds-EGB"/>
+                <constraint firstAttribute="centerY" secondItem="3Re-qX-uX0" secondAttribute="centerY" id="wP5-dq-OG5"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="208" y="463"/>
+        </view>
+    </objects>
+</document>

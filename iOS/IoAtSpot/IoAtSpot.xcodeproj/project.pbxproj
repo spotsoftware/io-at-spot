@@ -10,7 +10,7 @@
 		3935318C1B135F8D006A66D3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3935318B1B135F8D006A66D3 /* main.m */; };
 		3935318F1B135F8D006A66D3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3935318E1B135F8D006A66D3 /* AppDelegate.m */; };
 		393531921B135F8D006A66D3 /* IoAtSpot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 393531901B135F8D006A66D3 /* IoAtSpot.xcdatamodeld */; };
-		393531951B135F8D006A66D3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 393531941B135F8D006A66D3 /* ViewController.m */; };
+		393531951B135F8D006A66D3 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 393531941B135F8D006A66D3 /* MainViewController.m */; };
 		393531981B135F8D006A66D3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 393531961B135F8D006A66D3 /* Main.storyboard */; };
 		3935319A1B135F8D006A66D3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393531991B135F8D006A66D3 /* Images.xcassets */; };
 		3935319D1B135F8D006A66D3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3935319B1B135F8D006A66D3 /* LaunchScreen.xib */; };
@@ -22,6 +22,13 @@
 		393531BE1B1363CB006A66D3 /* ic_person_white_18dp.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B71B1363CB006A66D3 /* ic_person_white_18dp.png */; };
 		393531BF1B1363CB006A66D3 /* ic_person_white_18dp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B81B1363CB006A66D3 /* ic_person_white_18dp@2x.png */; };
 		393531C01B1363CB006A66D3 /* ic_wifi.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B91B1363CB006A66D3 /* ic_wifi.png */; };
+		393531C61B1365C7006A66D3 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 393531C41B1365C7006A66D3 /* LoginVC.m */; };
+		393531C71B1365C7006A66D3 /* LoginVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 393531C51B1365C7006A66D3 /* LoginVC.xib */; };
+		393531CB1B136614006A66D3 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 393531CA1B136614006A66D3 /* BaseVC.m */; };
+		393531D01B1366C9006A66D3 /* TextInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 393531CF1B1366C9006A66D3 /* TextInputView.m */; };
+		393531D21B1366DC006A66D3 /* TextInputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 393531D11B1366DC006A66D3 /* TextInputView.xib */; };
+		3982F30C1B1369A40013B67A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3982F3081B1369A40013B67A /* Reachability.m */; };
+		3982F30D1B1369A40013B67A /* UIViewController+AutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 3982F30A1B1369A40013B67A /* UIViewController+AutoLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,8 +48,8 @@
 		3935318D1B135F8D006A66D3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3935318E1B135F8D006A66D3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		393531911B135F8D006A66D3 /* IoAtSpot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IoAtSpot.xcdatamodel; sourceTree = "<group>"; };
-		393531931B135F8D006A66D3 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		393531941B135F8D006A66D3 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		393531931B135F8D006A66D3 /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		393531941B135F8D006A66D3 /* MainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		393531971B135F8D006A66D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		393531991B135F8D006A66D3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3935319C1B135F8D006A66D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -56,6 +63,19 @@
 		393531B71B1363CB006A66D3 /* ic_person_white_18dp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_person_white_18dp.png; path = IoAtSpot/resouces/ic_person_white_18dp.png; sourceTree = "<group>"; };
 		393531B81B1363CB006A66D3 /* ic_person_white_18dp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ic_person_white_18dp@2x.png"; path = "IoAtSpot/resouces/ic_person_white_18dp@2x.png"; sourceTree = "<group>"; };
 		393531B91B1363CB006A66D3 /* ic_wifi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_wifi.png; path = IoAtSpot/resouces/ic_wifi.png; sourceTree = "<group>"; };
+		393531C31B1365C7006A66D3 /* LoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
+		393531C41B1365C7006A66D3 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
+		393531C51B1365C7006A66D3 /* LoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginVC.xib; sourceTree = "<group>"; };
+		393531C91B136614006A66D3 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
+		393531CA1B136614006A66D3 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
+		393531CE1B1366C9006A66D3 /* TextInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputView.h; sourceTree = "<group>"; };
+		393531CF1B1366C9006A66D3 /* TextInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputView.m; sourceTree = "<group>"; };
+		393531D11B1366DC006A66D3 /* TextInputView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextInputView.xib; sourceTree = "<group>"; };
+		3982F3071B1369A40013B67A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		3982F3081B1369A40013B67A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		3982F3091B1369A40013B67A /* UIViewController+AutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+AutoLayout.h"; sourceTree = "<group>"; };
+		3982F30A1B1369A40013B67A /* UIViewController+AutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+AutoLayout.m"; sourceTree = "<group>"; };
+		3982F30B1B1369A40013B67A /* Exceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exceptions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,11 +117,14 @@
 		393531881B135F8D006A66D3 /* IoAtSpot */ = {
 			isa = PBXGroup;
 			children = (
+				393531C81B136604006A66D3 /* Common */,
 				393531C21B136539006A66D3 /* SplashScreen */,
 				393531C11B13652C006A66D3 /* Login */,
 				393531B21B1363B5006A66D3 /* resources */,
 				3935318D1B135F8D006A66D3 /* AppDelegate.h */,
 				3935318E1B135F8D006A66D3 /* AppDelegate.m */,
+				393531931B135F8D006A66D3 /* MainViewController.h */,
+				393531941B135F8D006A66D3 /* MainViewController.m */,
 				393531961B135F8D006A66D3 /* Main.storyboard */,
 				393531991B135F8D006A66D3 /* Images.xcassets */,
 				393531901B135F8D006A66D3 /* IoAtSpot.xcdatamodeld */,
@@ -154,8 +177,8 @@
 		393531C11B13652C006A66D3 /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				393531931B135F8D006A66D3 /* ViewController.h */,
-				393531941B135F8D006A66D3 /* ViewController.m */,
+				393531CD1B1366AE006A66D3 /* View */,
+				393531CC1B1366A7006A66D3 /* ViewController */,
 			);
 			name = Login;
 			sourceTree = "<group>";
@@ -166,6 +189,64 @@
 				3935319B1B135F8D006A66D3 /* LaunchScreen.xib */,
 			);
 			name = SplashScreen;
+			sourceTree = "<group>";
+		};
+		393531C81B136604006A66D3 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				3982F3101B1369CC0013B67A /* Bases */,
+				3982F30E1B1369A90013B67A /* Reachability */,
+				3982F30F1B1369B40013B67A /* ViewController+Autolayout */,
+				3982F30B1B1369A40013B67A /* Exceptions.h */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		393531CC1B1366A7006A66D3 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				393531C31B1365C7006A66D3 /* LoginVC.h */,
+				393531C41B1365C7006A66D3 /* LoginVC.m */,
+				393531C51B1365C7006A66D3 /* LoginVC.xib */,
+			);
+			name = ViewController;
+			sourceTree = "<group>";
+		};
+		393531CD1B1366AE006A66D3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				393531CE1B1366C9006A66D3 /* TextInputView.h */,
+				393531CF1B1366C9006A66D3 /* TextInputView.m */,
+				393531D11B1366DC006A66D3 /* TextInputView.xib */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		3982F30E1B1369A90013B67A /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				3982F3071B1369A40013B67A /* Reachability.h */,
+				3982F3081B1369A40013B67A /* Reachability.m */,
+			);
+			name = Reachability;
+			sourceTree = "<group>";
+		};
+		3982F30F1B1369B40013B67A /* ViewController+Autolayout */ = {
+			isa = PBXGroup;
+			children = (
+				3982F3091B1369A40013B67A /* UIViewController+AutoLayout.h */,
+				3982F30A1B1369A40013B67A /* UIViewController+AutoLayout.m */,
+			);
+			name = "ViewController+Autolayout";
+			sourceTree = "<group>";
+		};
+		3982F3101B1369CC0013B67A /* Bases */ = {
+			isa = PBXGroup;
+			children = (
+				393531C91B136614006A66D3 /* BaseVC.h */,
+				393531CA1B136614006A66D3 /* BaseVC.m */,
+			);
+			name = Bases;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,6 +330,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				393531BA1B1363CB006A66D3 /* ic_lock_outline_white_18dp.png in Resources */,
+				393531C71B1365C7006A66D3 /* LoginVC.xib in Resources */,
+				393531D21B1366DC006A66D3 /* TextInputView.xib in Resources */,
 				393531BE1B1363CB006A66D3 /* ic_person_white_18dp.png in Resources */,
 				393531981B135F8D006A66D3 /* Main.storyboard in Resources */,
 				393531BC1B1363CB006A66D3 /* ic_logo.png in Resources */,
@@ -277,7 +360,12 @@
 			files = (
 				3935318F1B135F8D006A66D3 /* AppDelegate.m in Sources */,
 				3935318C1B135F8D006A66D3 /* main.m in Sources */,
-				393531951B135F8D006A66D3 /* ViewController.m in Sources */,
+				3982F30D1B1369A40013B67A /* UIViewController+AutoLayout.m in Sources */,
+				3982F30C1B1369A40013B67A /* Reachability.m in Sources */,
+				393531C61B1365C7006A66D3 /* LoginVC.m in Sources */,
+				393531CB1B136614006A66D3 /* BaseVC.m in Sources */,
+				393531D01B1366C9006A66D3 /* TextInputView.m in Sources */,
+				393531951B135F8D006A66D3 /* MainViewController.m in Sources */,
 				393531921B135F8D006A66D3 /* IoAtSpot.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,6 +567,7 @@
 				393531AE1B135F8D006A66D3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		393531AF1B135F8D006A66D3 /* Build configuration list for PBXNativeTarget "IoAtSpotTests" */ = {
 			isa = XCConfigurationList;
@@ -487,6 +576,7 @@
 				393531B11B135F8D006A66D3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
