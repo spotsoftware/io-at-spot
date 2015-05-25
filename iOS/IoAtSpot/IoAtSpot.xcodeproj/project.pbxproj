@@ -40,6 +40,8 @@
 		3982F3341B1371550013B67A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3982F3151B13708A0013B67A /* Foundation.framework */; };
 		3982F3351B1371550013B67A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3982F3131B1370830013B67A /* AssetsLibrary.framework */; };
 		3982F3361B1371550013B67A /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3982F3111B13707E0013B67A /* AddressBook.framework */; };
+		3982F3381B1371C30013B67A /* GooglePlus.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3982F3371B1371C30013B67A /* GooglePlus.bundle */; };
+		3982F33B1B13721D0013B67A /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3982F33A1B13721D0013B67A /* Constants.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +102,9 @@
 		3982F3251B1370D00013B67A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3982F3281B13712F0013B67A /* GoogleOpenSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleOpenSource.framework; sourceTree = "<group>"; };
 		3982F3291B13712F0013B67A /* GooglePlus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlus.framework; sourceTree = "<group>"; };
+		3982F3371B1371C30013B67A /* GooglePlus.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GooglePlus.bundle; sourceTree = "<group>"; };
+		3982F3391B13721D0013B67A /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		3982F33A1B13721D0013B67A /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +176,7 @@
 		393531891B135F8D006A66D3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3982F3371B1371C30013B67A /* GooglePlus.bundle */,
 				3982F3271B1370EA0013B67A /* Frameworks */,
 				3935318A1B135F8D006A66D3 /* Info.plist */,
 				3935318B1B135F8D006A66D3 /* main.m */,
@@ -234,6 +240,8 @@
 				3982F30E1B1369A90013B67A /* Reachability */,
 				3982F30F1B1369B40013B67A /* ViewController+Autolayout */,
 				3982F30B1B1369A40013B67A /* Exceptions.h */,
+				3982F3391B13721D0013B67A /* Constants.h */,
+				3982F33A1B13721D0013B67A /* Constants.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -395,6 +403,7 @@
 				393531BB1B1363CB006A66D3 /* ic_lock_outline_white_18dp@2x.png in Resources */,
 				393531C01B1363CB006A66D3 /* ic_wifi.png in Resources */,
 				3935319D1B135F8D006A66D3 /* LaunchScreen.xib in Resources */,
+				3982F3381B1371C30013B67A /* GooglePlus.bundle in Resources */,
 				3935319A1B135F8D006A66D3 /* Images.xcassets in Resources */,
 				393531BF1B1363CB006A66D3 /* ic_person_white_18dp@2x.png in Resources */,
 			);
@@ -419,6 +428,7 @@
 				3982F30D1B1369A40013B67A /* UIViewController+AutoLayout.m in Sources */,
 				3982F30C1B1369A40013B67A /* Reachability.m in Sources */,
 				393531C61B1365C7006A66D3 /* LoginVC.m in Sources */,
+				3982F33B1B13721D0013B67A /* Constants.m in Sources */,
 				393531CB1B136614006A66D3 /* BaseVC.m in Sources */,
 				393531D01B1366C9006A66D3 /* TextInputView.m in Sources */,
 				393531951B135F8D006A66D3 /* MainViewController.m in Sources */,
@@ -557,6 +567,7 @@
 				INFOPLIST_FILE = IoAtSpot/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -573,6 +584,7 @@
 				INFOPLIST_FILE = IoAtSpot/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
