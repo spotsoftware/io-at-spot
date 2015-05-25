@@ -15,6 +15,13 @@
 		3935319A1B135F8D006A66D3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393531991B135F8D006A66D3 /* Images.xcassets */; };
 		3935319D1B135F8D006A66D3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3935319B1B135F8D006A66D3 /* LaunchScreen.xib */; };
 		393531A91B135F8D006A66D3 /* IoAtSpotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 393531A81B135F8D006A66D3 /* IoAtSpotTests.m */; };
+		393531BA1B1363CB006A66D3 /* ic_lock_outline_white_18dp.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B31B1363CB006A66D3 /* ic_lock_outline_white_18dp.png */; };
+		393531BB1B1363CB006A66D3 /* ic_lock_outline_white_18dp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B41B1363CB006A66D3 /* ic_lock_outline_white_18dp@2x.png */; };
+		393531BC1B1363CB006A66D3 /* ic_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B51B1363CB006A66D3 /* ic_logo.png */; };
+		393531BD1B1363CB006A66D3 /* ic_nfc.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B61B1363CB006A66D3 /* ic_nfc.png */; };
+		393531BE1B1363CB006A66D3 /* ic_person_white_18dp.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B71B1363CB006A66D3 /* ic_person_white_18dp.png */; };
+		393531BF1B1363CB006A66D3 /* ic_person_white_18dp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B81B1363CB006A66D3 /* ic_person_white_18dp@2x.png */; };
+		393531C01B1363CB006A66D3 /* ic_wifi.png in Resources */ = {isa = PBXBuildFile; fileRef = 393531B91B1363CB006A66D3 /* ic_wifi.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +49,13 @@
 		393531A21B135F8D006A66D3 /* IoAtSpotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IoAtSpotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		393531A71B135F8D006A66D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		393531A81B135F8D006A66D3 /* IoAtSpotTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IoAtSpotTests.m; sourceTree = "<group>"; };
+		393531B31B1363CB006A66D3 /* ic_lock_outline_white_18dp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_lock_outline_white_18dp.png; path = IoAtSpot/resouces/ic_lock_outline_white_18dp.png; sourceTree = "<group>"; };
+		393531B41B1363CB006A66D3 /* ic_lock_outline_white_18dp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ic_lock_outline_white_18dp@2x.png"; path = "IoAtSpot/resouces/ic_lock_outline_white_18dp@2x.png"; sourceTree = "<group>"; };
+		393531B51B1363CB006A66D3 /* ic_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_logo.png; path = IoAtSpot/resouces/ic_logo.png; sourceTree = "<group>"; };
+		393531B61B1363CB006A66D3 /* ic_nfc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_nfc.png; path = IoAtSpot/resouces/ic_nfc.png; sourceTree = "<group>"; };
+		393531B71B1363CB006A66D3 /* ic_person_white_18dp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_person_white_18dp.png; path = IoAtSpot/resouces/ic_person_white_18dp.png; sourceTree = "<group>"; };
+		393531B81B1363CB006A66D3 /* ic_person_white_18dp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ic_person_white_18dp@2x.png"; path = "IoAtSpot/resouces/ic_person_white_18dp@2x.png"; sourceTree = "<group>"; };
+		393531B91B1363CB006A66D3 /* ic_wifi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_wifi.png; path = IoAtSpot/resouces/ic_wifi.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,13 +97,13 @@
 		393531881B135F8D006A66D3 /* IoAtSpot */ = {
 			isa = PBXGroup;
 			children = (
+				393531C21B136539006A66D3 /* SplashScreen */,
+				393531C11B13652C006A66D3 /* Login */,
+				393531B21B1363B5006A66D3 /* resources */,
 				3935318D1B135F8D006A66D3 /* AppDelegate.h */,
 				3935318E1B135F8D006A66D3 /* AppDelegate.m */,
-				393531931B135F8D006A66D3 /* ViewController.h */,
-				393531941B135F8D006A66D3 /* ViewController.m */,
 				393531961B135F8D006A66D3 /* Main.storyboard */,
 				393531991B135F8D006A66D3 /* Images.xcassets */,
-				3935319B1B135F8D006A66D3 /* LaunchScreen.xib */,
 				393531901B135F8D006A66D3 /* IoAtSpot.xcdatamodeld */,
 				393531891B135F8D006A66D3 /* Supporting Files */,
 			);
@@ -120,6 +134,38 @@
 				393531A71B135F8D006A66D3 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		393531B21B1363B5006A66D3 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				393531B31B1363CB006A66D3 /* ic_lock_outline_white_18dp.png */,
+				393531B41B1363CB006A66D3 /* ic_lock_outline_white_18dp@2x.png */,
+				393531B51B1363CB006A66D3 /* ic_logo.png */,
+				393531B61B1363CB006A66D3 /* ic_nfc.png */,
+				393531B71B1363CB006A66D3 /* ic_person_white_18dp.png */,
+				393531B81B1363CB006A66D3 /* ic_person_white_18dp@2x.png */,
+				393531B91B1363CB006A66D3 /* ic_wifi.png */,
+			);
+			name = resources;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		393531C11B13652C006A66D3 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				393531931B135F8D006A66D3 /* ViewController.h */,
+				393531941B135F8D006A66D3 /* ViewController.m */,
+			);
+			name = Login;
+			sourceTree = "<group>";
+		};
+		393531C21B136539006A66D3 /* SplashScreen */ = {
+			isa = PBXGroup;
+			children = (
+				3935319B1B135F8D006A66D3 /* LaunchScreen.xib */,
+			);
+			name = SplashScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,9 +248,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				393531BA1B1363CB006A66D3 /* ic_lock_outline_white_18dp.png in Resources */,
+				393531BE1B1363CB006A66D3 /* ic_person_white_18dp.png in Resources */,
 				393531981B135F8D006A66D3 /* Main.storyboard in Resources */,
+				393531BC1B1363CB006A66D3 /* ic_logo.png in Resources */,
+				393531BD1B1363CB006A66D3 /* ic_nfc.png in Resources */,
+				393531BB1B1363CB006A66D3 /* ic_lock_outline_white_18dp@2x.png in Resources */,
+				393531C01B1363CB006A66D3 /* ic_wifi.png in Resources */,
 				3935319D1B135F8D006A66D3 /* LaunchScreen.xib in Resources */,
 				3935319A1B135F8D006A66D3 /* Images.xcassets in Resources */,
+				393531BF1B1363CB006A66D3 /* ic_person_white_18dp@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
