@@ -9,16 +9,11 @@ sys.path.append('nfcpy')
 
 from custom_snep_server import CustomSnepServer
 
-#import cli
-#from cli import CommandLineInterface
-
 import nfc
 import nfc.snep
 
 class NFCController(object):
-    #clf = None
-    #p2pInitiated = False
-       
+
     def peer_connected(self, llc):
         socket = nfc.llcp.Socket(llc, nfc.llcp.LOGICAL_DATA_LINK)
         
@@ -57,12 +52,14 @@ class NFCController(object):
             
             signature = None
             
+            '''
             print tag
             sig = tag.transceive("\x3C\x00", timeout=1)
             assert len(sig) == 32 or len(sig) == 34
             if len(sig) == 34 and nfc.tag.tt2.crca(sig, 32) == sig[32:34]:
                 sig = sig[0:32]
             signature = binascii.hexlify(tag.sig)
+            '''
             
             signature = binascii.hexlify(tag.signature)
             print uid
@@ -131,7 +128,6 @@ def goodbye():
     print 'Goodbye!'
  
 if __name__ == '__main__':
-    global ctrl
     sys.path.insert(1, os.path.split(sys.path[0])[0])    
 
     atexit.register(goodbye)

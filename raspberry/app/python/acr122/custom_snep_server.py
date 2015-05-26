@@ -1,5 +1,5 @@
 import sys, os, argparse
-#import zerorpc
+import zerorpc
 
 sys.path.insert(1, os.path.split(sys.path[0])[0])
 sys.path.append('/home/pi/nfcpy')
@@ -25,9 +25,9 @@ class CustomSnepServer(nfc.snep.SnepServer):
         c.connect("tcp://127.0.0.1:4242")
         response = c.token(token, mark)
         
-        response = {
-            'message': 'ok'
-        }
+        #response = {
+        #    'message': 'ok'
+        #}
         
         print "STATUS: sending result to peer"
         #connect to peer (as client) and sends the response
