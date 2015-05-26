@@ -5,11 +5,11 @@ import threading
 import binascii
 import atexit
 
-sys.path.append('nfcpy')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/nfcpy')
 
 from custom_snep_server import CustomSnepServer
 
-import nfc
+from nfcpy import nfc
 import nfc.snep
 
 class NFCController(object):
@@ -128,7 +128,7 @@ def goodbye():
     print 'Goodbye!'
  
 if __name__ == '__main__':
-    sys.path.insert(1, os.path.split(sys.path[0])[0])    
+    #sys.path.insert(1, os.path.split(sys.path[0])[0])    
 
     atexit.register(goodbye)
     ctrl = NFCController()    
