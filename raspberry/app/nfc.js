@@ -33,6 +33,7 @@ var server = new zerorpc.Server({
             reply(null);
             
         });
+        
     }
 });
 
@@ -40,10 +41,13 @@ server.bind("tcp://0.0.0.0:4242");
 
 logger.debug('starting nfcpy');
 ///home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py
-var python = require('child_process').spawn('python', ["python/nfc_controller.py"]);
+var python = require('child_process').spawn('python', ["python/nfc_controller.py", "usb"]);
+//var python = require('child_process').spawn('python', ['python/nfc_controller.py', 'tty:AMA0:pn53x']);
 process.on('exit', function () {
     python.kill();
 });
+python.stdout.pipe(process.stdout);
+python.stderr.pipe(process.stderr);
 module.exports = function (listener) {
     _listener = listener;
 };

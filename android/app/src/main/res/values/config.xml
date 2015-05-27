@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="server_url">http://io.dokku.demo.spot.it:80</string>
+    <string name="server_url">http://io.spot.it:80</string>
 </resources>
