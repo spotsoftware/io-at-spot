@@ -11,7 +11,7 @@ var transporter = nodemailer.createTransport({
 
 
 function sendMail(data, callback) {
-    data.from = config.google.user;
+    data.from = 'io@spot';
     transporter.sendMail(data, callback);
 }
 

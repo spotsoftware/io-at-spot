@@ -7,5 +7,6 @@ package it.spot.io.doorkeeper.proximity.nfc;
  */
 public interface INfcListener {
 
-    public void onSendTokenCompleted();
+    void onSendTokenCompleted();
+    
 }

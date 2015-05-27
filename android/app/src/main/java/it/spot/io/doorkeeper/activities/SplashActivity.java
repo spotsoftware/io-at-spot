@@ -12,8 +12,8 @@ import it.spot.io.doorkeeper.DoorKeeperApplication;
 import it.spot.io.doorkeeper.R;
 import it.spot.io.doorkeeper.auth.AuthHelper;
 import it.spot.io.doorkeeper.auth.IAuthHelper;
-import it.spot.io.doorkeeper.http.IDataResponse;
 import it.spot.io.doorkeeper.auth.IGoogleAuthListener;
+import it.spot.io.doorkeeper.http.IDataResponse;
 import it.spot.io.doorkeeper.http.IHttpPostCallback;
 import it.spot.io.doorkeeper.model.ILoggedUser;
 
@@ -42,16 +42,11 @@ public class SplashActivity extends Activity implements IGoogleAuthListener {
 
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
 
-        this.mAddress = sharedPref.getString(DoorKeeperApplication.SHARED_PREFERENCE_IP_KEY, "");
-        if (this.mAddress != "") {
-            this.mAuthenticationHelper.setupServerIpAddress(this.mAddress);
-        }
-
         new Handler().postDelayed(new Runnable() {
 
             @Override
             public void run() {
-                String token = sharedPref.getString(DoorKeeperApplication.SHARED_PREFERENCE_TOKEN_KEY, "");
+                final String token = sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
                 if (token != "") {
                     refreshLocalToken(token);
                 } else {
@@ -85,21 +80,19 @@ public class SplashActivity extends Activity implements IGoogleAuthListener {
      * It stores in {@link android.content.SharedPreferences} the server's IP address and the user token,
      * then navigates to the application's landing page.
      *
-     * @param result the model returned by the server: it contains user's data.
+     * @param user the logged user model returned from the server
      */
-    private void onLoginCompleted(final ILoggedUser result) {
+    private void onLoginCompleted(final ILoggedUser user) {
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("token", result.getToken());
-        editor.putString("address", this.mAddress);
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, user.getId());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_NAME, user.getName());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN, user.getToken());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, user.getEmail());
         editor.commit();
 
         final Intent intent = new Intent(this, LoggedInActivity.class);
-        intent.putExtra("token", result.getToken());
-        intent.putExtra("email", result.getEmail());
-        intent.putExtra("name", result.getName());
-        intent.putExtra("id", result.getId());
-
+        intent.putExtra(LoggedInActivity.EXTRA_LOGGED_USER, user);
         this.startActivity(intent);
     }
 

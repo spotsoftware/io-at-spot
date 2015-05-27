@@ -12,7 +12,6 @@ public class DoorKeeperApplication extends Application {
 
     public static final String SHARED_PREFERENCE_NAME = "door_keeper_prefs";
     public static final String SHARED_PREFERENCE_TOKEN_KEY = "token";
-    public static final String SHARED_PREFERENCE_IP_KEY = "address";
 
     public static class MessageConstants {
         public static final int MSG_SIGNATURE = 101;

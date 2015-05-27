@@ -9,6 +9,8 @@
                 </button>
                 <button class="btn btn-primary" type="button" decimal-separator="." field-separator=";" add-bom="true" ng-csv="utils.getExportData()" csv-header="utils.getExportHeader()" filename="timeoffs.csv"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                 </button>
+                <button class="btn btn-primary" ng-if="utils.isCurrentOrganizationAdmin()" ng-click="actions.import()"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
     </div>
@@ -24,8 +26,8 @@
             </div>
 
             <div class="col-md-3">
-                <div class="btn-group combo" dropdown is-open="utils.userDropdownOpened">
-                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()">
+                <div class="btn-group combo" dropdown>
+                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()" dropdown-toggle>
                         <span>{{model.membersFilterText}}</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
@@ -41,8 +43,8 @@
             </div>
 
             <div class="col-md-2">
-                <div class="btn-group combo" dropdown is-open="utils.dropdownOpened">
-                    <button type="button" class="btn btn-primary dropdown-toggle">
+                <div class="btn-group combo" dropdown>
+                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
                         <span>{{model.timeOffTypeFilter}}</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">

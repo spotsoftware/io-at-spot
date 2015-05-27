@@ -124,6 +124,32 @@ angular.module('ioAtSpotApp')
 
             $scope.actions = {
 
+                import: function () {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'app/timeOffs/timeOffs.import.modal.html',
+                        controller: 'TimeOffsImportModalCtrl',
+                        size: 'lg',
+                        resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
+                            currentOrganization: function () {
+                                return authModel.currentOrganization;
+                            }
+                        }
+                    }).result.then(function () {
+
+                        messageCenterService.add('success', 'Import completed successfully.', {
+                            timeout: 3000
+                        });
+
+                        $scope.actions.search();
+                    }, function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
+                    });
+                },
                 memberFilterChange: function (user) {
                     if (user === 'all') {
 
@@ -259,6 +285,7 @@ angular.module('ioAtSpotApp')
                         organizationId: authModel.currentOrganization._id
                     }).$promise.then(
                         function (members) {
+
                             $scope.model.members = members;
                         },
                         function (err) {
