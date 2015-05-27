@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/nfcpy')
 
 from custom_snep_server import CustomSnepServer
 
-from nfcpy import nfc
+import nfc
 import nfc.snep
 
 class NFCController(object):
