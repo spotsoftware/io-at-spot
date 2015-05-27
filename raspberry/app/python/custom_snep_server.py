@@ -4,7 +4,7 @@ import zerorpc
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/nfcpy')
 
 import threading
-from nfcpy import nfc
+import nfc
 import nfc.snep
 
 class CustomSnepServer(nfc.snep.SnepServer):
