@@ -2,12 +2,9 @@ import sys, os, argparse
 import zerorpc
 import time
 import threading
-import custom_snep_server
 import binascii
 
-sys.path.insert(1, os.path.split(sys.path[0])[0])
-sys.path.append('/home/pi/nfcpy')
-sys.path.append('/home/pi/nfcpy/examples')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/nfcpy')
 from custom_snep_server import CustomSnepServer
 
 #import cli

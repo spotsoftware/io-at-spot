@@ -21,19 +21,19 @@ var server = new zerorpc.Server({
 
         logger.debug('nfc tag read, uid: ' + uid.toString() + ' signature: ' + signature.toString());
 
-        ecdsa.verifySignature(uid, signature, function(isValid){
-            
+        ecdsa.verifySignature(uid, signature, function (isValid) {
+
             if (!isValid) {
                 logger.debug('invalid uid signature');
                 return reply(null, isValid);
             }
-    
+
             //Valid UID
             _listener.onNFCTagSubmitted(uid);
             reply(null);
-            
+
         });
-        
+
     }
 });
 
@@ -41,13 +41,16 @@ server.bind("tcp://0.0.0.0:4242");
 
 logger.debug('starting nfcpy');
 ///home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py
-var python = require('child_process').spawn('python', ["python/nfc_controller.py", "usb"]);
-//var python = require('child_process').spawn('python', ['python/nfc_controller.py', 'tty:AMA0:pn53x']);
+var extNfc = require('child_process').spawn('python', ["python/acr122/nfc_controller.py", "usb"]);
+var intNfc = require('child_process').spawn('python', ['python/ada_pn532/nfc_controller.py']);
 process.on('exit', function () {
-    python.kill();
+    extNfc.kill();
+    intNfc.kill();
 });
-python.stdout.pipe(process.stdout);
-python.stderr.pipe(process.stderr);
+intNfc.stdout.pipe(process.stdout);
+intNfc.stderr.pipe(process.stderr);
+extNfc.stdout.pipe(process.stdout);
+extNfc.stderr.pipe(process.stderr);
 module.exports = function (listener) {
     _listener = listener;
 };

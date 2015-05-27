@@ -1,9 +1,7 @@
 import sys, os, argparse
 import zerorpc
 
-sys.path.insert(1, os.path.split(sys.path[0])[0])
-sys.path.append('/home/pi/nfcpy')
-sys.path.append('/home/pi/nfcpy/examples')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/nfcpy')
 
 import threading
 import nfc
