@@ -45,6 +45,14 @@ angular.module('ioAtSpotApp')
                             workEntryId: '@workTimeEntryId'
                         },
                         isArray: false
+                    },
+                    batch: {
+                        url: '/api/organizations/:organizationId/workTimeEntries/batch',
+                        method: 'POST',
+                        params: {
+                            organizationId: '@organizationId'
+                        },
+                        isArray: false
                     }
                 });
     }]);

@@ -28,6 +28,11 @@ var WorkTimeEntrySchema = new BaseSchema({
         type: Boolean,
         default: false,
         required: true
+    },
+    externalId: {
+        required: false,
+        type: String,
+        unique: true
     }
 });
 
@@ -37,7 +42,7 @@ var WorkTimeEntrySchema = new BaseSchema({
 WorkTimeEntrySchema.pre('validate', function (next) {
 
     var wte = this;
-    
+
     if (!wte.isNew) {
         return next();
     } else {
@@ -65,7 +70,7 @@ WorkTimeEntrySchema.pre('validate', function (next) {
 
                     wte.workTimeEntryType = entries.length === 0 ? 'in' : (entries[0].workTimeEntryType === 'out' ? 'in' : 'out');
                     wte.manual = false;
-                
+
                     return next();
                 });
         } else {

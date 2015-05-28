@@ -283,14 +283,16 @@ angular.module('ioAtSpotApp')
             }
         };
 
-        authService.isAuthorized = function (authorizedRoles) {
+        authService.isAuthorized = function (authorizedRoles, callback) {
 
             if (!angular.isArray(authorizedRoles)) {
                 authorizedRoles = [authorizedRoles];
             }
 
-            return (authService.isAuthenticated() &&
-                authorizedRoles.indexOf(authModel.currentUser.role) !== -1);
+            authService.isAuthenticatedAsync(function (result) {
+                callback(result &&
+                    authorizedRoles.indexOf(authModel.currentUser.role) !== -1);
+            });
         };
 
         /**

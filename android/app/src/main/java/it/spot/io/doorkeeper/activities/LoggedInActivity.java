@@ -75,9 +75,9 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         NfcManager nfcManager = (NfcManager) this.getSystemService(NFC_SERVICE);
         this.mNfcHelper = new NfcHelper(this, this, nfcManager.getDefaultAdapter());
 
-        this.mHandledNfcOnStartup = this.handleNFCIntent(this.getIntent());
+        //this.mHandledNfcOnStartup = this.handleNFCIntent(this.getIntent());
 
-        if (!this.mHandledNfcOnStartup) {
+        //if (!this.mHandledNfcOnStartup) {
             // initializes bluetooth low energy helper
             BluetoothManager btManager = (BluetoothManager) this.getSystemService(BLUETOOTH_SERVICE);
             this.mBLEHelper = new BleHelper(this, btManager.getAdapter(), this, this.mMessageHandler);
@@ -95,14 +95,14 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
             this.mProgressDialog = new ProgressDialog(this);
             this.mProgressDialog.setIndeterminate(true);
             this.mProgressDialog.setCancelable(false);
-        }
+        //}
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (!this.mHandledNfcOnStartup) {
+        //if (!this.mHandledNfcOnStartup) {
             // enables Bluetooth Low Energy if needed
             if (this.mBLEHelper.adapterIsOff()) {
                 //Bluetooth is disabled
@@ -127,8 +127,10 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
                 return;
             }
 
+            handleNFCIntent(getIntent());
+
             this.mNfcHelper.resume();
-        }
+        //}
     }
 
     @Override
@@ -220,7 +222,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
 
     @Override
     public void onSendTokenCompleted() {
-        Log.i(TAG, "send completed");
+        //Log.i(TAG, "send completed");
 
         if (this.mHandledNfcOnStartup) {
             this.finish();
@@ -240,6 +242,7 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
      */
     private boolean handleNFCIntent(final Intent intent) {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+
             if (!this.mNfcHelper.isP2PStarted()) {
                 Log.w(TAG, "Reading signature " + this.mNfcHelper.readSignature(intent));
 

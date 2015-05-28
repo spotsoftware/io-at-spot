@@ -203,7 +203,32 @@ angular.module('ioAtSpotApp')
 
 
             $scope.actions = {
+                import: function () {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'app/workTimeEntries/workTimeEntries.import.modal.html',
+                        controller: 'WorkTimeEntriesImportModalCtrl',
+                        size: 'lg',
+                        resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
+                            currentOrganization: function () {
+                                return authModel.currentOrganization;
+                            }
+                        }
+                    }).result.then(function () {
 
+                        messageCenterService.add('success', 'Import completed successfully.', {
+                            timeout: 3000
+                        });
+
+                        $scope.actions.search();
+                    }, function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
+                    });
+                },
                 memberFilterChange: function (user) {
                     if (user === 'all') {
 
@@ -368,7 +393,6 @@ angular.module('ioAtSpotApp')
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.workTimeEntries = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
-
                         $scope.utils.setupChart();
                     },
                     errorCallback: function (err) {

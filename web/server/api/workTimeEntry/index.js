@@ -13,4 +13,6 @@ router.put('/api/organizations/:organizationId/workTimeEntries/:id', auth.ensure
 router.patch('/api/organizations/:organizationId/workTimeEntries/:id', auth.ensureOrganizationUserMiddleware(), controller.update);
 router.delete('/api/organizations/:organizationId/workTimeEntries/:id', auth.ensureOrganizationUserMiddleware(), controller.destroy);
 
+router.post('/api/organizations/:organizationId/workTimeEntries/batch', auth.ensureOrganizationAdminMiddleware(), controller.batch);
+
 module.exports = router;

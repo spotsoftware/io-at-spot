@@ -13,4 +13,6 @@ router.put('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganiz
 router.patch('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUserMiddleware(), controller.update);
 router.delete('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUserMiddleware(), controller.destroy);
 
+router.post('/api/organizations/:organizationId/timeOffs/batch', auth.ensureOrganizationAdminMiddleware(), controller.batch);
+
 module.exports = router;
