@@ -81,16 +81,16 @@ function authorizeAccess(uid) {
     if (isWorkingTime()) {
         if (authenticateMember(uid)) {
 
-            logger.debug('offline access allowed: ' + uid + '. Unknown user.');
+            logger.info('offline access allowed: ' + uid );
             return true;
         } else {
 
-            logger.debug('offline access denied: ' + uid);
+            logger.info('offline access denied: ' + uid+ '. Unknown user.');
             return false;
         }
     } else {
 
-        logger.debug('offline access denied: ' + uid + '. No working time.');
+        logger.info('offline access denied: ' + uid + '. No working time.');
         return false;
     }
 }
