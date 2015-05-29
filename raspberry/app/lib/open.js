@@ -47,8 +47,6 @@ function usbDeviceOpener(nfc, devString) {
 
 function usbDeviceResetter(nfc, devString) {
     
-    console.log('resetting ', nfc, devString);
-    
   return function (cb) {
     nfc.dev.reset(function(err) {
       if (err) {
@@ -208,7 +206,6 @@ function openNfc(cb) {
 
 module.exports = {
   open: openNfc,
-  openInterface: openInterface,
-  reset: reset
+  openInterface: openInterface
 };
 
