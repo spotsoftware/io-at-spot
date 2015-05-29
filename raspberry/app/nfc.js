@@ -3,6 +3,8 @@ var zerorpc = require("zerorpc"),
     ecdsa = require('./ecdsa'),
     logger = require('./logger');
 
+var nfc = require('./lib/nfc');
+
 var _listener = null;
 
 var server = new zerorpc.Server({
@@ -37,20 +39,26 @@ var server = new zerorpc.Server({
     }
 });
 
-server.bind("tcp://0.0.0.0:4242");
+nfc.open(function (err, dev) {
+    setTimeout(function () {
+        server.bind("tcp://0.0.0.0:4242");
 
-logger.debug('starting nfcpy');
-///home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py
-var extNfc = require('child_process').spawn('python', ["python/acr122/nfc_controller.py", "usb"]);
-var intNfc = require('child_process').spawn('python', ['python/ada_pn532/nfc_controller.py']);
-process.on('exit', function () {
-    extNfc.kill();
-    intNfc.kill();
+        logger.debug('starting nfcpy');
+        ///home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py
+        var extNfc = require('child_process').spawn('python', ["python/acr122/nfc_controller.py", "usb"]);
+        var intNfc = require('child_process').spawn('python', ['python/ada_pn532/nfc_controller.py']);
+        process.on('exit', function () {
+            extNfc.kill();
+            intNfc.kill();
+        });
+        intNfc.stdout.pipe(process.stdout);
+        intNfc.stderr.pipe(process.stderr);
+        extNfc.stdout.pipe(process.stdout);
+        extNfc.stderr.pipe(process.stderr);
+    }, 1000);
 });
-intNfc.stdout.pipe(process.stdout);
-intNfc.stderr.pipe(process.stderr);
-extNfc.stdout.pipe(process.stdout);
-extNfc.stderr.pipe(process.stderr);
+
+
 module.exports = function (listener) {
     _listener = listener;
 };
