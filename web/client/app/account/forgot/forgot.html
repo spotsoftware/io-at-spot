@@ -1,9 +1,10 @@
+<div class="background">
+</div>
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <h1>Forgot</h1>
-        </div>
-        <div class="col-sm-12">
+        <div class="col-xs-10 col-sm-6  col-xs-offset-1 col-sm-offset-3 floating-form">
+            <h1>Forgot password</h1>
+
             <form class="form" name="form" ng-submit="forgot(form)" novalidate>
 
                 <div class="form-group" ng-class="{ 'has-success': form.email.$valid && submitted,
@@ -21,8 +22,8 @@
                 </div>
 
 
-                <div>
-                    <button class="btn btn-primary btn-lg btn-login" type="submit">
+                <div class="bottom-detached">
+                    <button class="btn btn-warning btn-lg btn-login" type="submit">
                         Reset password
                     </button>
                 </div>
@@ -30,5 +31,4 @@
             </form>
         </div>
     </div>
-    <hr>
 </div>

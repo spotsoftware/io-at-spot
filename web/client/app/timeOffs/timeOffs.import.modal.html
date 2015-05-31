@@ -1,0 +1,170 @@
+<div cg-busy="{promise:model.importPromise,message:'Importing data...',backdrop:true,delay:50,minDuration:700}">
+
+    <div class="modal-header">
+        <h3 class="modal-title">Import Time Offs</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <div ng-show="model.step === 0">
+            <div>
+                <p>
+                    Select a csv file separated with ';'. The file should have column headers on the first row, and these fields: Email, ExternalId, Date, Amount, Type
+                </p>
+                <div>
+                    <button type="button" class="btn btn-primary" ng-click="actions.selectFile()">Select csv file...</button>
+                    <input id="timeOffsFileInput" type="file" on-read-file="actions.readCompleted($fileName, $fileContent)" accept=".csv" />
+                    <span class="left-detached">{{model.fileName}} </span>
+                </div>
+
+            </div>
+            <div class="top-detached">
+                <pre ng-show="model.contentPreview">{{model.contentPreview}}</pre>
+            </div>
+            <div class="form-group top-detached" ng-show="model.contentPreview">
+                <label class="control-label">Separator</label>
+                <div class="btn-group combo" dropdown>
+                    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                        <span>{{model.separatorChar}}</span><span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a ng-click="actions.selectSeparator(';')">;</a>
+                        </li>
+                        <li>
+                            <a ng-click="actions.selectSeparator(',')">,</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div ng-show="model.step === 1">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            ExternalId
+                        </th>
+                        <th>
+                            Email
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <div class="btn-group combo" dropdown>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    <span>{{model.fields[model.externalId]}}</span><span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="field in model.fields">
+                                        <a ng-click="actions.selectExternalId(field)">{{field}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="btn-group combo" dropdown>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    <span>{{model.fields[model.email]}}</span><span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="field in model.fields">
+                                        <a ng-click="actions.selectEmail(field)">{{field}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="btn-group combo" dropdown>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    <span>{{model.fields[model.date]}}</span><span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="field in model.fields">
+                                        <a ng-click="actions.selectDate(field)">{{field}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="btn-group combo" dropdown>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    <span>{{model.fields[model.amount]}}</span><span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="field in model.fields">
+                                        <a ng-click="actions.selectAmount(field)">{{field}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="btn-group combo" dropdown>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    <span>{{model.fields[model.type]}}</span><span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="field in model.fields">
+                                        <a ng-click="actions.selectType(field)">{{field}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="dataRow in model.data | limitTo:5">
+                        <td>
+                            {{dataRow[model.externalId]}}
+                        </td>
+                        <td>
+                            {{dataRow[model.email]}}
+                        </td>
+                        <td>
+                            {{dataRow[model.date]}}
+                        </td>
+                        <td>
+                            {{dataRow[model.amount]}}
+                        </td>
+                        <td>
+                            {{dataRow[model.type]}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            ...
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="actions.prev()" ng-disabled="!utils.prevEnabled()">&lt; Back</button>
+        <button class="btn btn-primary" ng-click="actions.next()" ng-if="model.step === 0" ng-disabled="!utils.nextEnabled()">Next &gt;</button>
+        <button class="btn btn-success" ng-click="actions.startImport()" ng-if="model.step === 1" ng-disabled="!utils.importEnabled()">Import <span class="glyphicon glyphicon-cloud-upload"></span>
+        </button>
+    </div>
+</div>

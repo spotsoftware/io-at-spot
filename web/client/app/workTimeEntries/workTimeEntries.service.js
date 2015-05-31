@@ -17,7 +17,8 @@ angular.module('ioAtSpotApp')
                             organizationId: '@organizationId',
                             page: '@page',
                             to: '@to',
-                            type: '@type'
+                            type: '@type',
+                            itemsPerPage: '@itemsPerPage'
                         },
                         isArray: false //returns an object (that also contains an array)
                     },
@@ -42,6 +43,14 @@ angular.module('ioAtSpotApp')
                         params: {
                             organizationId: '@organizationId',
                             workEntryId: '@workTimeEntryId'
+                        },
+                        isArray: false
+                    },
+                    batch: {
+                        url: '/api/organizations/:organizationId/workTimeEntries/batch',
+                        method: 'POST',
+                        params: {
+                            organizationId: '@organizationId'
                         },
                         isArray: false
                     }

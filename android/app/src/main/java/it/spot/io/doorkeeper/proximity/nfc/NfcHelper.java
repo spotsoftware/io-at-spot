@@ -19,6 +19,8 @@ import java.nio.charset.Charset;
  */
 public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallback{
 
+    private String TAG = "NfcHelper";
+
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] intentFiltersArray;
     private PendingIntent mPendingIntent;
@@ -72,7 +74,6 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
 
     }
 
-
     private NdefRecord createTextRecord(String payload) {
         Charset utfEncoding = Charset.forName("UTF-8");
         byte[] textBytes = payload.getBytes(utfEncoding);
@@ -84,10 +85,11 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
     /**
      * Implementation for the CreateNdefMessageCallback interface
      */
-    private NdefMessage createNdefMessage(String text) {
+    private NdefMessage createNdefMessage(String text, boolean mark) {
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[]{
-                        createTextRecord(text)
+                        createTextRecord(text),
+                        createTextRecord(mark ? "true" : "false")
                 });
         return msg;
     }
@@ -115,7 +117,6 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
 
     @Override
     public void resume() {
-        Log.i("LoggedInActivity","on resume");
         this.mIsActive = true;
         this.mNfcAdapter.enableForegroundDispatch(mActivity, mPendingIntent, intentFiltersArray, null);
     }
@@ -126,15 +127,13 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
     }
 
     @Override
-    public void writeToken(final String token, final boolean isEntrance) {
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                NfcHelper.this.mNfcAdapter.setNdefPushMessage(createNdefMessage(token + (isEntrance ? "I" : "O")), mActivity);
-//            }
-//        }, 200);
-
-        mNfcAdapter.setNdefPushMessage(createNdefMessage(token + (isEntrance ? "I" : "O")), mActivity);
+    public void writeToken(final String token, final boolean mark) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mNfcAdapter.setNdefPushMessage(createNdefMessage(token, mark), mActivity);
+            }
+        }, 200);
     }
 
     @Override
@@ -155,7 +154,8 @@ public class NfcHelper implements INfcHelper, NfcAdapter.OnNdefPushCompleteCallb
 
     @Override
     public void onNdefPushComplete(NfcEvent nfcEvent) {
-        Log.i("LoggedInActivity", "send completed");
+
+        Log.w(TAG, "send completed");
         this.mListener.onSendTokenCompleted();
         this.status = 1;
     }

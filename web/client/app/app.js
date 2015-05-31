@@ -11,16 +11,18 @@ angular.module('ioAtSpotApp', [
     'xeditable',
     'duScroll',
     'messageCenter',
-    'equals'
+    'equals',
+    'chart.js',
+    'ngCsv',
+    'cgBusy'
 ])
-    .config(
-        function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, USER_ROLES) {
-            $urlRouterProvider
-                .otherwise('/');
+    .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
+        $urlRouterProvider
+            .otherwise('/');
 
-            $locationProvider.html5Mode(true);
-            $httpProvider.interceptors.push('authInterceptor');
-        })
+        $locationProvider.html5Mode(true);
+        $httpProvider.interceptors.push('authInterceptor');
+    })
 
 .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
     return {
@@ -47,11 +49,13 @@ angular.module('ioAtSpotApp', [
     };
 })
 
-.run(function ($rootScope, $state, Auth, editableOptions, AUTH_EVENTS) {
-
+.run(function ($rootScope, $location, Auth, editableOptions, AUTH_EVENTS, $moment, $state) {
     // Redirect to login if route requires auth and you're not logged in
+
+    $moment.locale('it');
+
     $rootScope.$on('$stateChangeStart', function (event, next) {
-        console.log('stateChangeStart');
+
         var authorizedRoles = next.data.authorizedRoles;
         if (authorizedRoles && !Auth.getAuthModel().currentUser._id && (!Auth.getAuthModel().$promise || Auth.getAuthModel().$promise.resolved)) {
 
@@ -63,13 +67,18 @@ angular.module('ioAtSpotApp', [
 
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeSuccess', function (event, next) {
-        console.log('stateChangeSuccess');
-        var authorizedRoles = next.data.authorizedRoles;
-        if (authorizedRoles && !Auth.isAuthorized(authorizedRoles)) {
 
-            $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-            console.log('unauthorizad', authorizedRoles);
-            $state.go("public.login");
+        var authorizedRoles = next.data.authorizedRoles;
+
+        if (authorizedRoles) {
+            Auth.isAuthorized(authorizedRoles, function (result) {
+
+                if (!result) {
+                    $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+                    console.log('unauthorizad', authorizedRoles);
+                    $state.go("public.login");
+                }
+            });
         }
     });
 

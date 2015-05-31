@@ -6,11 +6,13 @@ var auth = require('../../auth/auth.service');
 
 var router = express.Router();
 
-router.get('/api/organizations/:organizationId/timeOffs', auth.ensureOrganizationUser(), controller.index);
-router.get('/api/organizations/:organizationId/timeOffs:id', auth.ensureOrganizationUser(), controller.detail);
-router.post('/api/organizations/:organizationId/timeOffs', auth.ensureOrganizationUser(), controller.create);
-router.put('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUser(), controller.update);
-router.patch('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUser(), controller.update);
-router.delete('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUser(), controller.destroy);
+router.get('/api/organizations/:organizationId/timeOffs', auth.ensureOrganizationUserMiddleware(), controller.index);
+router.get('/api/organizations/:organizationId/timeOffs:id', auth.ensureOrganizationUserMiddleware(), controller.detail);
+router.post('/api/organizations/:organizationId/timeOffs', auth.ensureOrganizationUserMiddleware(), controller.create);
+router.put('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUserMiddleware(), controller.update);
+router.patch('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUserMiddleware(), controller.update);
+router.delete('/api/organizations/:organizationId/timeOffs/:id', auth.ensureOrganizationUserMiddleware(), controller.destroy);
+
+router.post('/api/organizations/:organizationId/timeOffs/batch', auth.ensureOrganizationAdminMiddleware(), controller.batch);
 
 module.exports = router;

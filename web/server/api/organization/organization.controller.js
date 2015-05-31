@@ -31,37 +31,46 @@ exports.index = function (req, res, next) {
             }
 
             var organizationsToReturn = [];
+            var invitesToReturn = [];
 
             organizations.forEach(function (org) {
                 for (var i = 0; i < org.members.length; i++) {
                     if (org.members[i]._user._id.equals(userId)) {
 
-                        var organization = org.public;
-                        organization.userRole = org.members[i].role;
-                        organizationsToReturn.push(organization);
+                        if (org.members[i].active) {
+                            var organization = org.public;
+                            organization.userRole = org.members[i].role;
+                            organizationsToReturn.push(organization);
+                        } else {
+                            var invite = org.members[i].toObject();
+                            invite.organization = org.public;
+                            invitesToReturn.push(invite);
+                        }
                     }
                 }
             });
-
-            return res.json(200, organizationsToReturn);
+            return res.json(200, {
+                organizations: organizationsToReturn,
+                invites: invitesToReturn
+            });
         });
 };
 
 // Get a single organization
-exports.detail = function (req, res) {
+exports.detail = function (req, res, next) {
 
-   Organization.findById(req.params.organizationId, function (err, organization) {
+    Organization.findById(req.params.organizationId, function (err, organization) {
 
-       if (err) {
-           return next(err);
-       }
+        if (err) {
+            return next(err);
+        }
 
-       if (!organization) {
-           return next(new errorBuilder("No organization matching the given id was found.", 404));
-       }
+        if (!organization) {
+            return next(new errorBuilder("No organization matching the given id was found.", 404));
+        }
 
-       return res.json(organization);
-   });
+        return res.json(organization);
+    });
 };
 
 // Creates a new organization in the DB.
@@ -74,7 +83,8 @@ exports.create = function (req, res, next) {
 
     newOrganization.members = [{
         _user: user,
-        role: "admin"
+        role: "admin",
+        active: true
     }];
 
 
@@ -103,6 +113,7 @@ exports.create = function (req, res, next) {
     workingDays[5].active = false;
     workingDays[6].active = false;
     newOrganization.settings.workingDays = workingDays;
+    newOrganization.settings.timeOffTypes = ['ferie', 'malattia'];
 
     newOrganization.save(function (err, organization) {
 
@@ -110,18 +121,11 @@ exports.create = function (req, res, next) {
             return next(err);
         }
 
-        newOrganization.populate('members._user', function (err, organization) {
 
-            if (err) {
-                return next(err);
-            }
-
-            res.status(201);
-            res.location('/api/organizations/' + organization._id);
-
-            return res.json(organization.public);
-        });
-
+        res.status(201);
+        res.location('/api/organizations/' + organization._id);
+        organization.userRole = 'admin';
+        return res.json(organization.public);
 
     });
 };

@@ -4,6 +4,7 @@ var express = require('express');
 var passport = require('passport');
 var config = require('../config/environment');
 var User = require('../api/user/user.model');
+var Organization = require('../api/organization/organization.model');
 var auth = require('./auth.service');
 
 // Passport Configuration

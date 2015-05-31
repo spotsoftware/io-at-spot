@@ -2,8 +2,9 @@
 
 angular.module('ioAtSpotApp')
     .controller('TimeOffsCtrl',
-        function ($scope, $http, socket, Auth, TimeOffs, $moment, $modal) {
+        function ($scope, $http, socket, authModel, TimeOffs, $moment, $modal, Members, messageCenterService) {
 
+            //var authModel = Auth.getAuthModel();
 
             $scope.model = new function () {
                 var model = this;
@@ -14,18 +15,20 @@ angular.module('ioAtSpotApp')
                 model.maxPaginationSize = 5;
                 model.itemsPerPage = 10;
 
+                model.showFilters = true;
+
                 model.day = new Date();
 
                 model.fastPeriodFilter = null;
-                model.membersFilter = [$scope.parent.currentUser._id];
-                model.membersFilterText = $scope.parent.currentUser.name;
+                model.membersFilter = [authModel.currentUser._id];
+                model.membersFilterText = authModel.currentUser.name;
                 model.timeOffTypeFilter = 'All';
                 model.from = null;
                 model.to = null;
 
                 //model.organization = Auth.getCurrentOrganization(organizations);
-                model.workingDays = $scope.parent.currentOrganization.settings.workingDays;
-                model.timeOffTypes = $scope.parent.currentOrganization.settings.timeOffTypes;
+                model.workingDays = authModel.currentOrganization.settings.workingDays;
+                model.timeOffTypes = authModel.currentOrganization.settings.timeOffTypes;
 
                 $scope.$watch('model.fastPeriodFilter', function (newValue, oldValue) {
 
@@ -56,15 +59,25 @@ angular.module('ioAtSpotApp')
                         $scope.proxies.search.request();
                     }
                 });
+
+                $scope.$on('organization-updated', function (event, data) {
+                    var newOrganization = data.newOrganization;
+                    var oldOrganization = data.oldOrganization;
+
+                    if (newOrganization !== oldOrganization) {
+
+                        $scope.proxies.loadMembers();
+                        $scope.proxies.search.request();
+                    }
+                });
             };
 
             $scope.utils = new function () {
                 var utils = this;
 
-                //utils.isCurrentOrganizationAdmin = Auth.isCurrentOrganizationAdmin;
                 utils.userDropdownOpened = false;
 
-                utils.format = 'dd-MMMM-yyyy';
+                utils.format = 'dd MMMM yyyy';
 
                 utils.disabled = function (date, mode) {
                     return false;
@@ -74,39 +87,116 @@ angular.module('ioAtSpotApp')
                 utils.fromOpened = false;
                 utils.toOpened = false;
 
+                utils.isCurrentOrganizationAdmin = function () {
+
+                    return authModel.currentOrganization.userRole === 'admin';
+                };
+
+                utils.setPageSize = function (n) {
+                    $scope.model.itemsPerPage = n;
+                    $scope.actions.search();
+                };
+
+                utils.getExportData = function () {
+                    var data = [];
+                    for (var i = 0; i < $scope.model.timeOffs.length; i++) {
+
+                        data.push({
+                            name: $scope.model.timeOffs[i]._user.name,
+                            date: $moment($scope.model.timeOffs[i].performedAt).format('L'),
+                            type: $scope.model.timeOffs[i].timeOffType,
+                            amount: $scope.model.timeOffs[i].amount
+                        });
+                    }
+
+                    return data;
+                };
+
+                utils.getExportHeader = function () {
+                    return ['Name', 'Date', 'Type', 'Amount'];
+                };
+
+                utils.getExportFileName = function () {
+                    return 'timeoffs.csv';
+                };
             };
 
 
             $scope.actions = {
+
+                import: function () {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'app/timeOffs/timeOffs.import.modal.html',
+                        controller: 'TimeOffsImportModalCtrl',
+                        size: 'lg',
+                        resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
+                            currentOrganization: function () {
+                                return authModel.currentOrganization;
+                            }
+                        }
+                    }).result.then(function () {
+
+                        messageCenterService.add('success', 'Import completed successfully.', {
+                            timeout: 3000
+                        });
+
+                        $scope.actions.search();
+                    }, function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
+                    });
+                },
+                memberFilterChange: function (user) {
+                    if (user === 'all') {
+
+                        $scope.model.membersFilter = [];
+                        angular.forEach($scope.model.members, function (member) {
+                            $scope.model.membersFilter.push(member._user._id);
+                        });
+
+                        $scope.model.membersFilterText = 'All';
+
+                    } else {
+                        $scope.model.membersFilterText = user.name;
+                        $scope.model.membersFilter = [user._id];
+                    }
+                    $scope.utils.userDropdownOpened = false;
+                    $scope.actions.search();
+                },
+
                 timeOffTypeChange: function (timeOffType) {
                     $scope.model.timeOffTypeFilter = timeOffType;
                     $scope.utils.dropdownOpened = false;
                 },
 
                 lastMonth: function () {
-                    $scope.model.from = $moment().subtract('month', 1).startOf('month');
-                    $scope.model.to = $moment().subtract('month', 1).endOf('month');
+                    $scope.model.from = $moment().subtract('month', 1).startOf('month').toDate();
+                    $scope.model.to = $moment().subtract('month', 1).endOf('month').toDate();
 
                     $scope.actions.search();
                 },
 
                 lastWeek: function () {
-                    $scope.model.from = $moment().subtract('week', 1).startOf('week');
-                    $scope.model.to = $moment().subtract('week', 1).endOf('week');
+                    $scope.model.from = $moment().subtract('week', 1).startOf('week').toDate();
+                    $scope.model.to = $moment().subtract('week', 1).endOf('week').toDate();
 
                     $scope.actions.search();
                 },
 
                 thisMonth: function () {
-                    $scope.model.from = $moment().startOf('month');
-                    $scope.model.to = $moment().endOf('month');
+                    $scope.model.from = $moment().startOf('month').toDate();
+                    $scope.model.to = $moment().endOf('month').toDate();
 
                     $scope.actions.search();
                 },
 
                 thisWeek: function () {
-                    $scope.model.from = $moment().startOf('week');
-                    $scope.model.to = $moment().endOf('week');
+                    $scope.model.from = $moment().startOf('week').toDate();
+                    $scope.model.to = $moment().endOf('week').toDate();
 
                     $scope.actions.search();
                 },
@@ -135,13 +225,16 @@ angular.module('ioAtSpotApp')
                         templateUrl: 'app/timeOffs/timeOffs.modal.html',
                         controller: 'TimeOffsModalCtrl',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             timeOff: function () {
                                 var to = {};
                                 angular.copy(timeOff, to);
                                 return to;
                             },
                             organizationSettings: function () {
-                                return $scope.parent.currentOrganization.settings
+                                return authModel.currentOrganization.settings
                             }
                         }
                     }).result.then(function (timeOff) {
@@ -162,12 +255,16 @@ angular.module('ioAtSpotApp')
                     var modalInstance = $modal.open({
                         templateUrl: 'app/timeOffs/timeOffs.modal.html',
                         controller: 'TimeOffsModalCtrl',
+                        //size: 'lg',
                         resolve: {
+                            currentUser: function () {
+                                return authModel.currentUser;
+                            },
                             timeOff: function () {
                                 return null;
                             },
                             organizationSettings: function () {
-                                return $scope.parent.currentOrganization.settings
+                                return authModel.currentOrganization.settings
                             }
                         }
                     }).result.then(function (timeOff) {
@@ -183,42 +280,55 @@ angular.module('ioAtSpotApp')
             $scope.proxies = new function () {
                 var proxies = this;
 
+                proxies.loadMembers = function () {
+                    Members.query({
+                        organizationId: authModel.currentOrganization._id
+                    }).$promise.then(
+                        function (members) {
+
+                            $scope.model.members = members;
+                        },
+                        function (err) {
+                            messageCenterService.add('danger', err.data.error, {
+                                timeout: 3000
+                            });
+                        });
+                };
+
                 proxies.search = {
                     requestData: function () {
 
                         return {
                             from: $scope.model.from,
-                            organizationId: $scope.parent.currentOrganization._id,
+                            organizationId: authModel.currentOrganization._id,
                             page: $scope.model.page,
                             timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
-                            to: $scope.model.to
+                            to: $scope.model.to,
+                            members: JSON.stringify($scope.model.membersFilter),
+                            itemsPerPage: $scope.model.itemsPerPage
                         };
                     },
                     request: function () {
                         TimeOffs.query(proxies.search.requestData(), {}).$promise.then(
-                            function (pagedResult) {
-                                proxies.search.successCallback(pagedResult);
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.search.successCallback,
+                            proxies.search.errorCallback);
                     },
                     successCallback: function (pagedResult) {
-
                         $scope.model.totalNumber = pagedResult.total;
                         $scope.model.timeOffs = pagedResult.items;
                         $scope.model.page = pagedResult.currentPage;
-
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
                 proxies.create = {
                     requestData: function (timeOff) {
                         return {
-                            userId: $scope.parent.currentUser._id,
+                            userId: authModel.currentUser._id,
                             timeOffType: timeOff.timeOffType,
                             amount: timeOff.amount,
                             performedAt: timeOff.performedAt
@@ -226,21 +336,19 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (timeOff) {
                         TimeOffs.create({
-                                organizationId: $scope.parent.currentOrganization._id
+                                organizationId: authModel.currentOrganization._id
                             },
                             proxies.create.requestData(timeOff)).$promise.then(
-                            function () {
-                                proxies.create.successCallback();
-                            },
-                            function (err) {
-                                proxies.search.errorCallback(err);
-                            });
+                            proxies.create.successCallback,
+                            proxies.create.errorCallback);
                     },
                     successCallback: function () {
                         proxies.search.request();
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -253,18 +361,16 @@ angular.module('ioAtSpotApp')
                         }
                     },
                     request: function (timeOff) {
-                        console.log('edit', timeOff);
+
                         TimeOffs.update({
-                                organizationId: $scope.parent.currentOrganization._id,
+                                organizationId: authModel.currentOrganization._id,
                                 timeOffId: timeOff._id
                             },
                             proxies.edit.requestData(timeOff)).$promise.then(
-                            function (timeOff) {
+                            function () {
                                 proxies.edit.successCallback(timeOff);
                             },
-                            function (err) {
-                                proxies.edit.errorCallback(err);
-                            });
+                            proxies.edit.errorCallback);
                     },
                     successCallback: function (timeOff) {
 
@@ -278,8 +384,10 @@ angular.module('ioAtSpotApp')
                         }
 
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
 
@@ -289,39 +397,30 @@ angular.module('ioAtSpotApp')
                     },
                     request: function (timeOff) {
                         TimeOffs.delete({
-                                organizationId: $scope.parent.currentOrganization._id,
+                                organizationId: authModel.currentOrganization._id,
                                 timeOffId: timeOff._id
                             },
                             proxies.delete.requestData(timeOff)).$promise.then(
                             function () {
                                 proxies.delete.successCallback(timeOff);
                             },
-                            function (err) {
-                                proxies.delete.errorCallback(err);
-                            });
+                            proxies.delete.errorCallback);
                     },
                     successCallback: function (timeOff) {
-
-                        //                        for (var i = 0; i < $scope.model.timeOffs.length; i++) {
-                        //                            if ($scope.model.timeOffs[i]._id === timeOff._id) {
-                        //                                $scope.model.timeOffs.splice(i, 1);
-                        //                                break;
-                        //                            }
-                        //                        }
-
                         if ($scope.model.timeOffs.length === 1 && $scope.model.page > 1) {
                             $scope.model.page -= 1;
                         } else {
                             $scope.actions.search();
                         }
-
                     },
-                    errorCallback: function (error) {
-                        console.log(error);
+                    errorCallback: function (err) {
+                        messageCenterService.add('danger', err.data.error, {
+                            timeout: 3000
+                        });
                     }
                 };
             };
 
             $scope.proxies.search.request();
-
+            $scope.proxies.loadMembers();
         });

@@ -10,7 +10,14 @@ angular.module('ioAtSpotApp')
                     query: {
                         url: '/api/organizations/',
                         method: 'GET',
-                        isArray: true //not paged
+                        isArray: false
+                    },
+                    detail: {
+                        method: 'GET',
+                        params: {
+                            organizationId: '@organizationId'
+                        },
+                        isArray: false
                     },
                     update: {
                         method: 'PUT',
@@ -32,7 +39,7 @@ angular.module('ioAtSpotApp')
                         isArray: false
                     },
                     readUid: {
-                        url: '/api/organizations/:organizationId/readuid',
+                        url: '/api/organizations/:organizationId/uid',
                         params: {
                             organizationId: '@organizationId'
                         },

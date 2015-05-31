@@ -1,20 +1,45 @@
 package it.spot.io.doorkeeper.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
- * Created by andreacorzani on 18/10/14.
+ * @author a.rinaldi
  */
 public class LoggedUser implements ILoggedUser {
+
+    // { Properties
+
     private String mName;
     private String mId;
     private String mToken;
     private String mEmail;
 
-    public LoggedUser(String id, String name, String token, String email){
+    // }
+
+    // { Construction
+
+    public LoggedUser(final String id, final String name, final String token, final String email) {
+        super();
+
         this.mId = id;
         this.mName = name;
         this.mToken = token;
         this.mEmail = email;
     }
+
+    public LoggedUser(final Parcel in) {
+        super();
+
+        this.mId = in.readString();
+        this.mName = in.readString();
+        this.mToken = in.readString();
+        this.mEmail = in.readString();
+    }
+
+    // }
+
+    // { ILoggedUser implementation
 
     @Override
     public String getName() {
@@ -55,5 +80,34 @@ public class LoggedUser implements ILoggedUser {
     public void setEmail(String email) {
         this.mEmail = email;
     }
+
+    // }
+
+    // { Parcelable implementation
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags) {
+        dest.writeString(this.mId);
+        dest.writeString(this.mName);
+        dest.writeString(this.mToken);
+        dest.writeString(this.mEmail);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public ILoggedUser createFromParcel(Parcel in) {
+            return new LoggedUser(in);
+        }
+
+        public ILoggedUser[] newArray(int size) {
+            return new ILoggedUser[size];
+        }
+    };
+
+    // }
 
 }

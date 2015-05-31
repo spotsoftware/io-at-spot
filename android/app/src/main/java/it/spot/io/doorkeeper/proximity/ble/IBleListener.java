@@ -7,9 +7,9 @@ public interface IBleListener {
 
     public void onBLEDeviceReady();
 
-    public void onReadSignatureCompleted(byte[] result);
+    public void onBLEReadSignatureCompleted(byte[] result);
 
-    public void onWriteTokenCompleted(int result);
+    public void onBLEWriteTokenCompleted(int result);
 
     public void onBLEError(String error);
 }

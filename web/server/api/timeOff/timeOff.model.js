@@ -14,9 +14,20 @@ var TimeOffSchema = new BaseSchema({
         ref: 'Organization'
     },
     timeOffType: String,
-    performedAt: Date,
-    amount: Number,
-    description: String
+    performedAt: {
+        type: Date,
+        required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    description: String,
+    externalId: {
+        required: false,
+        type: String,
+        unique: true
+    }
 });
 
 module.exports = mongoose.model('TimeOff', TimeOffSchema);

@@ -20,8 +20,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import it.spot.io.doorkeeper.http.HttpPostHelper;
+import it.spot.io.doorkeeper.R;
 import it.spot.io.doorkeeper.http.DataResponse;
+import it.spot.io.doorkeeper.http.HttpPostHelper;
 import it.spot.io.doorkeeper.http.IDataResponse;
 import it.spot.io.doorkeeper.http.IHttpPostCallback;
 import it.spot.io.doorkeeper.http.IJsonResponse;
@@ -39,8 +40,6 @@ public class AuthHelper implements IAuthHelper {
     private HttpPostHelper mHttpPostHelper;
     // This is the helper object that connects to Google Play Services.
     private PlusClient mPlusClient;
-
-    private String mIpAddress;
 
     // A magic number we will use to know that our sign-in error resolution activity has completed
     private int mRequestCode;
@@ -74,7 +73,8 @@ public class AuthHelper implements IAuthHelper {
             e.printStackTrace();
         }
 
-        mHttpPostHelper.post("http://" + mIpAddress + ":9000/auth/local/refresh", jsonObject, new IHttpPostCallback<IJsonResponse>() {
+        String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/local/refresh");
+        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
 
             @Override
             public void exec(IJsonResponse jsonResponse) {
@@ -120,7 +120,8 @@ public class AuthHelper implements IAuthHelper {
             e.printStackTrace();
         }
 
-        mHttpPostHelper.post("http://" + mIpAddress + ":9000/auth/local/", jsonObject, new IHttpPostCallback<IJsonResponse>() {
+        String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/local/");
+        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
 
             @Override
             public void exec(IJsonResponse jsonResponse) {
@@ -161,7 +162,8 @@ public class AuthHelper implements IAuthHelper {
             e.printStackTrace();
         }
 
-        mHttpPostHelper.post("http://" + mIpAddress + ":9000/auth/google/getLocalUser", jsonObject, new IHttpPostCallback<IJsonResponse>() {
+        String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/google/getLocalUser");
+        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
 
             @Override
             public void exec(IJsonResponse jsonResponse) {
@@ -231,6 +233,11 @@ public class AuthHelper implements IAuthHelper {
     }
 
     @Override
+    public void resetGoogleAuthentication() {
+        this.mPlusClient.disconnect();
+    }
+
+    @Override
     public boolean googleLogin() {
         if (!mPlusClient.isConnected()) {
             // Make sure that we will connect the resolution (e.g. fire the intent and pop up a
@@ -296,16 +303,8 @@ public class AuthHelper implements IAuthHelper {
         initiatePlusClientConnect();
     }
 
-    @Override
-    public void setupServerIpAddress(String address) {
-        this.mIpAddress = address;
-    }
-
-
     /**
-     * Connect the {@link PlusClient} only if a connection isn't already in progress.  This will
-     * call back to {@link #onConnected(android.os.Bundle)} or
-     * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
+     * Connect the {@link PlusClient} only if a connection isn't already in progress.
      */
     private void initiatePlusClientConnect() {
         if (!mPlusClient.isConnected() && !mPlusClient.isConnecting()) {
@@ -315,7 +314,6 @@ public class AuthHelper implements IAuthHelper {
 
     /**
      * Disconnect the {@link PlusClient} only if it is connected (otherwise, it can throw an error.)
-     * This will call back to {@link #onDisconnected()}.
      */
     private void initiatePlusClientDisconnect() {
         if (mPlusClient.isConnected()) {

@@ -2,53 +2,17 @@
 
 angular.module('ioAtSpotApp')
     .controller('MembersCtrl',
-        function ($scope, $http, socket, Users, Members, Organizations, $modal, $document, messageCenterService) {
-
-            console.log('ciao', $scope);
+        function ($scope, $http, socket, Members, Organizations, $modal, $document, messageCenterService, Auth) {
             $scope.model = new function () {
                 var model = this;
 
                 model.addingMember = false;
-                //model.organization = null;
-                model.selectedUser = null;
+                model.organization = null;
                 model.editingMember = null;
                 model.newTimeOffType = '';
             };
 
             $scope.actions = {
-
-                userSelected: function ($item, $model, $label) {
-                    $scope.model.selectedUser = $item;
-                    $scope.model.selectedUser.role = 'user';
-                },
-
-                toggleAddingMember: function () {
-                    angular.forEach($scope.model.organization.members, function (mem) {
-                        $scope.actions.cancelEditMember(mem);
-                    });
-                    $scope.model.selectedUser = null;
-                    $scope.model.addingMember = !$scope.model.addingMember;
-                },
-
-                addMember: function () {
-
-                    Members.add({
-                        organizationId: $scope.model.organization._id,
-                    }, {
-                        userId: $scope.model.selectedUser._id,
-                        role: $scope.model.selectedUser.role,
-                        nfc_uid: $scope.model.selectedUser.nfc_uid
-                    }).$promise.then(
-                        function (member) {
-                            $scope.actions.toggleAddingMember();
-                            $scope.actions.reloadMembers();
-                        },
-                        function (err) {
-                            messageCenterService.add('danger', err.data.error, {
-                                timeout: 3000
-                            });
-                        });
-                },
 
                 editMember: function (member) {
                     angular.forEach($scope.model.organizations, function (org) {
@@ -79,7 +43,6 @@ angular.module('ioAtSpotApp')
 
                 cancelEditMember: function (member) {
                     $scope.model.editingMember = null;
-                    //member.editing = false;
                 },
 
                 removeMember: function (member) {
@@ -89,7 +52,7 @@ angular.module('ioAtSpotApp')
                         id: member._id
                     }, {}).$promise.then(
                         function () {
-                            $scope.actions.reloadMembers();
+                            $scope.actions.loadMembers();
                         },
                         function (err) {
                             messageCenterService.add('danger', err.data.error, {
@@ -109,7 +72,7 @@ angular.module('ioAtSpotApp')
                     }).$promise.then(
                         function () {
                             $scope.model.editingMember = null;
-                            $scope.actions.reloadMembers();
+                            $scope.actions.loadMembers();
                         },
                         function (err) {
                             messageCenterService.add('danger', err.data.error, {
@@ -118,7 +81,7 @@ angular.module('ioAtSpotApp')
                         });
                 },
 
-                reloadMembers: function () {
+                loadMembers: function () {
                     Members.query({
                         organizationId: $scope.model.organization._id,
                     }, {}).$promise.then(function (members) {
@@ -134,43 +97,15 @@ angular.module('ioAtSpotApp')
 
             $scope.utils = {
                 isMemberCurrentUser: function (member) {
-                    return member._user._id === $scope.parent.currentUser._id;
+                    return member._user._id === Auth.getAuthModel().currentUser._id;
                 },
                 currentUserIsAdmin: function () {
-                    for (var i = 0; i < $scope.model.organization.members.length; i++) {
-                        if ($scope.model.organization.members[i]._user._id === $scope.parent.currentUser._id && $scope.model.organization.members[i].role === 'admin') {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return $scope.model.organization.userRole === 'admin';
                 },
                 readingUid: false
             };
 
-            $scope.proxies = {
-                searchUsers: {
-                    requestData: function (searchText, searchField) {
-                        var excluded = [];
-                        angular.forEach($scope.model.organization.members, function (member) {
-                            excluded.push(member._user._id);
-                        });
-
-                        return {
-                            excluded: excluded,
-                            searchText: searchText,
-                            searchField: searchField
-                        }
-                    },
-                    request: function (searchText, searchField) {
-                        return Users.query($scope.proxies.searchUsers.requestData(searchText, searchField), {}).$promise.then(
-                            function (data) {
-                                return $scope.proxies.searchUsers.successCallback(data);
-                            });
-                    },
-                    successCallback: function (users) {
-                        return users;
-                    }
-                }
-            };
-
+            $scope.$watch('model.organization', function (value) {
+                $scope.actions.loadMembers();
+            });
         });

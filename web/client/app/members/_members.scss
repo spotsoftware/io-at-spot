@@ -1,0 +1,11 @@
+.members {
+    .btn-group, .btn-group-vertical {
+        > .btn {
+            min-width: 50px;
+        }
+    }
+}
+
+.btn.btn-invite {
+    @include custom-button($blue, $dark-blue);
+}

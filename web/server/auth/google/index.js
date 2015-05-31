@@ -12,7 +12,7 @@ var router = express.Router();
 router
     .get('/',
         passport.authenticate('google', {
-            failureRedirect: '/signup',
+            failureRedirect: '/login',
             scope: [
               'https://www.googleapis.com/auth/userinfo.profile',
               'https://www.googleapis.com/auth/userinfo.email'
@@ -21,7 +21,7 @@ router
         }))
     .get('/callback',
         passport.authenticate('google', {
-            failureRedirect: '/signup',
+            failureRedirect: '/login',
             session: false
         }),
         auth.setTokenCookie)
@@ -44,10 +44,12 @@ router
                     }
 
                     if (!user) {
-                        return res.send(401, "User not registered, go to -->");
+                        return res.send(401, "User not registered.");
                     } else {
                         //user found, return this user
-                        var token = auth.signToken(user._id, 60 * 24 * 10);
+                        var token = auth.signToken({
+                            _id: user._id
+                        }, 60 * 24 * 10);
                         res.json({
                             token: token,
                             user: user,

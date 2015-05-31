@@ -1,4 +1,6 @@
-node_modules/
-persist/
-tmp/
-config/config.js
+*.pyc
+app/node_modules/
+app/persist/
+app/tmp/
+app/config/config.js
+utils/deployer/node_modules

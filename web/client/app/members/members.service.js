@@ -12,10 +12,6 @@ angular.module('ioAtSpotApp')
                         method: 'GET',
                         isArray: true
                     },
-                    add: {
-                        method: 'POST',
-                        isArray: false
-                    },
                     update: {
                         method: 'PUT',
                         isArray: false

@@ -66,12 +66,14 @@ function addWorkTimeEntry(data, callback) {
 
     workTimeEntry._user = data.userId;
     workTimeEntry._organization = data.organizationId;
+    
+    /*
     workTimeEntry.workTimeEntryType = 'in'; //AUTO-GUESS
     workTimeEntry.manual = false;
-
     if (data.performedAt) {
         workTimeEntry.performedAt = data.performedAt;
     }
+    */
 
     workTimeEntry.save(function (err, savedWorkTimeEntry) {
 
@@ -108,32 +110,42 @@ io.sockets.on('connection', function (socket) {
                     message: "organization is not active at this time"
                 });
             }
-
+            
             authService.verifyToken(data.token, function (err, decoded) {
                 if (err) {
                     return callback({
                         responseCode: 403,
                         message: err.message
                     });
-                }
+                }                
 
-                addWorkTimeEntry({
-                    userId: decoded._id,
-                    organizationId: organizationId
-                }, function (err) {
-                    if (err) {
-                        return callback({
-                            responseCode: 403,
-                            message: err.message
+                if(data.mark){
+                
+                    addWorkTimeEntry({
+                        userId: decoded._id,
+                        organizationId: organizationId
+                    }, function (err) {
+                        if (err) {
+                            console.log(err);
+                            return callback({
+                                responseCode: 403,
+                                message: err.message
+                            });
+                        }
+
+                        callback({
+                            responseCode: 200,
+                            message: 'successfully authenticated'
                         });
-                    }
-
-                    callback({
-                        responseCode: 200,
-                        message: 'successfully authenticated'
                     });
-
-                });
+                    
+                }else {
+                    
+                    callback({
+                            responseCode: 200,
+                            message: 'successfully authenticated'
+                        });    
+                }
             });
         });
     });

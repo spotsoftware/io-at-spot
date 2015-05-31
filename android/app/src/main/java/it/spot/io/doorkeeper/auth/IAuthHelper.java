@@ -20,6 +20,8 @@ public interface IAuthHelper {
 
     public void setupGoogleAuthentication(final Activity activity, final IGoogleAuthListener listener, final int requestCode);
 
+    public void resetGoogleAuthentication();
+
     public boolean googleLogin();
 
     public void googleLogout();
@@ -27,6 +29,4 @@ public interface IAuthHelper {
     public void googleRevokeAccess();
 
     public void googleResolution(final int result, final Intent intent);
-
-    public void setupServerIpAddress(final String address);
 }

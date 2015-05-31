@@ -1,6 +1,14 @@
-.gradle
+#.gradle
+#/local.properties
+#.idea
+#.DS_Store
+#/build
+
+# Android Studio
+*.iml
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+.gradle
+build/
 .DS_Store
-/build

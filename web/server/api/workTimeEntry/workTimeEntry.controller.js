@@ -1,8 +1,10 @@
 'use strict';
 
+var async = require('async');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var WorkTimeEntry = require('./workTimeEntry.model');
+var Organization = require('../organization/organization.model');
 var auth = require('../../auth/auth.service');
 var errorBuilder = require('../../error-builder');
 
@@ -21,11 +23,9 @@ exports.index = function (req, res, next) {
     var filter = {};
 
     //Filters of mapreduce to have aggregated data, and query
-    var filterConditions = [
-        {
+    var filterConditions = [{
             _organization: organizationId
-        },
-        {
+        }, {
             deleted: false
         }
     ];
@@ -65,30 +65,18 @@ exports.index = function (req, res, next) {
 
     var membersFilter = [];
 
-    if (auth.ensureOrganizationAdmin()) {
-            var queryMembers = JSON.parse(req.query.members);
-            queryMembers.forEach(function (member, i) {
-                membersFilter.push({
-                    _user: member
-                });
-            });
-
-    } else {
+    var queryMembers = JSON.parse(req.query.members);
+    queryMembers.forEach(function (member, i) {
         membersFilter.push({
-            _user: req.user._id
+            _user: member
         });
-    }
+    });
 
-    if(membersFilter.length > 0) {
+    if (membersFilter.length > 0) {
         filterConditions.push({
             $or: membersFilter
         });
     }
-
-    //    var util = require('util');
-    //    console.log(util.inspect({
-    //        $and: filterConditions
-    //    }, false, null));
 
     WorkTimeEntry.count({
         $and: filterConditions
@@ -119,44 +107,116 @@ exports.index = function (req, res, next) {
     });
 };
 
+exports.batch = function (req, res, next) {
+
+    Organization
+        .findById(req.params.organizationId)
+        .populate('members._user')
+        .exec(function (err, organization) {
+
+            if (err) {
+                return next(err);
+            }
+
+            if (!organization) {
+                return next(new errorBuilder("organization not found", 404));
+            }
+
+            var items = req.body.items;
+
+            var newItems = [];
+
+            async.each(items, function (item, callback) {
+                WorkTimeEntry.findOne({
+                    externalId: item.externalId
+                }, function (err, timeOff) {
+                    if (err) {
+                        callback(err);
+                    } else {
+
+                        if (!timeOff) {
+                            //if timeOff is not existing
+                            var memberFound = false;
+                            for (var j = 0; j < organization.members.length && !memberFound; j++) {
+
+                                if (organization.members[j]._user.email === item.email) {
+                                    memberFound = true;
+
+                                    var newItem = {};
+
+                                    newItem._user = organization.members[j]._user._id;
+                                    newItem._organization = organization._id;
+                                    newItem.workTimeEntryType = item.type;
+                                    newItem.performedAt = new Date(item.date);
+                                    newItem.externalId = item.externalId;
+                                    newItem.deleted = false;
+                                    newItem.active = true;
+
+                                    newItems.push(newItem);
+                                }
+                            }
+                        }
+
+                        callback();
+                    }
+                });
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                if (newItems.length > 0) {
+                    WorkTimeEntry.collection.insert(newItems, {
+                        continueOnError: 1
+                    }, function (err, documents) {
+                        if (err) {
+                            return next(err);
+                        }
+                        return res.json(200);
+                    });
+                } else {
+                    return res.json(200);
+                }
+            });
+        });
+};
+
+
 // Creates a new workTimeEntry in the DB.
 exports.create = function (req, res, next) {
 
-    var organizationId = req.params.organizationId;
+    var wte = new WorkTimeEntry();
+    wte._user = req.body.userId;
+    wte._organization = req.params.organizationId;
+    wte.manual = !!(req.body.workTimeEntryType); //If specified the type, user is inserting manually
+    wte.performedAt = req.body.performedAt;
+    wte.workTimeEntryType = req.body.workTimeEntryType;
 
-    var workTimeEntry = new WorkTimeEntry();
-
-    workTimeEntry._user = req.body.userId;
-    workTimeEntry._organization = organizationId;
-    workTimeEntry.workTimeEntryType = req.body.workTimeEntryType;
-    workTimeEntry.manual = req.body.manual;
-    workTimeEntry.performedAt = req.body.performedAt;
-
-    workTimeEntry.save(function (err, savedWorkTimeEntry) {
+    wte.save(function (err, savedWorkTimeEntry) {
         if (err) {
             return next(err);
         }
-        
+
         res.status(201);
-        res.location('/api/organizations/' + organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
-        
+        res.location('/api/organizations/' + req.params.organizationId + '/workTimeEntries/' + savedWorkTimeEntry._id);
+
         return res.json(savedWorkTimeEntry);
     });
+
 };
 
 exports.detail = function (req, res, next) {
-    
+
     WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
-        if(err) {
+        if (err) {
             return next(err);
         }
-        
-        if(!workTimeEntry) {
+
+        if (!workTimeEntry) {
             return next(new errorBuilder("work time entry not found", 404));
         }
-        
+
         res.status(200);
-        
+
         return res.json(workTimeEntry);
     });
 };
@@ -172,7 +232,6 @@ exports.update = function (req, res, next) {
         }
 
         workTimeEntry.performedAt = req.body.performedAt;
-        console.log(req.body.workTimeEntryType);
         workTimeEntry.workTimeEntryType = req.body.workTimeEntryType;
         workTimeEntry.manual = true;
 
@@ -188,19 +247,27 @@ exports.update = function (req, res, next) {
 // Deletes a workTimeEntry from the DB.
 exports.destroy = function (req, res, next) {
     WorkTimeEntry.findById(req.params.id, function (err, workTimeEntry) {
-        console.log(workTimeEntry);
         if (err) {
             return next(err);
         }
         if (!workTimeEntry) {
             return next(new errorBuilder("work time entry not found", 404));
         }
-        workTimeEntry.deleted = true;
-        workTimeEntry.save(function (err) {
-            if (err) {
-                return next(err);
-            }
-            return res.send(204);
-        });
+        if (!workTimeEntry.externalId) {
+            workTimeEntry.deleted = true;
+            workTimeEntry.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send(204);
+            });
+        } else {
+            workTimeEntry.remove(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send(204);
+            });
+        }
     });
 };

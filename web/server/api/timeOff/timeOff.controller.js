@@ -1,7 +1,9 @@
 'use strict';
 
+var async = require('async');
 var _ = require('lodash');
 var TimeOff = require('./timeOff.model');
+var Organization = require('../organization/organization.model');
 var mongoose = require('mongoose');
 var auth = require('../../auth/auth.service');
 var errorBuilder = require('../../error-builder');
@@ -68,67 +70,24 @@ exports.index = function (req, res, next) {
         _user: req.user._id
     });
 
-    //Only if the user is the owner of the organization
-    if (auth.ensureOrganizationAdmin() && req.query.members && req.query.members.length > 0) {
-        array.forEach(req.query.members.length, function (el, i) {
+    var membersFilter = [];
 
-            membersFilter.push({
-                _user: el._user
-            });
+    var queryMembers = JSON.parse(req.query.members);
+    queryMembers.forEach(function (member, i) {
+        membersFilter.push({
+            _user: member
+        });
+    });
+
+    if (membersFilter.length > 0) {
+        filterConditions.push({
+            $or: membersFilter
         });
     }
 
-    filterConditions.push({
-        $or: membersFilter
-    });
-
-    TimeOff.aggregate([
-        {
-            $match: {
-                $and: filterConditions
-            }
-        },
-        {
-            $group: {
-                _id: "$_user",
-                totalAmount: {
-                    $sum: '$amount'
-                },
-                count: {
-                    $sum: 1
-                }
-            }
-        }
-    ], function (err, results) {
-        if (err) {
-            return next(err);
-        }
-
-        var aggregatedData = {
-            userAggregatedData: [],
-            totalCount: 0,
-            totalAmount: 0
-        };
-
-        if (results.length > 0) {
-
-            console.log(results);
-
-            for (var i = 0; i < results.length; i++) {
-
-                var userAggregatedData = {};
-
-                userAggregatedData.user = results[i]._id;
-                userAggregatedData.count = results[i].count;
-                userAggregatedData.totalAmount = Math.round(results[i].totalAmount);
-
-                aggregatedData.userAggregatedData.push(userAggregatedData);
-                aggregatedData.totalCount += userAggregatedData.count;
-                aggregatedData.totalAmount += userAggregatedData.totalAmount;
-            }
-        }
-
-        //non scala: http://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js/23640287#23640287
+    TimeOff.count({
+        $and: filterConditions
+    }, function (err, count) {
         TimeOff
             .find({
                 $and: filterConditions
@@ -137,28 +96,176 @@ exports.index = function (req, res, next) {
             .sort('-performedAt')
             .skip((page - 1) * itemsPerPage).limit(itemsPerPage)
             .exec(function (err, timeOffs) {
-
                 if (err) {
                     return next(err);
                 }
 
                 var pagedResult = {
                     items: timeOffs,
-                    total: aggregatedData.totalCount,
-                    pages: Math.ceil(aggregatedData.totalCount / itemsPerPage),
+                    total: count,
+                    pages: Math.ceil(count / itemsPerPage),
                     currentPage: page,
-                    itemsPerPage: itemsPerPage,
-                    amountTime: aggregatedData.totalAmount
+                    itemsPerPage: itemsPerPage
                 };
 
                 return res.json(pagedResult);
-
             });
 
     });
+
+    /*
+        TimeOff.aggregate([
+            {
+                $match: {
+                    $and: filterConditions
+                }
+            },
+            {
+                $group: {
+                    _id: "$_user",
+                    totalAmount: {
+                        $sum: '$amount'
+                    },
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ], function (err, results) {
+            if (err) {
+                return next(err);
+            }
+
+            var aggregatedData = {
+                userAggregatedData: [],
+                totalCount: 0,
+                totalAmount: 0
+            };
+
+            if (results.length > 0) {
+
+                console.log(results);
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var userAggregatedData = {};
+
+                    userAggregatedData.user = results[i]._id;
+                    userAggregatedData.count = results[i].count;
+                    userAggregatedData.totalAmount = Math.round(results[i].totalAmount);
+
+                    aggregatedData.userAggregatedData.push(userAggregatedData);
+                    aggregatedData.totalCount += userAggregatedData.count;
+                    aggregatedData.totalAmount += userAggregatedData.totalAmount;
+                }
+            }
+
+            //non scala: http://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js/23640287#23640287
+            TimeOff
+                .find({
+                    $and: filterConditions
+                })
+                .populate('_user')
+                .sort('-performedAt')
+                .skip((page - 1) * itemsPerPage).limit(itemsPerPage)
+                .exec(function (err, timeOffs) {
+
+                    if (err) {
+                        return next(err);
+                    }
+
+                    var pagedResult = {
+                        items: timeOffs,
+                        total: aggregatedData.totalCount,
+                        pages: Math.ceil(aggregatedData.totalCount / itemsPerPage),
+                        currentPage: page,
+                        itemsPerPage: itemsPerPage,
+                        amountTime: aggregatedData.totalAmount
+                    };
+
+                    return res.json(pagedResult);
+
+                });
+        });*/
+};
+
+exports.batch = function (req, res, next) {
+
+    Organization
+        .findById(req.params.organizationId)
+        .populate('members._user')
+        .exec(function (err, organization) {
+
+            if (err) {
+                return next(err);
+            }
+
+            if (!organization) {
+                return next(new errorBuilder("organization not found", 404));
+            }
+
+            var items = req.body.items;
+
+            var newTimeOffs = [];
+
+            async.each(items, function (item, callback) {
+                TimeOff.findOne({
+                    externalId: item.externalId
+                }, function (err, timeOff) {
+                    if (err) {
+                        callback(err);
+                    } else {
+
+                        if (!timeOff) {
+                            //if timeOff is not existing
+                            var memberFound = false;
+                            for (var j = 0; j < organization.members.length && !memberFound; j++) {
+
+                                if (organization.members[j]._user.email === item.email) {
+                                    memberFound = true;
+
+                                    var newTimeOff = {};
+
+                                    newTimeOff._user = organization.members[j]._user._id;
+                                    newTimeOff._organization = organization._id;
+                                    newTimeOff.amount = item.amount;
+                                    newTimeOff.timeOffType = item.type;
+                                    newTimeOff.performedAt = new Date(item.date);
+                                    newTimeOff.externalId = item.externalId;
+                                    newTimeOff.deleted = false;
+                                    newTimeOff.active = true;
+
+                                    newTimeOffs.push(newTimeOff);
+                                }
+                            }
+                        }
+
+                        callback();
+                    }
+                });
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                if (newTimeOffs.length > 0) {
+                    TimeOff.collection.insert(newTimeOffs, {
+                        continueOnError: 1
+                    }, function (err, documents) {
+                        if (err) {
+                            return next(err);
+                        }
+                        return res.json(200);
+                    });
+                } else {
+                    return res.json(200);
+                }
+            });
+        });
 };
 
 exports.detail = function (req, res, next) {
+
+    var organizationId = req.params.organizationId;
 
     TimeOff.findById(req.param.id, function (err, timeOff) {
 
@@ -195,7 +302,7 @@ exports.create = function (req, res, next) {
         }
 
         res.status(201);
-        res.location('/api/organizations/'+ organizationId +'/timeOffs/' + savedTimeOff._id);
+        res.location('/api/organizations/' + organizationId + '/timeOffs/' + savedTimeOff._id);
 
         return res.json(savedTimeOff);
     });
@@ -236,12 +343,21 @@ exports.destroy = function (req, res, next) {
         if (!timeOff) {
             return next(new errorBuilder("time off not found", 404));
         }
-        timeOff.deleted = true;
-        timeOff.save(function (err) {
-            if (err) {
-                return next(err);
-            }
-            return res.send(204);
-        });
+        if (!timeOff.externalId) {
+            timeOff.deleted = true;
+            timeOff.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send(204);
+            });
+        } else {
+            timeOff.remove(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send(204);
+            });
+        }
     });
 };

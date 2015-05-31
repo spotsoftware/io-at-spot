@@ -8,24 +8,43 @@ var Schema = mongoose.Schema;
 
 
 var workingDaySchema = new Schema({
-    active: Boolean,
-    startOfficeTime: Date,
-    endOfficeTime: Date
+    active: {
+        type: Boolean,
+        default: false
+    },
+    startOfficeTime: {
+        type: Date,
+        required: true
+    },
+    endOfficeTime: {
+        type: Date,
+        required: true
+    }
 });
 
 /**
  * Organization Schema
  */
 var OrganizationSchema = new BaseSchema({
-    name: String,
+    name: {
+        type: String,
+        required: true
+    },
     members: [MemberSchema],
     settings: {
         defaultTimeOffAmount: {
             type: Number,
-            default: 8
+            default: 8,
+            required: true
         },
-        timeOffTypes: [String],
-        workingDays: [workingDaySchema]
+        timeOffTypes: {
+            type: [String],
+            required: true
+        },
+        workingDays: {
+            type: [workingDaySchema],
+            required: true
+        }
     },
     hashedPassword: String,
     salt: String
@@ -60,9 +79,22 @@ OrganizationSchema
         return {
             _id: this._id,
             name: this.name,
-            members: this.members,
+            //members: this.members,
             settings: this.settings,
             hasPassword: this.hasPassword
+        }
+    });
+
+
+/**
+ * Pre-save hook
+ */
+OrganizationSchema
+    .pre('save', function (next) {
+        if (!this.validateSettingsStructure()) {
+            next(new Error('Invalid settings'));
+        } else {
+            next();
         }
     });
 
@@ -102,6 +134,20 @@ OrganizationSchema.methods = {
         if (!password || !this.salt) return '';
         var salt = new Buffer(this.salt, 'base64');
         return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+    },
+
+    /*
+     * Validate settings presence and workingDays size
+     */
+    validateSettingsStructure: function () {
+        if (!this.settings) {
+            return false;
+        }
+        if (this.settings.workingDays.length !== 7) {
+            return false;
+        }
+
+        return true;
     }
 };
 
