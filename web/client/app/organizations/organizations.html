@@ -74,9 +74,10 @@
                                             <div class="row form-group">
                                                 <label class="col-sm-3 control-label">Time off types</label>
                                                 <div class="col-sm-9">
-                                                    <ul class="col-sm-4 col-md-3 col-lg-2 nav nav-stacked" ng-repeat="timeOffType in org.settings.timeOffTypes">
+                                                    <ul class="col-sm-4 col-md-3 col-lg-2 nav nav-stacked time-off-types" ng-repeat="timeOffType in org.settings.timeOffTypes track by $index">
                                                         <li class="active">
-                                                            <a>{{timeOffType}}<button ng-show="utils.currentUserIsAdmin(org)" type="button" class="close" ng-click="actions.deleteTimeOffType(org, timeOffType)">&times;</button></a>
+                                                            <a>{{timeOffType}}</a>
+                                                            <button ng-show="utils.currentUserIsAdmin(org)" type="button" class="close" ng-click="actions.deleteTimeOffType(org, timeOffType)">&times;</button>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -85,7 +86,9 @@
                                                 <div class="col-sm-6 col-md-4">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" placeholder="Add a new time off type" ng-model="model.newTimeOffType">
-                                                        <span class="input-group-btn"><button type="submit" class="btn btn-primary" ng-click="actions.addTimeOffType(org)">Add New</button></span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-success" ng-click="actions.addTimeOffType(org)" ng-enabled="utils.canAddTimeOffType(org)">Add New</button>
+                                                        </span>
                                                     </p>
                                                 </div>
                                             </div>

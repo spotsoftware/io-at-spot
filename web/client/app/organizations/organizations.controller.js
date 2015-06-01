@@ -58,10 +58,12 @@ angular.module('ioAtSpotApp')
                         });
                 },
 
-                addTimeOffType: function (org) {
-                    org.settings.timeOffTypes.push($scope.model.newTimeOffType);
-                    $scope.model.newTimeOffType = '';
-                    $scope.actions.updateOrganization(org);
+                addTimeOffType: function (org) {        
+                    if($scope.utils.canAddTimeOffType(org)){
+                        org.settings.timeOffTypes.push($scope.model.newTimeOffType);
+                        $scope.model.newTimeOffType = '';
+                        $scope.actions.updateOrganization(org);
+                    }
                 },
 
                 deleteTimeOffType: function (org, timeOffType) {
@@ -182,7 +184,10 @@ angular.module('ioAtSpotApp')
                 currentUserIsAdmin: function (organization) {
                     return organization.userRole === 'admin';
                 },
-                readingUid: false
+                readingUid: false,
+                canAddTimeOffType: function(organization){
+                    return $scope.model.newTimeOffType && organization.settings.timeOffTypes.indexOf($scope.model.newTimeOffType) === -1; 
+                }
             };
 
             $scope.proxies = new function () {
