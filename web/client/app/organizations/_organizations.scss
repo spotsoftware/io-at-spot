@@ -122,3 +122,16 @@
         }
     }
 }
+
+ul.time-off-types {
+    li {
+        display: inline-block;
+        vertical-align: middle;
+        
+        > * {
+            display: inline-block;
+            vertical-align: middle;
+            float: none;
+        }
+    }
+}

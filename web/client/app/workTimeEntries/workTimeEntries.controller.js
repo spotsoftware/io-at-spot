@@ -196,7 +196,9 @@ angular.module('ioAtSpotApp')
                 };
 
                 utils.setPageSize = function (n) {
+                    $scope.model.page = 1;
                     $scope.model.itemsPerPage = n;
+                    
                     $scope.actions.search();
                 };
             };
