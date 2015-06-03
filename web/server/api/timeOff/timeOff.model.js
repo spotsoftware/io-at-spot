@@ -25,8 +25,7 @@ var TimeOffSchema = new BaseSchema({
     description: String,
     externalId: {
         required: false,
-        type: String,
-        unique: true
+        type: String
     }
 });
 
