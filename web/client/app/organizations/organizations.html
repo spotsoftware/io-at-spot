@@ -74,8 +74,8 @@
                                             <div class="row form-group">
                                                 <label class="col-sm-3 control-label">Time off types</label>
                                                 <div class="col-sm-9">
-                                                    <ul class="col-sm-4 col-md-3 col-lg-2 nav nav-stacked time-off-types" ng-repeat="timeOffType in org.settings.timeOffTypes track by $index">
-                                                        <li class="active">
+                                                    <ul class="nav nav-stacked time-off-types">
+                                                        <li class="active" ng-repeat="timeOffType in org.settings.timeOffTypes track by $index">
                                                             <a>{{timeOffType}}</a>
                                                             <button ng-show="utils.currentUserIsAdmin(org)" type="button" class="close" ng-click="actions.deleteTimeOffType(org, timeOffType)">&times;</button>
                                                         </li>

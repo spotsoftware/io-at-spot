@@ -127,44 +127,49 @@ exports.batch = function (req, res, next) {
             var newItems = [];
 
             async.each(items, function (item, callback) {
-                WorkTimeEntry.findOne({
-                    externalId: item.externalId
-                }, function (err, timeOff) {
-                    if (err) {
-                        callback(err);
-                    } else {
+                if (item.externalId) {
+                    WorkTimeEntry.findOne({
+                        externalId: item.externalId
+                    }, function (err, timeOff) {
+                        if (err) {
+                            callback(err);
+                        } else {
 
-                        if (!timeOff) {
-                            //if timeOff is not existing
-                            var memberFound = false;
-                            for (var j = 0; j < organization.members.length && !memberFound; j++) {
+                            if (!timeOff) {
+                                //if timeOff is not existing
+                                var memberFound = false;
+                                for (var j = 0; j < organization.members.length && !memberFound; j++) {
 
-                                if (organization.members[j]._user.email === item.email) {
-                                    memberFound = true;
+                                    if (organization.members[j]._user.email === item.email) {
+                                        memberFound = true;
 
-                                    var newItem = {};
+                                        var newItem = {};
 
-                                    newItem._user = organization.members[j]._user._id;
-                                    newItem._organization = organization._id;
-                                    newItem.workTimeEntryType = item.type;
-                                    newItem.performedAt = new Date(item.date);
-                                    newItem.externalId = item.externalId;
-                                    newItem.deleted = false;
-                                    newItem.active = true;
+                                        newItem._user = organization.members[j]._user._id;
+                                        newItem._organization = organization._id;
+                                        newItem.workTimeEntryType = item.type;
+                                        newItem.performedAt = new Date(item.date);
+                                        newItem.externalId = item.externalId;
+                                        newItem.deleted = false;
+                                        newItem.active = true;
 
-                                    newItems.push(newItem);
+                                        newItems.push(newItem);
+                                    }
                                 }
                             }
-                        }
 
-                        callback();
-                    }
-                });
+                            callback();
+                        }
+                    });
+                } else {
+                    callback(new Error('ExternalId null for an item in date ' + item.date));
+                }
             }, function (err) {
                 if (err) {
                     return next(err);
                 }
                 if (newItems.length > 0) {
+                    console.log(newItems);
                     WorkTimeEntry.collection.insert(newItems, {
                         continueOnError: 1
                     }, function (err, documents) {

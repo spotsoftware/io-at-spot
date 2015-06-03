@@ -31,8 +31,7 @@ var WorkTimeEntrySchema = new BaseSchema({
     },
     externalId: {
         required: false,
-        type: String,
-        unique: true
+        type: String
     }
 });
 
