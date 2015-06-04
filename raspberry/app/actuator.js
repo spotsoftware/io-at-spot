@@ -32,8 +32,11 @@ function openDoor(){
     setTimeout(function(){
         greenLed.writeSync(0);
         buzzer.writeSync(0);
-        relay.writeSync(0);
     }, 500);
+    
+    setTimeout(function(){        
+        relay.writeSync(0);
+    }, 1000);
 }
 
 function error(){

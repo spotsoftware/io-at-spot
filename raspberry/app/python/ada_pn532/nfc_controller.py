@@ -40,24 +40,26 @@ class NFCController(object):
         self.clf.close() #Need it to simulate new device tap for Android
     
     def tag_read(self, tag):
-        print "STATUS: read tag"
-        uid = binascii.hexlify(tag.uid)
-        signature = None
-        try:
-            print tag
-            sig = tag.transceive("\x3C\x00", timeout=1)
-            assert len(sig) == 32 or len(sig) == 34
-            if len(sig) == 34 and nfc.tag.tt2.crca(sig, 32) == sig[32:34]:
-                sig = sig[0:32]
-            signature = binascii.hexlify(sig)
-            print uid
-            print signature            
-            c = zerorpc.Client()
-            c.connect("tcp://127.0.0.1:4242")
-            c.tag(uid, signature)
-            time.sleep(3)
-        except:
-            pass
+        if type(tag).__name__ == 'NTAG216':
+            print "STATUS: read tag"
+            uid = binascii.hexlify(tag.uid)
+            
+            signature = None
+            try:
+                print tag
+                sig = tag.transceive("\x3C\x00", timeout=1)
+                assert len(sig) == 32 or len(sig) == 34
+                if len(sig) == 34 and nfc.tag.tt2.crca(sig, 32) == sig[32:34]:
+                    sig = sig[0:32]
+                signature = binascii.hexlify(sig)
+                print uid
+                print signature            
+                c = zerorpc.Client()
+                c.connect("tcp://127.0.0.1:4242")
+                c.tag(uid, signature)
+                time.sleep(3)
+            except:
+                pass
     
     
     def __init__(self):
