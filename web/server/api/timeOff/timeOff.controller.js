@@ -209,40 +209,47 @@ exports.batch = function (req, res, next) {
             var newTimeOffs = [];
 
             async.each(items, function (item, callback) {
-                TimeOff.findOne({
-                    externalId: item.externalId
-                }, function (err, timeOff) {
-                    if (err) {
-                        callback(err);
-                    } else {
 
-                        if (!timeOff) {
-                            //if timeOff is not existing
-                            var memberFound = false;
-                            for (var j = 0; j < organization.members.length && !memberFound; j++) {
+                if (item.externalId) {
+                    TimeOff.findOne({
+                        externalId: item.externalId
+                    }, function (err, timeOff) {
+                        if (err) {
+                            callback(err);
+                        } else {
 
-                                if (organization.members[j]._user.email === item.email) {
-                                    memberFound = true;
+                            if (!timeOff) {
+                                //if timeOff is not existing
+                                var memberFound = false;
+                                for (var j = 0; j < organization.members.length && !memberFound; j++) {
 
-                                    var newTimeOff = {};
+                                    if (organization.members[j]._user.email === item.email) {
+                                        memberFound = true;
 
-                                    newTimeOff._user = organization.members[j]._user._id;
-                                    newTimeOff._organization = organization._id;
-                                    newTimeOff.amount = item.amount;
-                                    newTimeOff.timeOffType = item.type;
-                                    newTimeOff.performedAt = new Date(item.date);
-                                    newTimeOff.externalId = item.externalId;
-                                    newTimeOff.deleted = false;
-                                    newTimeOff.active = true;
+                                        var newTimeOff = {};
 
-                                    newTimeOffs.push(newTimeOff);
+                                        newTimeOff._user = organization.members[j]._user._id;
+                                        newTimeOff._organization = organization._id;
+                                        newTimeOff.amount = item.amount;
+                                        newTimeOff.timeOffType = item.type;
+                                        newTimeOff.performedAt = new Date(item.date);
+                                        newTimeOff.externalId = item.externalId;
+                                        newTimeOff.deleted = false;
+                                        newTimeOff.active = true;
+
+                                        newTimeOffs.push(newTimeOff);
+                                    }
                                 }
                             }
-                        }
 
-                        callback();
-                    }
-                });
+                            callback();
+                        }
+                    });
+                } else {
+                    callback(new Error('ExternalId null for item in date ' + item.date ));
+                }
+
+
             }, function (err) {
                 if (err) {
                     return next(err);

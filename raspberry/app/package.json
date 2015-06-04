@@ -19,7 +19,11 @@
         "python-shell": "",
         "request-json": "",
         "socket.io-client": "",
-        "zerorpc": ""
+        "zerorpc": "",
+        "usb": "~0.3.11",
+        "winston": "~0.7.3",
+        "async": "~0.9.0",
+        "binary": "~0.3.0"
     },
     "engines": {
         "node": ">=0.8"

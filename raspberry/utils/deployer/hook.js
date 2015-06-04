@@ -5,10 +5,10 @@ var busy = false;
 gith({
     repo: 'spotsoftware/io-at-spot', // the github-user/repo-name
     file: /^raspberry/,
-    branch: 'deploy'
+    branch: 'master'
 }).on('all', function (payload) {
 
-    console.log("new push on deploy branch and raspberry folder received");
+    console.log("new push on master branch and raspberry folder received");
     if (!busy) {
         busy = true;
         exec('./hook.sh', function (err, stdout, stderr) {

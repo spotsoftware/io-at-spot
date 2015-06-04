@@ -146,7 +146,6 @@ function onNFCTagSubmitted(uid) {
             });
 
         } else {
-
             if (offlineHelper.authorizeAccess(uid)) {
                 actuatorService.openDoor();
             } else {

@@ -22,7 +22,9 @@ import it.spot.io.doorkeeper.model.ILoggedUser;
  *
  * @author Andrea Rinaldi
  */
-public class SplashActivity extends Activity implements IGoogleAuthListener {
+public class SplashActivity
+        extends Activity
+        implements Runnable, IGoogleAuthListener {
 
     private static final int TIMEOUT = 2000;
 
@@ -35,25 +37,27 @@ public class SplashActivity extends Activity implements IGoogleAuthListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        this.setContentView(R.layout.activity_splash);
 
         this.mAuthenticationHelper = new AuthHelper();
         this.mAuthenticationHelper.setupGoogleAuthentication(this, this, AuthHelper.PLUS_REQUEST_CODE);
 
+        new Handler().postDelayed(this, TIMEOUT);
+    }
+
+    // }
+
+    // { Runnable implementation
+
+    @Override
+    public void run() {
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                final String token = sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
-                if (token != "") {
-                    refreshLocalToken(token);
-                } else {
-                    goToLoginActivity();
-                }
-            }
-        }, TIMEOUT);
+        final String token = sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
+        if (token != "") {
+            this.refreshLocalToken(token);
+        } else {
+            this.goToLoginActivity();
+        }
     }
 
     // }
@@ -61,7 +65,7 @@ public class SplashActivity extends Activity implements IGoogleAuthListener {
     // { Private methods
 
     private void refreshLocalToken(final String token) {
-        mAuthenticationHelper.refreshLocalLogin(token, new IHttpPostCallback<IDataResponse<ILoggedUser>>() {
+        this.mAuthenticationHelper.refreshLocalLogin(token, new IHttpPostCallback<IDataResponse<ILoggedUser>>() {
             @Override
             public void exec(IDataResponse<ILoggedUser> response) {
 
