@@ -42,6 +42,8 @@
 		3982F3361B1371550013B67A /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3982F3111B13707E0013B67A /* AddressBook.framework */; };
 		3982F3381B1371C30013B67A /* GooglePlus.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3982F3371B1371C30013B67A /* GooglePlus.bundle */; };
 		3982F33B1B13721D0013B67A /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3982F33A1B13721D0013B67A /* Constants.m */; };
+		F615EB511B270A93003E8C54 /* HomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F615EB4F1B270A93003E8C54 /* HomeVC.m */; };
+		F615EB521B270A93003E8C54 /* HomeVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F615EB501B270A93003E8C54 /* HomeVC.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +107,9 @@
 		3982F3371B1371C30013B67A /* GooglePlus.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GooglePlus.bundle; sourceTree = "<group>"; };
 		3982F3391B13721D0013B67A /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		3982F33A1B13721D0013B67A /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		F615EB4E1B270A93003E8C54 /* HomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeVC.h; sourceTree = "<group>"; };
+		F615EB4F1B270A93003E8C54 /* HomeVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeVC.m; sourceTree = "<group>"; };
+		F615EB501B270A93003E8C54 /* HomeVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeVC.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +162,7 @@
 		393531881B135F8D006A66D3 /* IoAtSpot */ = {
 			isa = PBXGroup;
 			children = (
+				F615EB481B27092B003E8C54 /* Home */,
 				393531C81B136604006A66D3 /* Common */,
 				393531C21B136539006A66D3 /* SplashScreen */,
 				393531C11B13652C006A66D3 /* Login */,
@@ -313,6 +319,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F615EB481B27092B003E8C54 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				F615EB4E1B270A93003E8C54 /* HomeVC.h */,
+				F615EB4F1B270A93003E8C54 /* HomeVC.m */,
+				F615EB501B270A93003E8C54 /* HomeVC.xib */,
+			);
+			name = Home;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -406,6 +422,7 @@
 				3982F3381B1371C30013B67A /* GooglePlus.bundle in Resources */,
 				3935319A1B135F8D006A66D3 /* Images.xcassets in Resources */,
 				393531BF1B1363CB006A66D3 /* ic_person_white_18dp@2x.png in Resources */,
+				F615EB521B270A93003E8C54 /* HomeVC.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +446,7 @@
 				3982F30C1B1369A40013B67A /* Reachability.m in Sources */,
 				393531C61B1365C7006A66D3 /* LoginVC.m in Sources */,
 				3982F33B1B13721D0013B67A /* Constants.m in Sources */,
+				F615EB511B270A93003E8C54 /* HomeVC.m in Sources */,
 				393531CB1B136614006A66D3 /* BaseVC.m in Sources */,
 				393531D01B1366C9006A66D3 /* TextInputView.m in Sources */,
 				393531951B135F8D006A66D3 /* MainViewController.m in Sources */,

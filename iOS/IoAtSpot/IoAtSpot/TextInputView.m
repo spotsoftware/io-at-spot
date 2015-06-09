@@ -59,4 +59,8 @@
     
 }
 
+- (NSString *)getText{
+    return self.txtInput.text;
+}
+
 @end

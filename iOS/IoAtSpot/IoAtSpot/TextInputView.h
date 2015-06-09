@@ -13,4 +13,6 @@
 @property (nonatomic, strong) NSString *imageName;
 @property (nonatomic) BOOL isSecure;
 
+- (NSString *)getText;
+
 @end

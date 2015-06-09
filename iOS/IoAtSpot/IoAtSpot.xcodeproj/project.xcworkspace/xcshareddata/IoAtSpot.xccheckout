@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>CDCB5F70-183A-4AC4-A41C-00B07799A003</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>IoAtSpot</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>975E51D00922F6BA5997AD4C205C76693D12A97D</key>
 		<string>https://github.com/spotsoftware/io-at-spot.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>iOS/IoAtSpot/IoAtSpot.xcodeproj/project.xcworkspace</string>
+	<string>iOS/IoAtSpot/IoAtSpot.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>975E51D00922F6BA5997AD4C205C76693D12A97D</key>
@@ -34,7 +34,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>975E51D00922F6BA5997AD4C205C76693D12A97D</string>
 			<key>IDESourceControlWCCName</key>
-			<string>IoAtSpot</string>
+			<string>io-at-spot</string>
 		</dict>
 	</array>
 </dict>
