@@ -14,6 +14,15 @@
 
 @implementation HomeVC
 
+- (instancetype)init
+{
+    self = [super initWithNibName:@"HomeVC" bundle:nil];
+    if (self) {
+        
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.

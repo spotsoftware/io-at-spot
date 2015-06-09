@@ -7,6 +7,7 @@
 //
 
 #import "LoginVC.h"
+#import "HomeVC.h"
 #import "TextInputView.h"
 
 @interface LoginVC ()
@@ -77,6 +78,9 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             //code to be executed on the main thread when background task is finished
             NSLog(@"va tutto %@", responseData);
+            
+            HomeVC *homeVc = [[HomeVC alloc] init];
+            [self.navigationController pushViewController:homeVc animated:NO];
         });
     });
 }
