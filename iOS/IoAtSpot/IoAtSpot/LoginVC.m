@@ -79,8 +79,27 @@
             //code to be executed on the main thread when background task is finished
             NSLog(@"va tutto %@", responseData);
             
-            HomeVC *homeVc = [[HomeVC alloc] init];
-            [self.navigationController pushViewController:homeVc animated:NO];
+            NSError* error;
+            NSDictionary* json = [NSJSONSerialization JSONObjectWithData:responseData
+                                                                 options:kNilOptions
+                                                                   error:&error];
+            
+            NSNumber *status = [json objectForKey:@"status"];
+            if(404 == status.intValue){
+                NSLog(@"Error: %@", [json objectForKey:@"message"]);
+            } else {
+                NSString *userToken = [json objectForKey:@"token"];
+                
+                // Store the token
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                [defaults setObject:userToken forKey:@"authToken"];
+                [defaults synchronize];
+                
+                NSLog(@"Token %@ saved in user defaults", userToken);
+                
+                HomeVC *homeVc = [[HomeVC alloc] init];
+                [self.navigationController pushViewController:homeVc animated:NO];
+            }
         });
     });
 }

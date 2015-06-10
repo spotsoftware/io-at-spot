@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6751"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeVC">
@@ -12,9 +12,33 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <rect key="frame" x="0.0" y="0.0" width="400" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LeZ-zi-kXu">
+                    <rect key="frame" x="0.0" y="400" width="400" height="200"/>
+                    <color key="backgroundColor" red="0.1803921568627451" green="0.4392156862745098" blue="0.70588235294117652" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.2274509804" green="0.52156862749999999" blue="0.75686274509999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="200" id="WK0-zt-pbo"/>
+                    </constraints>
+                </view>
+                <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Twq-Bf-e0R">
+                    <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="LeZ-zi-kXu" firstAttribute="top" secondItem="Twq-Bf-e0R" secondAttribute="bottom" id="AUS-FV-FQn"/>
+                <constraint firstAttribute="trailing" secondItem="LeZ-zi-kXu" secondAttribute="trailing" id="QiZ-hR-RzH"/>
+                <constraint firstItem="Twq-Bf-e0R" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="SUQ-WE-raF"/>
+                <constraint firstItem="Twq-Bf-e0R" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Tht-Zf-M8y"/>
+                <constraint firstAttribute="trailing" secondItem="Twq-Bf-e0R" secondAttribute="trailing" id="Wvt-7z-sRx"/>
+                <constraint firstAttribute="bottom" secondItem="LeZ-zi-kXu" secondAttribute="bottom" id="YX6-7y-sjc"/>
+                <constraint firstItem="LeZ-zi-kXu" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="msk-Ed-Shv"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
         </view>
     </objects>
 </document>
