@@ -30,7 +30,7 @@
 ///**
 // * Created by andreacorzani on 19/10/14.
 // */
-//public class AuthHelper2 implements IAuthHelper {
+//public class AuthHelper2 implements IAuthenticator {
 //
 //    // A magic number used to know that the sign-in error resolution activity has completed
 //    public static final int PLUS_REQUEST_CODE = 49404;

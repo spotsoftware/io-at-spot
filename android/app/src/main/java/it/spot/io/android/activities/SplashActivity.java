@@ -9,8 +9,8 @@ import android.os.Handler;
 
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
-import it.spot.io.android.auth.AuthHelper;
-import it.spot.io.android.auth.IAuthHelper;
+import it.spot.io.android.auth.Authenticator;
+import it.spot.io.android.auth.IAuthenticator;
 import it.spot.io.android.model.ILoggedUser;
 
 /**
@@ -20,11 +20,11 @@ import it.spot.io.android.model.ILoggedUser;
  */
 public class SplashActivity
         extends Activity
-        implements Runnable, IAuthHelper.Listener {
+        implements Runnable, IAuthenticator.Listener {
 
     private static final int TIMEOUT = 2000;
 
-    private IAuthHelper mAuthenticationHelper;
+    private IAuthenticator mAuthenticator;
 
     // { Activity methods overriding
 
@@ -33,7 +33,7 @@ public class SplashActivity
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_splash);
 
-        this.mAuthenticationHelper = new AuthHelper(this, this);
+        this.mAuthenticator = new Authenticator(this, this);
 
         new Handler().postDelayed(this, TIMEOUT);
     }
@@ -47,7 +47,7 @@ public class SplashActivity
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         final String token = sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
         if (token != "") {
-            this.mAuthenticationHelper.refreshLogin(token);
+            this.mAuthenticator.refreshLogin(token);
         } else {
             // navigates to login activity
             this.startActivity(new Intent(this, LogInActivity.class));
@@ -56,7 +56,7 @@ public class SplashActivity
 
     // }
 
-    // region IAuthHelper.Listener implementation
+    // region IAuthenticator.Listener implementation
 
     @Override
     public void onLoginCompleted(final ILoggedUser user) {

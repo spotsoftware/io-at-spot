@@ -12,7 +12,7 @@ import it.spot.io.android.model.ILoggedUser;
  *
  * @author a.rinaldi
  */
-public interface IAuthHelper
+public interface IAuthenticator
         extends GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     /**
@@ -41,9 +41,14 @@ public interface IAuthHelper
      * @param requestCode  the integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from
      * @param responseCode the integer response code returned from the activity started for result
      * @param intent       intent returned from the activity started for result
-     * @return {@code true} if the result intent was handled from the IAuthHelper, {@code false} otherwise
+     * @return {@code true} if the result intent was handled from the IAuthenticator, {@code false} otherwise
      */
     boolean checkGoogleErrorsResolution(int requestCode, int responseCode, Intent intent);
+
+    /**
+     * Destroys the authenticator, freeing all the occupied resources.
+     */
+    void destroy();
 
     // region Inner listener interface
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,9 +20,9 @@ import com.google.android.gms.common.SignInButton;
 
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
-import it.spot.io.android.auth.AuthHelper;
 import it.spot.io.android.auth.AuthUtils;
-import it.spot.io.android.auth.IAuthHelper;
+import it.spot.io.android.auth.Authenticator;
+import it.spot.io.android.auth.IAuthenticator;
 import it.spot.io.android.model.ILoggedUser;
 
 
@@ -37,7 +36,7 @@ import it.spot.io.android.model.ILoggedUser;
  */
 public class LogInActivity
         extends BaseActivity
-        implements IAuthHelper.Listener {
+        implements IAuthenticator.Listener {
 
     // UI references.
     private EditText mEmailView;
@@ -47,7 +46,7 @@ public class LogInActivity
 
     private View mLoginFormView;
 
-    private IAuthHelper mAuthenticationHelper;
+    private IAuthenticator mAuthenticator;
 
     // { BaseActivity methods overriding
 
@@ -56,29 +55,25 @@ public class LogInActivity
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_log_in);
 
-        this.mAuthenticationHelper = new AuthHelper(this, this);
+        this.mAuthenticator = new Authenticator(this, this);
 
         this.mPlusSignInButton = (SignInButton) this.findViewById(R.id.plus_sign_in_button);
-        this.mPlusSignInButton.setEnabled(true);
-        this.mPlusSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // User clicked the sign-in button, so begin the sign-in process and automatically
-                // attempt to resolve any errors that occur.
-                showProgressDialog(R.string.loading_title, R.string.loading);
-                mAuthenticationHelper.loginByGoogle();
-            }
-        });
+        if (this.areGooglePlayServicesSupported()) {
+            this.mPlusSignInButton.setEnabled(true);
+            this.mPlusSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showProgressDialog(R.string.loading_title, R.string.loading);
+                    mAuthenticator.loginByGoogle();
+                }
+            });
+        }
 
         this.initializeLoginForm();
-
-//        this.mAuthenticationHelper = new AuthHelper();
-//        this.mAuthenticationHelper.setupGoogleAuthentication(this, this, AuthHelper.PLUS_REQUEST_CODE);
 
         // checks logout
         final Bundle extras = this.getIntent().getExtras();
         if (extras != null && extras.getBoolean("logout")) {
-            // clears the shared preferences
             SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, "");
@@ -86,33 +81,27 @@ public class LogInActivity
             editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
             editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "");
             editor.commit();
-            // disconnects the user
-            //this.mAuthenticationHelper.googleLogout();
+            // TODO - logout
+            //this.mAuthenticator.googleLogout();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        this.mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        this.mGoogleApiClient.disconnect();
+        this.mAuthenticator.destroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        if (!this.mAuthenticationHelper.checkGoogleErrorsResolution(requestCode, responseCode, intent)) {
+        if (!this.mAuthenticator.checkGoogleErrorsResolution(requestCode, responseCode, intent)) {
             super.onActivityResult(requestCode, responseCode, intent);
         }
     }
 
-    // }
+    // endregion
 
-    // { Private methods
+    // region Private methods
 
     /**
      * It simply initializes the login form and its fields.
@@ -184,7 +173,7 @@ public class LogInActivity
             focusView.requestFocus();
         } else {
             this.showProgressDialog(R.string.loading_title, R.string.loading);
-            this.mAuthenticationHelper.login(email, password);
+            this.mAuthenticator.login(email, password);
         }
     }
 
@@ -200,7 +189,7 @@ public class LogInActivity
 
     // endregion
 
-    // region IAuthHelper.Listener implementation
+    // region IAuthenticator.Listener implementation
 
     @Override
     public void onLoginCompleted(ILoggedUser user) {
@@ -224,7 +213,7 @@ public class LogInActivity
     public void onError(int errCode, String errMessage) {
         this.hideProgressDialog();
 
-        if (errCode == AuthHelper.ERROR_CODE_LOGIN_UNAUTHORIZED_ERROR) {
+        if (errCode == Authenticator.ERROR_CODE_LOGIN_UNAUTHORIZED_ERROR) {
             this.mPasswordView.setError("Invalid password");
             this.mPasswordView.requestFocus();
         }

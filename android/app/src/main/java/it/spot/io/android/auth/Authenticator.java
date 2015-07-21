@@ -32,8 +32,8 @@ import it.spot.io.android.model.LoggedUser;
 /**
  * @author a.rinaldi
  */
-public class AuthHelper
-        implements IAuthHelper {
+public class Authenticator
+        implements IAuthenticator {
 
     // region Properties
 
@@ -56,7 +56,7 @@ public class AuthHelper
 
     // region Construction
 
-    public AuthHelper(Activity activity, Listener listener) {
+    public Authenticator(Activity activity, Listener listener) {
         super();
         this.mActivity = activity;
         this.mListener = listener;
@@ -65,7 +65,7 @@ public class AuthHelper
 
     // endregion
 
-    // region IAuthHelper implementation
+    // region IAuthenticator implementation
 
     @Override
     public void login(String email, String password) {
@@ -139,6 +139,13 @@ public class AuthHelper
         }
 
         return false;
+    }
+
+    @Override
+    public void destroy() {
+        if (this.mGoogleApiClient != null) {
+            this.mGoogleApiClient.disconnect();
+        }
     }
 
     // endregion
