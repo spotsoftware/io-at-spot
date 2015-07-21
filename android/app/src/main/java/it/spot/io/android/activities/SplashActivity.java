@@ -6,15 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.Toast;
 
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
 import it.spot.io.android.auth.AuthHelper;
 import it.spot.io.android.auth.IAuthHelper;
-import it.spot.io.android.auth.IGoogleAuthListener;
-import it.spot.io.android.http.IDataResponse;
-import it.spot.io.android.http.IHttpPostCallback;
 import it.spot.io.android.model.ILoggedUser;
 
 /**
@@ -24,13 +20,11 @@ import it.spot.io.android.model.ILoggedUser;
  */
 public class SplashActivity
         extends Activity
-        implements Runnable, IGoogleAuthListener {
+        implements Runnable, IAuthHelper.Listener {
 
     private static final int TIMEOUT = 2000;
 
     private IAuthHelper mAuthenticationHelper;
-
-    private String mAddress;
 
     // { Activity methods overriding
 
@@ -39,8 +33,7 @@ public class SplashActivity
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_splash);
 
-//        this.mAuthenticationHelper = new AuthHelper();
-//        this.mAuthenticationHelper.setupGoogleAuthentication(this, this, AuthHelper.PLUS_REQUEST_CODE);
+        this.mAuthenticationHelper = new AuthHelper(this, this);
 
         new Handler().postDelayed(this, TIMEOUT);
     }
@@ -51,43 +44,22 @@ public class SplashActivity
 
     @Override
     public void run() {
-        this.goToLoginActivity();
-//        final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
-//        final String token = sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
-//        if (token != "") {
-//            this.refreshLocalToken(token);
-//        } else {
-//            this.goToLoginActivity();
-//        }
+        final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        final String token = sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
+        if (token != "") {
+            this.mAuthenticationHelper.refreshLogin(token);
+        } else {
+            // navigates to login activity
+            this.startActivity(new Intent(this, LogInActivity.class));
+        }
     }
 
     // }
 
-    // { Private methods
+    // region IAuthHelper.Listener implementation
 
-//    private void refreshLocalToken(final String token) {
-//        this.mAuthenticationHelper.refreshLocalLogin(token, new IHttpPostCallback<IDataResponse<ILoggedUser>>() {
-//            @Override
-//            public void exec(IDataResponse<ILoggedUser> response) {
-//
-//                if (!response.hasError()) {
-//                    onLoginCompleted(response.getData());
-//                } else {
-//                    Toast.makeText(SplashActivity.this, "##Error refreshing token", Toast.LENGTH_LONG).show();
-//                    goToLoginActivity();
-//                }
-//            }
-//        });
-//    }
-
-    /**
-     * This method gets called when login process goes well.</br>
-     * It stores in {@link android.content.SharedPreferences} the server's IP address and the user token,
-     * then navigates to the application's landing page.
-     *
-     * @param user the logged user model returned from the server
-     */
-    private void onLoginCompleted(final ILoggedUser user) {
+    @Override
+    public void onLoginCompleted(final ILoggedUser user) {
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, user.getId());
@@ -101,32 +73,11 @@ public class SplashActivity
         this.startActivity(intent);
     }
 
-    /**
-     * This method simply navigates to the {@link it.spot.io.android.activities.LogInActivity}.
-     */
-    private void goToLoginActivity() {
+    @Override
+    public void onError(int errCode, String errMessage) {
+        // navigates to login activity, without taking care of the reason
         this.startActivity(new Intent(this, LogInActivity.class));
     }
 
-    // }
-
-    // { IGoogleAuthListener implementation
-
-    @Override
-    public void onPlusConnected(String token, String name) {
-        // INF: Emtpy
-    }
-
-    @Override
-    public void onPlusDisconnected() {
-        // INF: Emtpy
-    }
-
-    @Override
-    public void onPlusAccessRevoked() {
-        // INF: Emtpy
-    }
-
-    // }
-
+    // endregion
 }

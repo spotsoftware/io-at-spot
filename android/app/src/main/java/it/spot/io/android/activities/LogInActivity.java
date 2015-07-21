@@ -162,7 +162,6 @@ public class LogInActivity
         boolean cancel = false;
         View focusView = null;
 
-
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !AuthUtils.isPasswordValid(password)) {
             this.mPasswordView.setError(this.getString(R.string.error_invalid_password));
@@ -182,32 +181,10 @@ public class LogInActivity
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             this.showProgressDialog(R.string.loading_title, R.string.loading);
-
-//            this.mAuthenticationHelper.localLogin(email, password, new IHttpPostCallback<IDataResponse<String>>() {
-//                @Override
-//                public void exec(IDataResponse<String> response) {
-//
-//                    if (!response.hasError()) {
-//                        refreshLocalToken(response.getData());
-//                    } else {
-//                        hideProgressDialog();
-//                        if (response.getErrorMessage().equals("401")) {
-//                            mPasswordView.setError("Invalid password");
-//                            mPasswordView.requestFocus();
-//                            handleGenericError(R.string.error_invalid_password);
-//                        } else {
-//                            handleGenericError(response.getErrorMessage());
-//                        }
-//                    }
-//                }
-//            });
+            this.mAuthenticationHelper.login(email, password);
         }
     }
 
@@ -235,6 +212,8 @@ public class LogInActivity
         editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, user.getEmail());
         editor.commit();
 
+        this.hideProgressDialog();
+
         final Intent intent = new Intent(this, LoggedInActivity.class);
         intent.putExtra(LoggedInActivity.EXTRA_LOGGED_USER, user);
         this.startActivity(intent);
@@ -242,14 +221,15 @@ public class LogInActivity
     }
 
     @Override
-    public void onLoginByGoogleCompleted() {
-        // TODO ???
-    }
-
-    @Override
     public void onError(int errCode, String errMessage) {
-        // TODO - show error
-        Log.e("LOGIN", errCode + " - " + errMessage);
+        this.hideProgressDialog();
+
+        if (errCode == AuthHelper.ERROR_CODE_LOGIN_UNAUTHORIZED_ERROR) {
+            this.mPasswordView.setError("Invalid password");
+            this.mPasswordView.requestFocus();
+        }
+
+        this.handleGenericError(errMessage);
     }
 
     // endregion

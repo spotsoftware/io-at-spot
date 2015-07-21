@@ -1,14 +1,10 @@
 package it.spot.io.android.activities;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBarActivity;
-
-import it.spot.io.android.R;
+import android.widget.Toast;
 
 /**
  * An abstract extension of Android's Activity which provides generic utilities.</br>
@@ -25,7 +21,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this.supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR);
     }
 
@@ -34,30 +29,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     // { Protected methods
 
     protected void handleGenericError(final String message) {
-        final Context context = this;
-
-        this.runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder
-                        .setTitle(R.string.error_generic_title)
-                        .setMessage(message)
-                        .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .create()
-                        .show();
-            }
-        });
-    }
-
-    protected void handleGenericError(final int msgResourceId) {
-        this.handleGenericError(this.getString(msgResourceId));
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     /**

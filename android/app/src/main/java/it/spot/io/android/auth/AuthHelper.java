@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import it.spot.io.android.R;
-import it.spot.io.android.http.DataResponse;
 import it.spot.io.android.http.HttpPostHelper;
 import it.spot.io.android.http.IDataResponse;
 import it.spot.io.android.http.IHttpPostCallback;
@@ -36,12 +35,12 @@ import it.spot.io.android.model.LoggedUser;
 public class AuthHelper
         implements IAuthHelper {
 
-    // A magic number used to know that the sign-in error resolution activity has completed
-    public static final int PLUS_REQUEST_CODE = 49404;
+    // region Properties
 
     public static final int ERROR_CODE_LOGIN_ERROR = 0;
     public static final int ERROR_CODE_PROFILE_ERROR = 1;
     public static final int ERROR_CODE_REFRESH_ERROR = 2;
+    public static final int ERROR_CODE_LOGIN_UNAUTHORIZED_ERROR = 3;
 
     private static final int REQUEST_CODE_GOOGLE_SING_IN = 2;
 
@@ -52,6 +51,8 @@ public class AuthHelper
     private boolean mIsResolving = false;
     private boolean mShouldResolve = false;
     private GoogleApiClient mGoogleApiClient;
+
+    // endregion
 
     // region Construction
 
@@ -65,6 +66,84 @@ public class AuthHelper
     // endregion
 
     // region IAuthHelper implementation
+
+    @Override
+    public void login(String email, String password) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", email);
+            jsonObject.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/local/");
+        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
+
+            @Override
+            public void exec(IJsonResponse jsonResponse) {
+                try {
+                    if (!jsonResponse.hasError()) {
+                        JSONObject jsonData = jsonResponse.getJSON();
+                        String token = jsonData.getString("token");
+
+                        refresh(token);
+                    } else {
+                        if (jsonResponse.getErrorMessage().equals("401")) {
+                            mListener.onError(ERROR_CODE_LOGIN_UNAUTHORIZED_ERROR, "Unauthorized.");
+                        }
+                    }
+                } catch (JSONException e) {
+                    mListener.onError(ERROR_CODE_LOGIN_ERROR, e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void loginByGoogle() {
+        if (this.mGoogleApiClient == null) {
+            this.mGoogleApiClient = new GoogleApiClient.Builder(this.mActivity)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(Plus.API)
+                    .addScope(new Scope(Scopes.PROFILE))
+                    .build();
+        }
+
+        if (this.mGoogleApiClient.isConnecting() || this.mGoogleApiClient.isConnected()) {
+            return;
+        }
+
+        this.mShouldResolve = true;
+        this.mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void refreshLogin(String token) {
+        this.refresh(token);
+    }
+
+    @Override
+    public boolean checkGoogleErrorsResolution(int requestCode, int responseCode, Intent intent) {
+        if (requestCode == REQUEST_CODE_GOOGLE_SING_IN) {
+            // If the error resolution was not successful we should not resolve further.
+            if (responseCode != Activity.RESULT_OK) {
+                mShouldResolve = false;
+            }
+
+            mIsResolving = false;
+            mGoogleApiClient.connect();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // endregion
+
+    // region Private methods
 
     /**
      * Refreshes the token and validates the sign-in of the user.
@@ -110,42 +189,13 @@ public class AuthHelper
         });
     }
 
-    @Override
-    public void login(String email, String password, final IHttpPostCallback<IDataResponse<String>> callback) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", email);
-            jsonObject.put("password", password);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/local/");
-        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
-
-            @Override
-            public void exec(IJsonResponse jsonResponse) {
-
-                IDataResponse<String> response = null;
-
-                try {
-                    if (!jsonResponse.hasError()) {
-                        JSONObject jsonData = jsonResponse.getJSON();
-                        String token = jsonData.getString("token");
-
-                        refresh(token);
-                    } else {
-                        mListener.onError(ERROR_CODE_LOGIN_ERROR, jsonResponse.getErrorMessage());
-                    }
-                } catch (JSONException e) {
-                    mListener.onError(ERROR_CODE_LOGIN_ERROR, e.getMessage());
-                }
-            }
-        });
-    }
-
-    @Override
-    public void getUserProfile(final String token, final String email, final IHttpPostCallback<IDataResponse<ILoggedUser>> callback) {
+    /**
+     * Gets the profile info of the io@spot user.
+     *
+     * @param token the authentication token
+     * @param email the user email
+     */
+    private void getUserProfile(final String token, final String email) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", email);
@@ -172,65 +222,17 @@ public class AuthHelper
                         String name = jsonUser.getString("name");
                         String id = jsonUser.getString("_id");
 
-                        response = new DataResponse<ILoggedUser>(new LoggedUser(id, name, token, email));
+                        mListener.onLoginCompleted(new LoggedUser(id, name, token, email));
                     } else {
-                        response = new DataResponse<ILoggedUser>();
-                        response.setErrorMessage(jsonResponse.getErrorMessage());
+                        Log.e("AUTH HELPER", "Error retrieving the user profile");
+                        mListener.onError(ERROR_CODE_PROFILE_ERROR, "Error retrieving user profile.");
                     }
                 } catch (JSONException e) {
-                    response = new DataResponse<ILoggedUser>();
-                    response.setErrorMessage(jsonResponse.getErrorMessage());
+                    Log.e("AUTH HELPER", "Error retrieving the user profile");
+                    mListener.onError(ERROR_CODE_PROFILE_ERROR, "Error retrieving user profile.");
                 }
-
-                callback.exec(response);
             }
         });
-    }
-
-    @Override
-    public void loginByGoogle() {
-        if (this.mGoogleApiClient == null) {
-            this.mGoogleApiClient = new GoogleApiClient.Builder(this.mActivity)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(Plus.API)
-                    .addScope(new Scope(Scopes.PROFILE))
-                    .build();
-        }
-
-        if (this.mGoogleApiClient.isConnecting() || this.mGoogleApiClient.isConnected()) {
-            return;
-        }
-
-        this.mShouldResolve = true;
-        this.mGoogleApiClient.connect();
-    }
-
-    @Override
-    public boolean checkGoogleErrorsResolution(int requestCode, int responseCode, Intent intent) {
-        if (requestCode == REQUEST_CODE_GOOGLE_SING_IN) {
-            // If the error resolution was not successful we should not resolve further.
-            if (responseCode != Activity.RESULT_OK) {
-                mShouldResolve = false;
-            }
-
-            mIsResolving = false;
-            mGoogleApiClient.connect();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void enableLoginByGoogle(Activity activity) {
-        this.mGoogleApiClient = new GoogleApiClient.Builder(activity)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
-                .addScope(new Scope(Scopes.PROFILE))
-                .build();
     }
 
     // endregion
@@ -309,17 +311,7 @@ public class AuthHelper
         @Override
         protected void onPostExecute(final String token) {
             if (token != null) {
-                getUserProfile(token, Plus.AccountApi.getAccountName(mGoogleApiClient), new IHttpPostCallback<IDataResponse<ILoggedUser>>() {
-                    @Override
-                    public void exec(IDataResponse<ILoggedUser> result) {
-                        if (result.hasError()) {
-                            Log.e("AUTH HELPER", "Error retrieving the user profile");
-                            mListener.onError(ERROR_CODE_PROFILE_ERROR, "Error retrieving user profile.");
-                        } else {
-                            mListener.onLoginCompleted(result.getData());
-                        }
-                    }
-                });
+                getUserProfile(token, Plus.AccountApi.getAccountName(mGoogleApiClient));
             }
         }
     }

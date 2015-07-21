@@ -1,12 +1,9 @@
 package it.spot.io.android.auth;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import it.spot.io.android.http.IDataResponse;
-import it.spot.io.android.http.IHttpPostCallback;
 import it.spot.io.android.model.ILoggedUser;
 
 /**
@@ -23,30 +20,15 @@ public interface IAuthHelper
      *
      * @param email    the user email
      * @param password the authentication password
-     * @param callback the callback triggered at the end of the sign-in process
      */
-    void login(String email, String password, IHttpPostCallback<IDataResponse<String>> callback);
+    void login(String email, String password);
 
     /**
-     * Gets the profile info of the io@spot user.
+     * Refreshes the token and validates the sign-in of the user.
      *
-     * @param token    the authentication token
-     * @param email    the user email
-     * @param callback the callback triggered at the end of the request
+     * @param token the token to refresh
      */
-    void getUserProfile(String token, String email, IHttpPostCallback<IDataResponse<ILoggedUser>> callback);
-
-    /**
-     * Enables or disables the login by Google feature.<br/>
-     * It's required to enable the feature before calling any of the following:
-     * <ul>
-     * <li>{@link #loginByGoogle()};</li>
-     * <li>{@link #checkGoogleErrorsResolution(int, int, Intent)}.</li>
-     * </ul>
-     *
-     * @param activity the activity the method is called from
-     */
-    void enableLoginByGoogle(Activity activity);
+    void refreshLogin(String token);
 
     /**
      * Starts the login by Google flow.
@@ -75,8 +57,6 @@ public interface IAuthHelper
          * @param user the logged user model
          */
         void onLoginCompleted(ILoggedUser user);
-
-        void onLoginByGoogleCompleted();
 
         void onError(int errCode, String errMessage);
     }
