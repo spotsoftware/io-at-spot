@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +36,8 @@ import it.spot.io.android.model.ILoggedUser;
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
 public class LogInActivity
-        extends BaseActivity {
+        extends BaseActivity
+        implements IAuthHelper.Listener {
 
     // UI references.
     private EditText mEmailView;
@@ -54,7 +56,7 @@ public class LogInActivity
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_log_in);
 
-        this.mAuthenticationHelper = new AuthHelper(this);
+        this.mAuthenticationHelper = new AuthHelper(this, this);
 
         this.mPlusSignInButton = (SignInButton) this.findViewById(R.id.plus_sign_in_button);
         this.mPlusSignInButton.setEnabled(true);
@@ -106,22 +108,6 @@ public class LogInActivity
         if (!this.mAuthenticationHelper.checkGoogleErrorsResolution(requestCode, responseCode, intent)) {
             super.onActivityResult(requestCode, responseCode, intent);
         }
-//        if (requestCode == RC_SIGN_IN) {
-//            // If the error resolution was not successful we should not resolve further.
-//            if (responseCode != RESULT_OK) {
-//                mShouldResolve = false;
-//            }
-//
-//            mIsResolving = false;
-//            mGoogleApiClient.connect();
-//        }
-//        if (requestCode == AuthHelper.PLUS_REQUEST_CODE && responseCode == RESULT_OK) {
-//            this.mAuthenticationHelper.googleResolution(responseCode, intent);
-//        } else if (requestCode == AuthHelper.PLUS_REQUEST_CODE && responseCode != Activity.RESULT_OK) {
-//            // If we've got an error we can't resolve, we're no longer in the midst of signing
-//            // in, so we can stop the progress spinner.
-//            this.hideProgressDialog();
-//        }
     }
 
     // }
@@ -157,29 +143,6 @@ public class LogInActivity
 
         this.mLoginFormView = findViewById(R.id.login_form);
     }
-
-    /**
-     * Through this method, the activity tries to refresh the stored access token.
-     *
-     * @param token the access token to refresh
-     */
-//    private void refreshLocalToken(final String token) {
-//        this.showProgressDialog(R.string.loading_title, R.string.loading);
-//
-//        this.mAuthenticationHelper.refreshLocalLogin(token, new IHttpPostCallback<IDataResponse<ILoggedUser>>() {
-//            @Override
-//            public void exec(IDataResponse<ILoggedUser> response) {
-//
-//                hideProgressDialog();
-//
-//                if (!response.hasError()) {
-//                    onLoginCompleted(response.getData());
-//                } else {
-//                    handleGenericError(response.getErrorMessage());
-//                }
-//            }
-//        });
-//    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -258,15 +221,12 @@ public class LogInActivity
         return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
     }
 
-    /**
-     * This method handles the login flow completion.</br>
-     * No need to check error presence, this code gets executed only in the successful case.<br/>
-     * The data of the logged user gets stored within shared preferences and directly passed to the next activity.
-     *
-     * @param user the logged user model
-     */
-    private void onLoginCompleted(final ILoggedUser user) {
+    // endregion
 
+    // region IAuthHelper.Listener implementation
+
+    @Override
+    public void onLoginCompleted(ILoggedUser user) {
         final SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, user.getId());
@@ -281,7 +241,18 @@ public class LogInActivity
         this.finish();
     }
 
-    // }
+    @Override
+    public void onLoginByGoogleCompleted() {
+        // TODO ???
+    }
+
+    @Override
+    public void onError(int errCode, String errMessage) {
+        // TODO - show error
+        Log.e("LOGIN", errCode + " - " + errMessage);
+    }
+
+    // endregion
 }
 
 

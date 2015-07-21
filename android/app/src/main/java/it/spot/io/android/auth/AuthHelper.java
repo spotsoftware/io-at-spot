@@ -31,7 +31,7 @@ import it.spot.io.android.model.ILoggedUser;
 import it.spot.io.android.model.LoggedUser;
 
 /**
- * Created by andreacorzani on 19/10/14.
+ * @author a.rinaldi
  */
 public class AuthHelper
         implements IAuthHelper {
@@ -39,10 +39,15 @@ public class AuthHelper
     // A magic number used to know that the sign-in error resolution activity has completed
     public static final int PLUS_REQUEST_CODE = 49404;
 
+    public static final int ERROR_CODE_LOGIN_ERROR = 0;
+    public static final int ERROR_CODE_PROFILE_ERROR = 1;
+    public static final int ERROR_CODE_REFRESH_ERROR = 2;
+
     private static final int REQUEST_CODE_GOOGLE_SING_IN = 2;
 
-    private Activity mActivity;
-    private HttpPostHelper mHttpPostHelper;
+    private final Activity mActivity;
+    private final Listener mListener;
+    private final HttpPostHelper mHttpPostHelper;
 
     private boolean mIsResolving = false;
     private boolean mShouldResolve = false;
@@ -50,16 +55,23 @@ public class AuthHelper
 
     // region Construction
 
-    public AuthHelper(Activity activity) {
+    public AuthHelper(Activity activity, Listener listener) {
         super();
         this.mActivity = activity;
+        this.mListener = listener;
         this.mHttpPostHelper = new HttpPostHelper();
     }
 
     // endregion
 
-    @Override
-    public void refresh(String token, final IHttpPostCallback<IDataResponse<ILoggedUser>> callback) {
+    // region IAuthHelper implementation
+
+    /**
+     * Refreshes the token and validates the sign-in of the user.
+     *
+     * @param token the token to refresh
+     */
+    private void refresh(String token) {
 
         final JSONObject jsonObject = new JSONObject();
         try {
@@ -74,7 +86,6 @@ public class AuthHelper
             @Override
             public void exec(IJsonResponse jsonResponse) {
 
-
                 IDataResponse<ILoggedUser> response = null;
 
                 try {
@@ -88,19 +99,13 @@ public class AuthHelper
                         String newToken = jsonData.getString("token");
                         String type = jsonData.getString("type");
 
-                        response = new DataResponse<ILoggedUser>(new LoggedUser(id, name, newToken, type));
-
+                        mListener.onLoginCompleted(new LoggedUser(id, name, newToken, type));
                     } else {
-                        response = new DataResponse<ILoggedUser>();
-                        response.setErrorMessage(jsonResponse.getErrorMessage());
+                        mListener.onError(ERROR_CODE_REFRESH_ERROR, jsonResponse.getErrorMessage());
                     }
-
                 } catch (JSONException e) {
-                    response = new DataResponse<ILoggedUser>();
-                    response.setErrorMessage(e.getMessage());
+                    mListener.onError(ERROR_CODE_REFRESH_ERROR, e.getMessage());
                 }
-
-                callback.exec(response);
             }
         });
     }
@@ -125,23 +130,16 @@ public class AuthHelper
 
                 try {
                     if (!jsonResponse.hasError()) {
-
                         JSONObject jsonData = jsonResponse.getJSON();
                         String token = jsonData.getString("token");
-                        response = new DataResponse<String>(token);
 
+                        refresh(token);
                     } else {
-
-                        response = new DataResponse<String>();
-                        response.setErrorMessage(jsonResponse.getErrorMessage());
-
+                        mListener.onError(ERROR_CODE_LOGIN_ERROR, jsonResponse.getErrorMessage());
                     }
                 } catch (JSONException e) {
-                    response = new DataResponse<String>();
-                    response.setErrorMessage(e.getMessage());
+                    mListener.onError(ERROR_CODE_LOGIN_ERROR, e.getMessage());
                 }
-
-                callback.exec(response);
             }
         });
     }
@@ -235,6 +233,8 @@ public class AuthHelper
                 .build();
     }
 
+    // endregion
+
     // region GoogleApiClient.OnConnectionFailedListener implementation
 
     @Override
@@ -273,31 +273,22 @@ public class AuthHelper
 
     @Override
     public void onConnected(Bundle bundle) {
-        // onConnected indicates that an account was selected on the device, that the selected
-        // account has granted any requested permissions to our app and that we were able to
-        // establish a service connection to Google Play services.
-        Log.d("LogInActivity", "onConnected:" + bundle);
         mShouldResolve = false;
-
         new GetOAuthTokenTask().execute();
-
-//        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
-//            String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-//            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-//            String personName = currentPerson.getDisplayName();
-//            Person.Image personPhoto = currentPerson.getImage();
-//            String personGooglePlusProfile = currentPerson.getUrl();
-//        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        // TODO - don't know
     }
 
-    // }
+    // endregion
 
-    private class GetOAuthTokenTask extends AsyncTask<Void, Void, String> {
+    // region Inner classes and interfaces
+
+    private class GetOAuthTokenTask
+            extends AsyncTask<Void, Void, String> {
+
         @Override
         protected String doInBackground(Void... voids) {
             String scope = "oauth2:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/userinfo.email";
@@ -316,19 +307,22 @@ public class AuthHelper
         }
 
         @Override
-        protected void onPostExecute(String token) {
+        protected void onPostExecute(final String token) {
             if (token != null) {
                 getUserProfile(token, Plus.AccountApi.getAccountName(mGoogleApiClient), new IHttpPostCallback<IDataResponse<ILoggedUser>>() {
                     @Override
                     public void exec(IDataResponse<ILoggedUser> result) {
                         if (result.hasError()) {
                             Log.e("AUTH HELPER", "Error retrieving the user profile");
+                            mListener.onError(ERROR_CODE_PROFILE_ERROR, "Error retrieving user profile.");
                         } else {
-                            Log.e("AUTH HELPER", "Retrieved the user profile");
+                            mListener.onLoginCompleted(result.getData());
                         }
                     }
                 });
             }
         }
     }
+
+    // endregion
 }

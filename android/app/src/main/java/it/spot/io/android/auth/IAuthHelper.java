@@ -19,14 +19,6 @@ public interface IAuthHelper
         extends GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     /**
-     * Refreshes the token and validates the sign-in of the user.
-     *
-     * @param token    the token to refresh
-     * @param callback the callback triggered at the end of the validation
-     */
-    void refresh(String token, IHttpPostCallback<IDataResponse<ILoggedUser>> callback);
-
-    /**
      * Attempts a sign-in with plain credentials.
      *
      * @param email    the user email
@@ -48,7 +40,7 @@ public interface IAuthHelper
      * Enables or disables the login by Google feature.<br/>
      * It's required to enable the feature before calling any of the following:
      * <ul>
-     * <li>{@link #loginByGoogle(Activity)};</li>
+     * <li>{@link #loginByGoogle()};</li>
      * <li>{@link #checkGoogleErrorsResolution(int, int, Intent)}.</li>
      * </ul>
      *
@@ -70,4 +62,24 @@ public interface IAuthHelper
      * @return {@code true} if the result intent was handled from the IAuthHelper, {@code false} otherwise
      */
     boolean checkGoogleErrorsResolution(int requestCode, int responseCode, Intent intent);
+
+    // region Inner listener interface
+
+    interface Listener {
+
+        /**
+         * This method handles the login flow completion.</br>
+         * No need to check error presence, this code gets executed only in the successful case.<br/>
+         * The data of the logged user gets stored within shared preferences and directly passed to the next activity.
+         *
+         * @param user the logged user model
+         */
+        void onLoginCompleted(ILoggedUser user);
+
+        void onLoginByGoogleCompleted();
+
+        void onError(int errCode, String errMessage);
+    }
+
+    // endregion
 }
