@@ -9,8 +9,6 @@ import android.util.Patterns;
  */
 public class AuthUtils {
 
-    // { Public static methods
-
     /**
      * This method tells if the given email address is valid.</br>
      *
@@ -30,7 +28,4 @@ public class AuthUtils {
     public static boolean isPasswordValid(final String password) {
         return password.length() >= 4;
     }
-
-    // }
-
 }

@@ -51,7 +51,7 @@ public class LogInActivity
     // { BaseActivity methods overriding
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_log_in);
 
@@ -72,7 +72,7 @@ public class LogInActivity
         this.initializeLoginForm();
 
         // checks logout
-        final Bundle extras = this.getIntent().getExtras();
+        Bundle extras = this.getIntent().getExtras();
         if (extras != null && extras.getBoolean("logout")) {
             SharedPreferences sharedPref = this.getSharedPreferences(DoorKeeperApplication.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -133,12 +133,12 @@ public class LogInActivity
         this.mLoginFormView = findViewById(R.id.login_form);
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLocalLogin() {
+        /**
+         * Attempts to sign in or register the account specified by the login form.
+         * If there are form errors (invalid email, missing fields, etc.), the
+         * errors are presented and no actual login attempt is made.
+         */
+        private void attemptLocalLogin() {
 
         // Reset errors.
         this.mEmailView.setError(null);
