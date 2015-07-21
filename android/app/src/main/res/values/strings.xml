@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Door keeper</string>
+    <string name="app_name">io@spot</string>
     <string name="app_title">io@spot</string>
-    <string name="title_activity_logged_in">LoggedInActivity</string>
-    <string name="title_activity_login">Sign in</string>
 
     <string name="error_generic_title">Error</string>
 
