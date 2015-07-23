@@ -112,6 +112,9 @@ public class BleDoorProxy
 
     @Override
     public void openDoor(String token, boolean mark) {
+
+        Log.e(LOGTAG, "Token " + token);
+
         this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
 
             @Override

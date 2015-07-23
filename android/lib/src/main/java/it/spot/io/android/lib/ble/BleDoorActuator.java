@@ -243,33 +243,22 @@ public class BleDoorActuator
             mConnectedGatt.writeCharacteristic(lastTokenChunkCharacteristic);
             Log.i(LOGTAG, "Write last token chunk");
         }
-
     }
 
-
     private void enableNotification(boolean enable) {
-        BluetoothGattCharacteristic characteristic;
-        if (enable) {
-
-            Log.d(LOGTAG, "Set notifications");
-        } else {
-            Log.d(LOGTAG, "Remove notifications");
-        }
-
-        characteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
+        BluetoothGattCharacteristic characteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(NOTIFY_AUTHENTICATION_CHAR);
 
         //Enable local notifications
-        mConnectedGatt.setCharacteristicNotification(characteristic, enable);
+        this.mConnectedGatt.setCharacteristicNotification(characteristic, enable);
 
         //Enabled remote notifications
         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
         descriptor.setValue(enable ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
-        mConnectedGatt.writeDescriptor(descriptor);
+        this.mConnectedGatt.writeDescriptor(descriptor);
     }
 
     private void writeMarkCharacteristic() {
-
         BluetoothGattCharacteristic markAccessCharacteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(WRITE_MARK_ACCESS_CHAR);
         ByteBuffer bb = ByteBuffer.allocate(4);

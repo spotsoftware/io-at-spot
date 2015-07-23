@@ -10,7 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends WearableActivity {
+import it.spot.io.android.lib.ProxyNotInitializedException;
+import it.spot.io.android.lib.ProxyNotSupportedException;
+import it.spot.io.android.lib.ble.BleDoorProxy;
+import it.spot.io.android.lib.ble.IBleDoorProxy;
+
+public class MainActivity
+        extends WearableActivity
+        implements IBleDoorProxy.Listener {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
@@ -19,15 +26,34 @@ public class MainActivity extends WearableActivity {
     private TextView mTextView;
     private TextView mClockView;
 
+    private IBleDoorProxy mDoorProxy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
 
+        this.mDoorProxy = BleDoorProxy.create(this, this);
+        try {
+            if (this.mDoorProxy.init()) {
+                this.mDoorProxy.startScanningForDoorController();
+            }
+        } catch (ProxyNotSupportedException e) {
+            e.printStackTrace();
+        } catch (ProxyNotInitializedException e) {
+            e.printStackTrace();
+        }
+
         mContainerView = (BoxInsetLayout) findViewById(R.id.container);
         mTextView = (TextView) findViewById(R.id.text);
         mClockView = (TextView) findViewById(R.id.clock);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.mDoorProxy.destroy();
     }
 
     @Override
@@ -61,4 +87,18 @@ public class MainActivity extends WearableActivity {
             mClockView.setVisibility(View.GONE);
         }
     }
+
+    // region IBleDoorProxy.Listener implementation
+
+    @Override
+    public void onProxyReady() {
+        this.mDoorProxy.openDoor("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NTQzM2Y5N2NiMDIwODE2MDAyMGYzZGIiLCJpYXQiOjE0Mzc2MzU1Njg1NTYsImV4cCI6MTQzODQ5OTU2ODU1Nn0.uK8Iyf8YuhhqGrLiD4-ndzbuQIWVXT56ZvtNj_Vz1Ak", false);
+    }
+
+    @Override
+    public void onDoorOpened() {
+
+    }
+
+    // endregion
 }
