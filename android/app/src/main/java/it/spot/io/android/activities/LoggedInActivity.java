@@ -1,16 +1,12 @@
 package it.spot.io.android.activities;
 
 import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -24,26 +20,26 @@ import android.widget.Toast;
 
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
+import it.spot.io.android.lib.ProxyNotInitializedException;
+import it.spot.io.android.lib.ProxyNotSupportedException;
+import it.spot.io.android.lib.ble.BleDoorProxy;
+import it.spot.io.android.lib.ble.IBleDoorProxy;
 import it.spot.io.android.model.ILoggedUser;
 import it.spot.io.android.model.LoggedUser;
-import it.spot.io.android.proximity.ble.BleHelper;
-import it.spot.io.android.proximity.ble.IBleHelper;
-import it.spot.io.android.proximity.ble.IBleListener;
 import it.spot.io.android.proximity.nfc.INfcHelper;
 import it.spot.io.android.proximity.nfc.INfcListener;
 import it.spot.io.android.proximity.nfc.NfcHelper;
 
-public class LoggedInActivity extends BaseActivity implements IBleListener, INfcListener {
+public class LoggedInActivity
+        extends BaseActivity
+        implements IBleDoorProxy.Listener, INfcListener {
 
     public static final String EXTRA_LOGGED_USER = "logged_user";
+    private static final String LOGTAG = "LoggedInActivity";
 
-    private static final String TAG = "LoggedInActivity";
-
-    private IBleHelper mBLEHelper;
+    private IBleDoorProxy mDoorProxy;
     private INfcHelper mNfcHelper;
-
     private ILoggedUser mLoggedUser;
-
     private boolean mHandledNfcOnStartup;
 
     private Button mOpenButton;
@@ -78,23 +74,33 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         //this.mHandledNfcOnStartup = this.handleNFCIntent(this.getIntent());
 
         //if (!this.mHandledNfcOnStartup) {
-            // initializes bluetooth low energy helper
-            BluetoothManager btManager = (BluetoothManager) this.getSystemService(BLUETOOTH_SERVICE);
-            this.mBLEHelper = new BleHelper(this, btManager.getAdapter(), this, this.mMessageHandler);
+        // initializes bluetooth low energy helper
+        this.mDoorProxy = BleDoorProxy.create(this, this);
 
-            // otherwise not useful
-            this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
-            this.mOpenButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mBLEHelper.readSignature();
-                    mOpenButton.setEnabled(false);
-                }
-            });
+        try {
+            if (this.mDoorProxy.init()) {
+                this.mDoorProxy.startScanningForDoorController();
+            }
+        } catch (ProxyNotSupportedException e) {
+            e.printStackTrace();
+        } catch (ProxyNotInitializedException e) {
+            e.printStackTrace();
+        }
 
-            this.mProgressDialog = new ProgressDialog(this);
-            this.mProgressDialog.setIndeterminate(true);
-            this.mProgressDialog.setCancelable(false);
+        // otherwise not useful
+        this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
+        this.mOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDoorProxy.openDoor(mLoggedUser.getToken(), mMarkCheckbox.isChecked());
+                showProgressDialog(R.string.prompt_email, R.string.prompt_password);
+                mOpenButton.setEnabled(false);
+            }
+        });
+
+        this.mProgressDialog = new ProgressDialog(this);
+        this.mProgressDialog.setIndeterminate(true);
+        this.mProgressDialog.setCancelable(false);
         //}
     }
 
@@ -102,34 +108,23 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
     protected void onResume() {
         super.onResume();
 
-        //if (!this.mHandledNfcOnStartup) {
-            // enables Bluetooth Low Energy if needed
-            if (this.mBLEHelper.adapterIsOff()) {
-                //Bluetooth is disabled
-                final Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                this.startActivity(enableBtIntent);
-                return;
-            }
+        // enables NFC if needed
+        if (this.mNfcHelper.adapterIsOff()) {
+            final Intent enableNfcIntent = new Intent(Settings.ACTION_NFC_SETTINGS);
+            this.startActivity(enableNfcIntent);
+            return;
+        }
 
-            this.mBLEHelper.resume();
+        // enables NFC peer-to-peer if needed
+        if (this.mNfcHelper.isP2PDisabled()) {
+            final Intent enableNfcIntent = new Intent(Settings.ACTION_NFCSHARING_SETTINGS);
+            this.startActivity(enableNfcIntent);
+            return;
+        }
 
-            // enables NFC if needed
-            if (this.mNfcHelper.adapterIsOff()) {
-                final Intent enableNfcIntent = new Intent(Settings.ACTION_NFC_SETTINGS);
-                this.startActivity(enableNfcIntent);
-                return;
-            }
+        handleNFCIntent(getIntent());
 
-            // enables NFC peer-to-peer if needed
-            if (this.mNfcHelper.isP2PDisabled()) {
-                final Intent enableNfcIntent = new Intent(Settings.ACTION_NFCSHARING_SETTINGS);
-                this.startActivity(enableNfcIntent);
-                return;
-            }
-
-            handleNFCIntent(getIntent());
-
-            this.mNfcHelper.resume();
+        this.mNfcHelper.resume();
         //}
     }
 
@@ -141,28 +136,34 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
             this.mProgressDialog.dismiss();
         }
 
-        if (this.mBLEHelper != null && this.mBLEHelper.isActive()) {
-            this.mBLEHelper.pause();
-        }
-
         if (this.mNfcHelper != null && this.mNfcHelper.isActive()) {
             this.mNfcHelper.pause();
         }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-
-        if (this.mBLEHelper != null) {
-            this.mBLEHelper.stop();
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        this.mDoorProxy.destroy();
     }
 
     @Override
     protected void onNewIntent(final Intent intent) {
         if (!this.handleNFCIntent(intent)) {
             super.onNewIntent(intent);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            if (this.mDoorProxy.init()) {
+                this.mDoorProxy.startScanningForDoorController();
+            }
+        } catch (ProxyNotSupportedException e) {
+            e.printStackTrace();
+        } catch (ProxyNotInitializedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -188,50 +189,39 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
 
     // }
 
-    // { IBleListener implementation
+    // region IBleDoorProxy.Listener implementation
 
     @Override
-    public void onBLEDeviceReady() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mOpenButton.setEnabled(true);
-            }
-        });
+    public void onProxyReady() {
+        this.mOpenButton.setEnabled(true);
     }
 
     @Override
-    public void onBLEReadSignatureCompleted(byte[] result) {
-        //TODO: Check for signature
-        this.mBLEHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
+    public void onDoorOpened() {
+        this.hideProgressDialog();
+        this.mOpenButton.setEnabled(true);
     }
 
-    @Override
-    public void onBLEWriteTokenCompleted(int result) {
-        Log.w(TAG, result + "");
-    }
+//    TODO - notify ble error
+//    @Override
+//    public void onBLEError(String error) {
+//        this.handleGenericError(error);
+//    }
 
-    @Override
-    public void onBLEError(String error) {
-        this.handleGenericError(error);
-    }
+    // endregion
 
-    // }
-
-    // { INfcListener implementation
+    // region INfcListener implementation
 
     @Override
     public void onSendTokenCompleted() {
-        //Log.i(TAG, "send completed");
-
         if (this.mHandledNfcOnStartup) {
             this.finish();
         }
     }
 
-    // }
+    // endregion
 
-    // { Private methods
+    // region  Private methods
 
     /**
      * If the intent comes from an NFC source this method tries to handle it,
@@ -244,11 +234,11 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
 
             if (!this.mNfcHelper.isP2PStarted()) {
-                Log.w(TAG, "Reading signature " + this.mNfcHelper.readSignature(intent));
+                Log.w(LOGTAG, "Reading signature " + this.mNfcHelper.readSignature(intent));
 
                 this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
             } else {
-                Log.w(TAG, "Reading result");
+                Log.w(LOGTAG, "Reading result");
                 Toast.makeText(this, this.mNfcHelper.readAuthenticationResult(intent), Toast.LENGTH_LONG).show();
             }
 
@@ -288,31 +278,5 @@ public class LoggedInActivity extends BaseActivity implements IBleListener, INfc
         }
     }
 
-    // }
-
-    // { Inner classes
-
-    /*
-     * We have a Handler to process event results on the main thread
-     */
-    private final Handler mMessageHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case DoorKeeperApplication.MessageConstants.MSG_PROGRESS:
-                    mProgressDialog.setMessage((String) msg.obj);
-                    if (!mProgressDialog.isShowing()) {
-                        mProgressDialog.show();
-                    }
-                    break;
-                case DoorKeeperApplication.MessageConstants.MSG_DISMISS:
-                    mProgressDialog.dismiss();
-                    break;
-            }
-        }
-    };
-
-    // }
-
+    // endregion
 }

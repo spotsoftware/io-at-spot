@@ -9,6 +9,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
@@ -21,7 +22,7 @@ import it.spot.io.android.lib.ProxyNotSupportedException;
  */
 public class BleDoorProxy
         extends ScanCallback
-        implements IBleDoorProxy, Runnable {
+        implements IBleDoorProxy, BluetoothBondBroadcastReceiver.Listener, Runnable {
 
     public static final int REQUEST_CODE_ENABLE_BT = 100;
 
@@ -37,9 +38,11 @@ public class BleDoorProxy
     private int mScanPeriod;
 
     private BluetoothDevice mDoorBleDevice;
+    private IBleDoorActuator mDoorActuator;
     private BluetoothManager mBtManager;
     private BluetoothAdapter mBtAdapter;
     private BluetoothLeScanner mBleAdapter;
+    private BluetoothBondBroadcastReceiver mBondReceiver;
 
     // region Construction
 
@@ -108,8 +111,29 @@ public class BleDoorProxy
     }
 
     @Override
+    public void openDoor(String token, boolean mark) {
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
+
+            @Override
+            public void onBLEReadSignatureCompleted(byte[] signature) {
+
+            }
+
+            @Override
+            public void onBLEWriteTokenCompleted(int result) {
+                destroyDoorActuator();
+                mListener.onDoorOpened();
+            }
+        });
+
+        this.mDoorActuator.openDoor(token, mark);
+    }
+
+    @Override
     public void destroy() {
         this.stopScan();
+        this.cancelBondBroadcastReceiver();
+        this.destroyDoorActuator();
         this.mHandler.removeCallbacks(this);
     }
 
@@ -128,6 +152,9 @@ public class BleDoorProxy
             if (result.getDevice().getBondState() == BluetoothDevice.BOND_BONDED) {
                 this.mListener.onProxyReady();
             } else {
+                Log.e(LOGTAG, "Starting bonding creation");
+                this.mBondReceiver = new BluetoothBondBroadcastReceiver(this.mDoorBleDevice.getAddress(), this);
+                this.mActivity.registerReceiver(this.mBondReceiver, new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED));
                 result.getDevice().createBond();
             }
         }
@@ -151,12 +178,47 @@ public class BleDoorProxy
 
     // endregion
 
+    // region BluetoothBondBroadcastReceiver.Listener implementation
+
+    @Override
+    public void onBondCreated() {
+        this.mListener.onProxyReady();
+        this.stopScan();
+    }
+
+    @Override
+    public void onBondProgress() {
+        // INF: Empty
+    }
+
+    @Override
+    public void onBondRemoved() {
+        // INF: Empty
+    }
+
+    // endregion
+
     // region Private methods
 
     private void stopScan() {
         if (this.mDiscovering) {
             this.mDiscovering = false;
             this.mBleAdapter.stopScan(this);
+            this.cancelBondBroadcastReceiver();
+        }
+    }
+
+    private void cancelBondBroadcastReceiver() {
+        if (this.mBondReceiver != null) {
+            this.mActivity.unregisterReceiver(this.mBondReceiver);
+            this.mBondReceiver = null;
+        }
+    }
+
+    private void destroyDoorActuator() {
+        if (this.mDoorActuator != null) {
+            this.mDoorActuator.destroy();
+            this.mDoorActuator = null;
         }
     }
 

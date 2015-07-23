@@ -41,6 +41,8 @@ public class Authenticator
     public static final int ERROR_CODE_PROFILE_ERROR = 1;
     public static final int ERROR_CODE_REFRESH_ERROR = 2;
     public static final int ERROR_CODE_LOGIN_UNAUTHORIZED_ERROR = 3;
+    public static final int ERROR_CODE_GOOGLE_RESOLUTION = 4;
+    public static final int ERROR_CODE_GOOGLE_SIGNOUT = 5;
 
     private static final int REQUEST_CODE_GOOGLE_SING_IN = 2;
 
@@ -78,7 +80,7 @@ public class Authenticator
         }
 
         String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/local/");
-        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
+        this.mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
 
             @Override
             public void exec(IJsonResponse jsonResponse) {
@@ -111,10 +113,6 @@ public class Authenticator
                     .build();
         }
 
-        if (this.mGoogleApiClient.isConnecting() || this.mGoogleApiClient.isConnected()) {
-            return;
-        }
-
         this.mShouldResolve = true;
         this.mGoogleApiClient.connect();
     }
@@ -129,11 +127,10 @@ public class Authenticator
         if (requestCode == REQUEST_CODE_GOOGLE_SING_IN) {
             // If the error resolution was not successful we should not resolve further.
             if (responseCode != Activity.RESULT_OK) {
-                mShouldResolve = false;
+                this.mShouldResolve = false;
             }
-
-            mIsResolving = false;
-            mGoogleApiClient.connect();
+            this.mIsResolving = false;
+            this.mGoogleApiClient.connect();
 
             return true;
         }
@@ -167,7 +164,7 @@ public class Authenticator
         }
 
         String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/local/refresh");
-        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
+        this.mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
 
             @Override
             public void exec(IJsonResponse jsonResponse) {
@@ -213,7 +210,7 @@ public class Authenticator
         }
 
         String url = String.format("%s/%s", this.mActivity.getString(R.string.server_url), "auth/google/getLocalUser");
-        mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
+        this.mHttpPostHelper.post(url, jsonObject, new IHttpPostCallback<IJsonResponse>() {
 
             @Override
             public void exec(IJsonResponse jsonResponse) {
@@ -248,31 +245,21 @@ public class Authenticator
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        // Could not connect to Google Play Services.  The user needs to select an account,
-        // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
-        // ConnectionResult to see possible error codes.
-        Log.d("LogInActivity", "onConnectionFailed:" + connectionResult);
-
-        if (!mIsResolving && mShouldResolve) {
+        if (!this.mIsResolving && this.mShouldResolve) {
             if (connectionResult.hasResolution()) {
                 try {
                     connectionResult.startResolutionForResult(this.mActivity, REQUEST_CODE_GOOGLE_SING_IN);
-                    mIsResolving = true;
+                    this.mIsResolving = true;
                 } catch (IntentSender.SendIntentException e) {
-                    Log.e("LogInActivity", "Could not resolve ConnectionResult.", e);
-                    mIsResolving = false;
-                    mGoogleApiClient.connect();
+                    this.mIsResolving = false;
+                    this.mGoogleApiClient.connect();
                 }
             } else {
-                // Could not resolve the connection result, show the user an
-                // error dialog.
-//                showErrorDialog(connectionResult);
-                // TODO - notify error
+                this.mListener.onError(ERROR_CODE_GOOGLE_RESOLUTION, "No connection resolution1.");
             }
         } else {
-            // Show the signed-out UI
-//            showSignedOutUI();
-            // TODO - notify sign out
+            this.mGoogleApiClient.disconnect();
+            this.mListener.onError(ERROR_CODE_GOOGLE_RESOLUTION, "No connection resolution2.");
         }
     }
 
@@ -282,13 +269,13 @@ public class Authenticator
 
     @Override
     public void onConnected(Bundle bundle) {
-        mShouldResolve = false;
+        this.mShouldResolve = false;
         new GetOAuthTokenTask().execute();
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        // TODO - don't know
+        Log.e("AUTHENTICATION", "onConnectionSuspended");
     }
 
     // endregion

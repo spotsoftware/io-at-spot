@@ -20,6 +20,8 @@ public interface IBleDoorProxy {
 
     void startScanningForDoorController() throws ProxyNotInitializedException;
 
+    void openDoor(String token, boolean mark);
+
     void destroy();
 
     // region Inner listener interface
@@ -27,6 +29,8 @@ public interface IBleDoorProxy {
     interface Listener {
 
         void onProxyReady();
+
+        void onDoorOpened();
     }
 
     // endregion

@@ -1,16 +1,26 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+
+    dexOptions {
+        javaMaxHeapSize "2048M"
+    }
+
+    compileOptions {
+        sourceCompatibility org.gradle.api.JavaVersion.VERSION_1_6
+        targetCompatibility org.gradle.api.JavaVersion.VERSION_1_6
+    }
 
     defaultConfig {
         applicationId "it.spot.io.android"
-        minSdkVersion 19
-        targetSdkVersion 22
+        minSdkVersion 21
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -20,8 +30,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.google.android.support:wearable:+'
+    compile project.MULTIDEX
+    compile project.PLAY_SERVICES
+    compile project.ANDROID_SUPPORT_APP_COMPAT_V7
+    compile project.ANDROID_SUPPORT_WEARABLE
+    compile project(':lib')
 }
