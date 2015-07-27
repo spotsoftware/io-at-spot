@@ -1,4 +1,4 @@
-package it.spot.io.android.lib.ble;
+package it.spot.io.android.lib.proxies.ble;
 
 /**
  * @author a.rinaldi
@@ -13,9 +13,11 @@ public interface IBleDoorActuator {
 
     interface Listener {
 
-        void onBLEReadSignatureCompleted(byte[] signature);
-
         void onBLEWriteTokenCompleted(int result);
+
+        void onBLEDeviceDisconnected();
+
+        void onBLEDeviceError(int status, int newState);
     }
 
     // endregion

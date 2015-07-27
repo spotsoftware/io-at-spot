@@ -10,10 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import it.spot.io.android.lib.ProxyNotInitializedException;
-import it.spot.io.android.lib.ProxyNotSupportedException;
-import it.spot.io.android.lib.ble.BleDoorProxy;
-import it.spot.io.android.lib.ble.IBleDoorProxy;
+import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
+import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
+import it.spot.io.android.lib.proxies.ble.BleDoorProxy;
+import it.spot.io.android.lib.proxies.ble.IBleDoorProxy;
 
 public class MainActivity
         extends WearableActivity

@@ -35,4 +35,5 @@ dependencies {
     compile project.ANDROID_SUPPORT_APP_COMPAT_V7
     compile project.ANDROID_SUPPORT_WEARABLE
     compile project(':lib')
+    wearApp project(':wear')
 }
