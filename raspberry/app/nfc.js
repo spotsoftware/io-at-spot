@@ -51,10 +51,19 @@ nfc.open(function (err, dev) {
             extNfc.kill();
             intNfc.kill();
         });
-        intNfc.stdout.pipe(process.stdout);
-        intNfc.stderr.pipe(process.stderr);
-        extNfc.stdout.pipe(process.stdout);
-        extNfc.stderr.pipe(process.stderr);
+        intNfc.stdout.on('data', function (data) {
+            logger.info('internal reader: ' + data);
+        });
+        intNfc.stderr.on('data', function (data) {
+            logger.error('internal reader: ' + data);
+        });
+        extNfc.stdout.on('data', function (data) {
+            logger.info('external reader: ' + data);
+        });
+        extNfc.stderr.on('data', function (data) {
+            logger.error('external reader: ' + data);
+        });
+
     }, 1000);
 });
 
