@@ -202,7 +202,12 @@ public class LoggedInActivity
 
     @Override
     public void onProxyReady() {
-        this.mOpenButton.setEnabled(true);
+        this.mOpenButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mOpenButton.setEnabled(true);
+            }
+        }, 3000);
     }
 
     @Override
