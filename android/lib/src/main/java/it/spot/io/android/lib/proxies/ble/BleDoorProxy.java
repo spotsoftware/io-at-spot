@@ -32,6 +32,7 @@ public class BleDoorProxy
     private final Activity mActivity;
     private final Listener mListener;
     private final Handler mHandler;
+    private final String mDoorId;
 
     private boolean mInitialized;
     private boolean mDiscovering;
@@ -46,9 +47,10 @@ public class BleDoorProxy
 
     // region Construction
 
-    protected BleDoorProxy(Activity activity, Listener listener) {
+    protected BleDoorProxy(Activity activity, String doorId, Listener listener) {
         super();
         this.mActivity = activity;
+        this.mDoorId = doorId;
         this.mListener = listener;
         this.mHandler = new Handler();
 
@@ -57,8 +59,8 @@ public class BleDoorProxy
         this.mScanPeriod = DEFAULT_SCAN_PERIOD;
     }
 
-    public static IBleDoorProxy create(Activity activity, Listener listener) {
-        return new BleDoorProxy(activity, listener);
+    public static IBleDoorProxy create(Activity activity, String doorId, Listener listener) {
+        return new BleDoorProxy(activity, doorId, listener);
     }
 
     // endregion
@@ -147,7 +149,7 @@ public class BleDoorProxy
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
         Log.d(LOGTAG, "Found device " + result.getDevice().getName() + " with " + result.getRssi() + " rssi");
-        if (result.getDevice().getName().equals("raspy2")) {
+        if (result.getDevice().getName().equals(this.mDoorId)) {
             this.stopScan();
 
             this.mDoorBleDevice = result.getDevice();

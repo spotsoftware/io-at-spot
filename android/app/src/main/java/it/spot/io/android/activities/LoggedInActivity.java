@@ -18,13 +18,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.stetho.okhttp.StethoInterceptor;
-import com.squareup.okhttp.OkHttpClient;
-
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
-import it.spot.io.android.lib.api.organizations.Organization;
-import it.spot.io.android.lib.api.organizations.OrganizationsEndPoint;
 import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
 import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
 import it.spot.io.android.lib.proxies.ble.BleDoorProxy;
@@ -34,12 +29,6 @@ import it.spot.io.android.model.LoggedUser;
 import it.spot.io.android.proximity.nfc.INfcHelper;
 import it.spot.io.android.proximity.nfc.INfcListener;
 import it.spot.io.android.proximity.nfc.NfcHelper;
-import retrofit.Callback;
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.OkClient;
-import retrofit.client.Response;
 
 public class LoggedInActivity
         extends BaseActivity
@@ -245,7 +234,7 @@ public class LoggedInActivity
 
     private void checkBleProxy() {
         if (this.mDoorProxy == null) {
-            this.mDoorProxy = BleDoorProxy.create(this, this);
+            this.mDoorProxy = BleDoorProxy.create(this, this.getString(R.string.raspberry_name), this);
         }
 
         try {

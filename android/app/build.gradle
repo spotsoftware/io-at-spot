@@ -26,6 +26,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        lab {
+            minifyEnabled false
+            debuggable true
+            jniDebuggable true
+        }
     }
 }
 
