@@ -18,8 +18,13 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.stetho.okhttp.StethoInterceptor;
+import com.squareup.okhttp.OkHttpClient;
+
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
+import it.spot.io.android.lib.api.organizations.Organization;
+import it.spot.io.android.lib.api.organizations.OrganizationsEndPoint;
 import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
 import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
 import it.spot.io.android.lib.proxies.ble.BleDoorProxy;
@@ -29,6 +34,12 @@ import it.spot.io.android.model.LoggedUser;
 import it.spot.io.android.proximity.nfc.INfcHelper;
 import it.spot.io.android.proximity.nfc.INfcListener;
 import it.spot.io.android.proximity.nfc.NfcHelper;
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.OkClient;
+import retrofit.client.Response;
 
 public class LoggedInActivity
         extends BaseActivity
@@ -93,6 +104,32 @@ public class LoggedInActivity
         this.mProgressDialog.setIndeterminate(true);
         this.mProgressDialog.setCancelable(false);
         //}
+
+//        OkHttpClient client = new OkHttpClient();
+//        client.networkInterceptors().add(new StethoInterceptor());
+//        RestAdapter adapter = new RestAdapter.Builder()
+//                .setEndpoint(this.getString(R.string.server_url))
+//                .setClient(new OkClient(client))
+//                .setRequestInterceptor(new RequestInterceptor() {
+//                    @Override
+//                    public void intercept(RequestFacade request) {
+//                        request.addHeader("Authorization", String.format("Bearer %s", mLoggedUser.getToken()));
+//                    }
+//                })
+//                .build();
+//
+//        OrganizationsEndPoint orgEndPoint = adapter.create(OrganizationsEndPoint.class);
+//        orgEndPoint.get("5578236ba5d5b416001ec31b", new Callback<Organization>() {
+//            @Override
+//            public void success(Organization organization, Response response) {
+//                Log.e(LOGTAG, "found " + organization.getName() + " organization");
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -207,7 +244,7 @@ public class LoggedInActivity
     // region  Private methods
 
     private void checkBleProxy() {
-        if(this.mDoorProxy == null) {
+        if (this.mDoorProxy == null) {
             this.mDoorProxy = BleDoorProxy.create(this, this);
         }
 
