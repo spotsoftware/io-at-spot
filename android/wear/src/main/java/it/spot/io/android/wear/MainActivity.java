@@ -34,7 +34,7 @@ public class MainActivity
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
 
-        this.mDoorProxy = BleDoorProxy.create(this,"", this);
+        this.mDoorProxy = BleDoorProxy.create(this, "", this);
         try {
             if (this.mDoorProxy.init()) {
                 this.mDoorProxy.startScanningForDoorController();

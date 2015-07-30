@@ -82,6 +82,8 @@ public class BleDoorActuator
 
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+
+
         Log.d(LOGTAG, "Connection State Change: " + status + " -> " + connectionState(newState));
         if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
             /*
@@ -96,18 +98,18 @@ public class BleDoorActuator
              * If at any point we disconnect, send a message to clear the weather values
              * out of the UI
              */
-            gatt.close();
             gatt.disconnect();
-            this.mListener.onBLEDeviceDisconnected();
+            gatt.close();
+            mListener.onBLEDeviceDisconnected();
             // TODO - notify disconnection
         } else if (status != BluetoothGatt.GATT_SUCCESS) {
             /*
              * If there is a failure at any stage, simply disconnect
              */
-            gatt.close();
             gatt.disconnect();
-            this.mListener.onBLEDeviceDisconnected();
-            this.mListener.onBLEDeviceError(status, newState);
+            gatt.close();
+            mListener.onBLEDeviceDisconnected();
+            mListener.onBLEDeviceError(status, newState);
             // TODO - notify disconnection
         }
     }
@@ -187,6 +189,11 @@ public class BleDoorActuator
         Log.d(LOGTAG, "Connecting to " + this.mDevice.getName());
 
         this.mConnectedGatt = this.mDevice.connectGatt(this.mActivity, false, this);
+        if (this.mConnectedGatt == null) {
+            Log.d(LOGTAG, "Connected gatt is null");
+        } else {
+            Log.d(LOGTAG, "Connected gatt is NOT null");
+        }
 
         //Display progress UI
         // TODO - notify MSG_PROGRESS, "Connecting to " + this.mDevice.getName() + "..."));
