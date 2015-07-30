@@ -26,6 +26,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        lab {
+            minifyEnabled false
+            debuggable true
+            jniDebuggable true
+        }
     }
 }
 
@@ -34,5 +40,10 @@ dependencies {
     compile project.PLAY_SERVICES
     compile project.ANDROID_SUPPORT_APP_COMPAT_V7
     compile project.ANDROID_SUPPORT_WEARABLE
+    compile project.OK_HTTP
+    compile project.RETROFIT
+    compile project.STETHO
+    compile project.STETHO_OK_HTTP
     compile project(':lib')
+    wearApp project(':wear')
 }

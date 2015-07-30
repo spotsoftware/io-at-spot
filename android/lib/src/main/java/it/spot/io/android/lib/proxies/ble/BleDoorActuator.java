@@ -1,4 +1,4 @@
-package it.spot.io.android.lib.ble;
+package it.spot.io.android.lib.proxies.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -21,7 +21,7 @@ public class BleDoorActuator
         extends BluetoothGattCallback
         implements IBleDoorActuator {
 
-    private static final String LOGTAG = "BLE_ACTUATOR";
+    private static final String LOGTAG = "IO_AT_SPOT_BLE";
 
     private static final UUID AUTHENTICATION_SERVICE = UUID.fromString("f000cc40-0451-4000-b000-000000000000");
     private static final UUID READ_DIGITAL_SIG_CHAR = UUID.fromString("f000cc41-0451-4000-b000-000000000000");
@@ -69,6 +69,7 @@ public class BleDoorActuator
     @Override
     public void destroy() {
         if (mConnectedGatt != null) {
+            Log.d(LOGTAG, "Destroying actuator");
             mConnectedGatt.disconnect();
             mConnectedGatt.close();
             mConnectedGatt = null;
@@ -83,42 +84,37 @@ public class BleDoorActuator
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
         Log.d(LOGTAG, "Connection State Change: " + status + " -> " + connectionState(newState));
         if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
-                    /*
-                     * Once successfully connected, we must next discover all the services on the
-                     * device before we can read and write their characteristics.
-                     */
+            /*
+             * Once successfully connected, we must next discover all the services on the
+             * device before we can read and write their characteristics.
+             */
             gatt.discoverServices();
             // TODO - notify services discovery
         } else if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED) {
 
-                    /*
-                     * If at any point we disconnect, send a message to clear the weather values
-                     * out of the UI
-                     */
+            /*
+             * If at any point we disconnect, send a message to clear the weather values
+             * out of the UI
+             */
             gatt.close();
             gatt.disconnect();
+            this.mListener.onBLEDeviceDisconnected();
             // TODO - notify disconnection
         } else if (status != BluetoothGatt.GATT_SUCCESS) {
-                    /*
-                     * If there is a failure at any stage, simply disconnect
-                     */
+            /*
+             * If there is a failure at any stage, simply disconnect
+             */
             gatt.close();
             gatt.disconnect();
+            this.mListener.onBLEDeviceDisconnected();
+            this.mListener.onBLEDeviceError(status, newState);
             // TODO - notify disconnection
-//            mHandler.sendMessage(Message.obtain(null, DoorKeeperApplication.MessageConstants.MSG_DISMISS, "Disconnected..."));
-            //startScan();
-//            mActivity.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    startScan();
-//                }
-//            });
         }
     }
 
     @Override
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-        Log.d(LOGTAG, "Services Discovered: " + status);
+        Log.d(LOGTAG, "Services discover status: " + (status == BluetoothGatt.GATT_SUCCESS ? "success" : "error"));
 
         if (mConnectedGatt != null) {
             subscribeAuthenticatedNotification();
@@ -129,11 +125,10 @@ public class BleDoorActuator
     public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         //If characteristic is the signature
         if (READ_DIGITAL_SIG_CHAR.equals(characteristic.getUuid())) {
-            Log.w(LOGTAG, "Read sig completed");
+            Log.d(LOGTAG, "Read sig completed");
             if (mConnectedGatt != null) {
                 writeMarkCharacteristic();
             }
-//            mListener.onBLEReadSignatureCompleted(characteristic.getValue());
         }
     }
 
@@ -189,9 +184,9 @@ public class BleDoorActuator
     private void connectToDevice() {
 
         //Obtain the discovered device to connect with
-        Log.i(LOGTAG, "Connecting to " + this.mDevice.getName());
+        Log.d(LOGTAG, "Connecting to " + this.mDevice.getName());
 
-        this.mConnectedGatt = this.mDevice.connectGatt(this.mActivity, true, this);
+        this.mConnectedGatt = this.mDevice.connectGatt(this.mActivity, false, this);
 
         //Display progress UI
         // TODO - notify MSG_PROGRESS, "Connecting to " + this.mDevice.getName() + "..."));
@@ -236,40 +231,29 @@ public class BleDoorActuator
         if (mChunkIndex < mChunks.length - 1) {
             tokenChunkCharacteristic.setValue(mChunks[mChunkIndex]);
             mConnectedGatt.writeCharacteristic(tokenChunkCharacteristic);
-            Log.i(LOGTAG, "Write token chunk" + mChunkIndex);
+            Log.d(LOGTAG, "Write token chunk" + mChunkIndex);
             mChunkIndex++;
         } else {
             lastTokenChunkCharacteristic.setValue(mChunks[mChunks.length - 1]);
             mConnectedGatt.writeCharacteristic(lastTokenChunkCharacteristic);
-            Log.i(LOGTAG, "Write last token chunk");
+            Log.d(LOGTAG, "Write last token chunk");
         }
-
     }
 
-
     private void enableNotification(boolean enable) {
-        BluetoothGattCharacteristic characteristic;
-        if (enable) {
-
-            Log.d(LOGTAG, "Set notifications");
-        } else {
-            Log.d(LOGTAG, "Remove notifications");
-        }
-
-        characteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
+        BluetoothGattCharacteristic characteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(NOTIFY_AUTHENTICATION_CHAR);
 
         //Enable local notifications
-        mConnectedGatt.setCharacteristicNotification(characteristic, enable);
+        this.mConnectedGatt.setCharacteristicNotification(characteristic, enable);
 
         //Enabled remote notifications
         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
         descriptor.setValue(enable ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
-        mConnectedGatt.writeDescriptor(descriptor);
+        this.mConnectedGatt.writeDescriptor(descriptor);
     }
 
     private void writeMarkCharacteristic() {
-
         BluetoothGattCharacteristic markAccessCharacteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(WRITE_MARK_ACCESS_CHAR);
         ByteBuffer bb = ByteBuffer.allocate(4);
@@ -277,7 +261,7 @@ public class BleDoorActuator
         bb.putInt(this.mShouldMark ? 1 : 0);
         markAccessCharacteristic.setValue(bb.array());
         mConnectedGatt.writeCharacteristic(markAccessCharacteristic);
-        Log.i(LOGTAG, "Write mark access characteristic " + this.mShouldMark);
+        Log.d(LOGTAG, "Write mark access characteristic " + this.mShouldMark);
     }
 
     private void writeTokenCharacteristic() {

@@ -1,4 +1,4 @@
-package it.spot.io.android.lib.ble;
+package it.spot.io.android.lib.proxies.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -14,8 +14,8 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 
-import it.spot.io.android.lib.ProxyNotInitializedException;
-import it.spot.io.android.lib.ProxyNotSupportedException;
+import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
+import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
 
 /**
  * @author a.rinaldi
@@ -26,12 +26,13 @@ public class BleDoorProxy
 
     public static final int REQUEST_CODE_ENABLE_BT = 100;
 
-    private static final int DEFAULT_SCAN_PERIOD = 10000;
-    private static final String LOGTAG = "IO_AT_SPOT_BLE_PROXY";
+    private static final int DEFAULT_SCAN_PERIOD = 30000;
+    private static final String LOGTAG = "IO_AT_SPOT_BLE";
 
     private final Activity mActivity;
     private final Listener mListener;
     private final Handler mHandler;
+    private final String mDoorId;
 
     private boolean mInitialized;
     private boolean mDiscovering;
@@ -46,9 +47,10 @@ public class BleDoorProxy
 
     // region Construction
 
-    protected BleDoorProxy(Activity activity, Listener listener) {
+    protected BleDoorProxy(Activity activity, String doorId, Listener listener) {
         super();
         this.mActivity = activity;
+        this.mDoorId = doorId;
         this.mListener = listener;
         this.mHandler = new Handler();
 
@@ -57,8 +59,8 @@ public class BleDoorProxy
         this.mScanPeriod = DEFAULT_SCAN_PERIOD;
     }
 
-    public static IBleDoorProxy create(Activity activity, Listener listener) {
-        return new BleDoorProxy(activity, listener);
+    public static IBleDoorProxy create(Activity activity, String doorId, Listener listener) {
+        return new BleDoorProxy(activity, doorId, listener);
     }
 
     // endregion
@@ -103,26 +105,29 @@ public class BleDoorProxy
         if (!this.mInitialized) {
             throw new ProxyNotInitializedException("BleDoorProxy wasn't properly initialized");
         }
-
-        this.mDiscovering = true;
-        this.mBleAdapter.startScan(this);
-        // schedules scan stop
-        this.mHandler.postDelayed(this, this.mScanPeriod);
+        this.startScan();
     }
 
     @Override
     public void openDoor(String token, boolean mark) {
+
+        Log.i(LOGTAG, "Token " + token);
+
         this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
 
             @Override
-            public void onBLEReadSignatureCompleted(byte[] signature) {
-
+            public void onBLEWriteTokenCompleted(int result) {
+                mListener.onDoorOpened();
             }
 
             @Override
-            public void onBLEWriteTokenCompleted(int result) {
-                destroyDoorActuator();
-                mListener.onDoorOpened();
+            public void onBLEDeviceDisconnected() {
+                startScan();
+            }
+
+            @Override
+            public void onBLEDeviceError(int status, int newState) {
+                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
             }
         });
 
@@ -144,7 +149,7 @@ public class BleDoorProxy
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
         Log.d(LOGTAG, "Found device " + result.getDevice().getName() + " with " + result.getRssi() + " rssi");
-        if (result.getDevice().getName().equals("raspy")) {
+        if (result.getDevice().getName().equals(this.mDoorId)) {
             this.stopScan();
 
             this.mDoorBleDevice = result.getDevice();
@@ -199,6 +204,19 @@ public class BleDoorProxy
     // endregion
 
     // region Private methods
+
+    private void startScan() {
+        if (!this.mDiscovering) {
+            Log.d(LOGTAG, "Start scanning ble devices");
+
+            this.mDiscovering = true;
+            this.mBleAdapter.startScan(this);
+            // schedules scan stop
+            this.mHandler.postDelayed(this, this.mScanPeriod);
+        } else {
+            Log.d(LOGTAG, "Scanning ble devices already taking place");
+        }
+    }
 
     private void stopScan() {
         if (this.mDiscovering) {

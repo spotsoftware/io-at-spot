@@ -2,6 +2,8 @@ package it.spot.io.android;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
+
 /**
  * The {@link android.app.Application} class for door keeper app.</br>
  * For the moment it's empty because we don't need it, but who knows.
@@ -22,4 +24,26 @@ public class DoorKeeperApplication extends Application {
         public static final int MSG_CLEAR = 301;
     }
 
+    // region Application life cycle
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        this.initializeStethoDebug();
+    }
+
+    // endregion
+
+    // region Private methods
+
+    private void initializeStethoDebug() {
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                        .build());
+    }
+
+    // endregion
 }

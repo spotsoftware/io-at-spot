@@ -20,10 +20,10 @@ import android.widget.Toast;
 
 import it.spot.io.android.DoorKeeperApplication;
 import it.spot.io.android.R;
-import it.spot.io.android.lib.ProxyNotInitializedException;
-import it.spot.io.android.lib.ProxyNotSupportedException;
-import it.spot.io.android.lib.ble.BleDoorProxy;
-import it.spot.io.android.lib.ble.IBleDoorProxy;
+import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
+import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
+import it.spot.io.android.lib.proxies.ble.BleDoorProxy;
+import it.spot.io.android.lib.proxies.ble.IBleDoorProxy;
 import it.spot.io.android.model.ILoggedUser;
 import it.spot.io.android.model.LoggedUser;
 import it.spot.io.android.proximity.nfc.INfcHelper;
@@ -75,17 +75,8 @@ public class LoggedInActivity
 
         //if (!this.mHandledNfcOnStartup) {
         // initializes bluetooth low energy helper
-        this.mDoorProxy = BleDoorProxy.create(this, this);
 
-        try {
-            if (this.mDoorProxy.init()) {
-                this.mDoorProxy.startScanningForDoorController();
-            }
-        } catch (ProxyNotSupportedException e) {
-            e.printStackTrace();
-        } catch (ProxyNotInitializedException e) {
-            e.printStackTrace();
-        }
+        this.checkBleProxy();
 
         // otherwise not useful
         this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
@@ -102,6 +93,32 @@ public class LoggedInActivity
         this.mProgressDialog.setIndeterminate(true);
         this.mProgressDialog.setCancelable(false);
         //}
+
+//        OkHttpClient client = new OkHttpClient();
+//        client.networkInterceptors().add(new StethoInterceptor());
+//        RestAdapter adapter = new RestAdapter.Builder()
+//                .setEndpoint(this.getString(R.string.server_url))
+//                .setClient(new OkClient(client))
+//                .setRequestInterceptor(new RequestInterceptor() {
+//                    @Override
+//                    public void intercept(RequestFacade request) {
+//                        request.addHeader("Authorization", String.format("Bearer %s", mLoggedUser.getToken()));
+//                    }
+//                })
+//                .build();
+//
+//        OrganizationsEndPoint orgEndPoint = adapter.create(OrganizationsEndPoint.class);
+//        orgEndPoint.get("5578236ba5d5b416001ec31b", new Callback<Organization>() {
+//            @Override
+//            public void success(Organization organization, Response response) {
+//                Log.e(LOGTAG, "found " + organization.getName() + " organization");
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -156,15 +173,7 @@ public class LoggedInActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        try {
-            if (this.mDoorProxy.init()) {
-                this.mDoorProxy.startScanningForDoorController();
-            }
-        } catch (ProxyNotSupportedException e) {
-            e.printStackTrace();
-        } catch (ProxyNotInitializedException e) {
-            e.printStackTrace();
-        }
+        this.checkBleProxy();
     }
 
     @Override
@@ -199,7 +208,7 @@ public class LoggedInActivity
     @Override
     public void onDoorOpened() {
         this.hideProgressDialog();
-        this.mOpenButton.setEnabled(true);
+//        this.mOpenButton.setEnabled(true);
     }
 
 //    TODO - notify ble error
@@ -222,6 +231,22 @@ public class LoggedInActivity
     // endregion
 
     // region  Private methods
+
+    private void checkBleProxy() {
+        if (this.mDoorProxy == null) {
+            this.mDoorProxy = BleDoorProxy.create(this, this.getString(R.string.raspberry_name), this);
+        }
+
+        try {
+            if (this.mDoorProxy.init()) {
+                this.mDoorProxy.startScanningForDoorController();
+            }
+        } catch (ProxyNotSupportedException e) {
+            e.printStackTrace();
+        } catch (ProxyNotInitializedException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * If the intent comes from an NFC source this method tries to handle it,
