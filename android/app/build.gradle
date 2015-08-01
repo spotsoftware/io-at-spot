@@ -55,6 +55,7 @@ dependencies {
     compile project.RETROFIT
     compile project.STETHO
     compile project.STETHO_OK_HTTP
+    compile project.FLOATING_BUTTON_LIB
     compile project(':lib')
     debugWearApp project(path:':wear', configuration: 'debug')
     releaseWearApp project(path:':wear', configuration: 'release')

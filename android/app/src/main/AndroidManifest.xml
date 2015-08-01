@@ -60,6 +60,22 @@
         <activity
             android:name="it.spot.io.app.home.HomeActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="it.spot.io.app.absences.AbsencesNewActivity"
+            android:parentActivityName="it.spot.io.app.home.HomeActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.spot.io.app.home.HomeActivity" />
+        </activity>
+        <activity
+            android:name="it.spot.io.app.entries.EntriesNewActivity"
+            android:parentActivityName="it.spot.io.app.home.HomeActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.spot.io.app.home.HomeActivity" />
+        </activity>
 
         <!--<receiver android:name=".widget.WidgetProvider">-->
         <!--<intent-filter>-->

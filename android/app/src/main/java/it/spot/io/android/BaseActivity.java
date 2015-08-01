@@ -2,7 +2,6 @@ package it.spot.io.android;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
@@ -12,7 +11,9 @@ import android.widget.Toast;
  *
  * @author Andrea Corzani
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity
+        extends ActionBarActivity
+        implements BaseActivityInterface {
 
     protected ProgressDialog mProgressDialog;
 
