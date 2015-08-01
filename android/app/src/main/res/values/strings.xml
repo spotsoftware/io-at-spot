@@ -29,4 +29,10 @@
     <string name="loading">Loading...</string>
     <string name="title_activity_splash">SplashActivity</string>
 
+
+    <string-array name="menu_voices">
+        <item name="home">Home</item>
+        <item name="entries">Marcature</item>
+        <item name="absences">Assenze</item>
+    </string-array>
 </resources>

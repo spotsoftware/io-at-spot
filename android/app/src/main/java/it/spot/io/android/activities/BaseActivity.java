@@ -21,7 +21,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR);
     }
 
     // }

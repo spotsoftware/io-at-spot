@@ -68,7 +68,7 @@ public class SplashActivity
         editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, user.getEmail());
         editor.commit();
 
-        final Intent intent = new Intent(this, LoggedInActivity.class);
+        final Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(LoggedInActivity.EXTRA_LOGGED_USER, user);
         this.startActivity(intent);
     }
