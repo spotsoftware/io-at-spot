@@ -1,4 +1,4 @@
-package it.spot.io.android.proximity;
+package it.spot.io.android.lib.proxies.nfc;
 
 /**
  * @author Andrea Corzani

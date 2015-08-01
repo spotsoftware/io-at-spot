@@ -1,10 +1,10 @@
-package it.spot.io.android.auth;
+package it.spot.io.app.login.auth;
 
 import android.content.Intent;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import it.spot.io.android.model.ILoggedUser;
+import it.spot.io.app.login.auth.model.ILoggedUser;
 
 /**
  * Groups all the needed methods and logic to accomplish a sign-in to io@spot.<br/>

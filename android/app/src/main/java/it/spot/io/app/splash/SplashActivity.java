@@ -1,4 +1,4 @@
-package it.spot.io.android.activities;
+package it.spot.io.app.splash;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,11 +7,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
-import it.spot.io.android.DoorKeeperApplication;
+import it.spot.io.app.home.LoggedInActivity;
+import it.spot.io.app.DoorKeeperApplication;
 import it.spot.io.android.R;
-import it.spot.io.android.auth.Authenticator;
-import it.spot.io.android.auth.IAuthenticator;
-import it.spot.io.android.model.ILoggedUser;
+import it.spot.io.app.home.HomeActivity;
+import it.spot.io.app.login.auth.Authenticator;
+import it.spot.io.app.login.auth.IAuthenticator;
+import it.spot.io.app.login.LogInActivity;
+import it.spot.io.app.login.auth.model.ILoggedUser;
 
 /**
  * A common splash activity which internally checks if the stored token is still valid.

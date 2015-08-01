@@ -1,4 +1,4 @@
-package it.spot.io.android.activities;
+package it.spot.io.android;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;

@@ -1,8 +1,6 @@
-package it.spot.io.android.proximity.nfc;
+package it.spot.io.android.lib.proxies.nfc;
 
 import android.content.Intent;
-
-import it.spot.io.android.proximity.IProximityServiceHelper;
 
 /**
  * This is the interface of a NFC helper.</br>

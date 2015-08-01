@@ -20,13 +20,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name="it.spot.io.android.DoorKeeperApplication"
+        android:name="it.spot.io.app.DoorKeeperApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.LoggedInActivity"
+            android:name="it.spot.io.app.home.LoggedInActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait">
 
@@ -44,7 +44,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".activities.SplashActivity"
+            android:name="it.spot.io.app.splash.SplashActivity"
             android:noHistory="true"
             android:screenOrientation="portrait">
 
@@ -55,10 +55,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LogInActivity"
+            android:name="it.spot.io.app.login.LogInActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.HomeActivity"
+            android:name="it.spot.io.app.home.HomeActivity"
             android:screenOrientation="portrait" />
 
         <!--<receiver android:name=".widget.WidgetProvider">-->

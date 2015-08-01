@@ -1,4 +1,4 @@
-package it.spot.io.android;
+package it.spot.io.app;
 
 import android.app.Application;
 

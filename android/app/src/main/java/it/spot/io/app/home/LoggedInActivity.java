@@ -1,4 +1,4 @@
-package it.spot.io.android.activities;
+package it.spot.io.app.home;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,17 +18,19 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import it.spot.io.android.DoorKeeperApplication;
+import it.spot.io.android.BaseActivity;
+import it.spot.io.app.DoorKeeperApplication;
 import it.spot.io.android.R;
 import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
 import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
 import it.spot.io.android.lib.proxies.ble.BleDoorProxy;
 import it.spot.io.android.lib.proxies.ble.IBleDoorProxy;
-import it.spot.io.android.model.ILoggedUser;
-import it.spot.io.android.model.LoggedUser;
-import it.spot.io.android.proximity.nfc.INfcHelper;
-import it.spot.io.android.proximity.nfc.INfcListener;
-import it.spot.io.android.proximity.nfc.NfcHelper;
+import it.spot.io.app.login.LogInActivity;
+import it.spot.io.app.login.auth.model.ILoggedUser;
+import it.spot.io.app.login.auth.model.LoggedUser;
+import it.spot.io.android.lib.proxies.nfc.INfcHelper;
+import it.spot.io.android.lib.proxies.nfc.INfcListener;
+import it.spot.io.android.lib.proxies.nfc.NfcHelper;
 
 public class LoggedInActivity
         extends BaseActivity

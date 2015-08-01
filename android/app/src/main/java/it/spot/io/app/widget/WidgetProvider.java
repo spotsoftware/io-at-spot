@@ -1,4 +1,4 @@
-package it.spot.io.android.widget;
+package it.spot.io.app.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import it.spot.io.android.R;
-import it.spot.io.android.activities.SplashActivity;
+import it.spot.io.app.splash.SplashActivity;
 
 /**
  * @author a.rinaldi

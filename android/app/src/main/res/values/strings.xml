@@ -29,6 +29,10 @@
     <string name="loading">Loading...</string>
     <string name="title_activity_splash">SplashActivity</string>
 
+    <string name="cancel">Annulla</string>
+    <string name="exit">Esci</string>
+    <string name="attention">Attenzione</string>
+    <string name="exit_confirmation">Sei sicuro di voler uscire dall\'app?</string>
 
     <string-array name="menu_voices">
         <item name="home">Home</item>

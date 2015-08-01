@@ -1,4 +1,4 @@
-package it.spot.io.android.proximity.nfc;
+package it.spot.io.android.lib.proxies.nfc;
 
 import android.app.Activity;
 import android.app.PendingIntent;

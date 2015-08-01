@@ -1,4 +1,4 @@
-package it.spot.io.android.auth;
+package it.spot.io.app.login.auth;
 
 import android.util.Patterns;
 

@@ -1,6 +1,6 @@
-package it.spot.io.android.auth;
+package it.spot.io.app.login.auth;
 
-import it.spot.io.android.model.ILoggedUser;
+import it.spot.io.app.login.auth.model.ILoggedUser;
 
 /**
  * @author a.rinaldi

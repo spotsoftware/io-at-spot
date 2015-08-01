@@ -1,4 +1,4 @@
-package it.spot.io.android.auth;
+package it.spot.io.app.login.auth;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,8 +26,8 @@ import it.spot.io.android.http.HttpPostHelper;
 import it.spot.io.android.http.IDataResponse;
 import it.spot.io.android.http.IHttpPostCallback;
 import it.spot.io.android.http.IJsonResponse;
-import it.spot.io.android.model.ILoggedUser;
-import it.spot.io.android.model.LoggedUser;
+import it.spot.io.app.login.auth.model.ILoggedUser;
+import it.spot.io.app.login.auth.model.LoggedUser;
 
 /**
  * @author a.rinaldi

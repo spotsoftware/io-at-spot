@@ -1,4 +1,4 @@
-package it.spot.io.android.activities;
+package it.spot.io.app.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,12 +18,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
-import it.spot.io.android.DoorKeeperApplication;
+import it.spot.io.app.DoorKeeperApplication;
 import it.spot.io.android.R;
-import it.spot.io.android.auth.AuthUtils;
-import it.spot.io.android.auth.Authenticator;
-import it.spot.io.android.auth.IAuthenticator;
-import it.spot.io.android.model.ILoggedUser;
+import it.spot.io.android.BaseActivity;
+import it.spot.io.app.home.LoggedInActivity;
+import it.spot.io.app.login.auth.AuthUtils;
+import it.spot.io.app.login.auth.Authenticator;
+import it.spot.io.app.login.auth.IAuthenticator;
+import it.spot.io.app.login.auth.model.ILoggedUser;
 
 
 /**

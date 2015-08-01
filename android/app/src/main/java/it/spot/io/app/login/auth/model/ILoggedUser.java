@@ -1,4 +1,4 @@
-package it.spot.io.android.model;
+package it.spot.io.app.login.auth.model;
 
 import android.os.Parcelable;
 
