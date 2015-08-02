@@ -4,13 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <it.spot.io.android.views.SlidingTabLayout
+        android:id="@id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/color_primary_darker" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/tabs" />
+
     <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/create"
+        android:id="@id/create_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
         android:src="@drawable/ic_add"
         fab:fab_colorNormal="@color/color_primary"
         fab:fab_colorPressed="@color/color_primary_darker" />

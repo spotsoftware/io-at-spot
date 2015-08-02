@@ -33,10 +33,13 @@
     <string name="exit">Esci</string>
     <string name="attention">Attenzione</string>
     <string name="exit_confirmation">Sei sicuro di voler uscire dall\'app?</string>
+    <string name="entries">Marcature</string>
+    <string name="absences">Assenze</string>
+    <string name="stats">Statistiche</string>
 
     <string-array name="menu_voices">
         <item name="home">Home</item>
-        <item name="entries">Marcature</item>
-        <item name="absences">Assenze</item>
+        <item name="entries">@string/entries</item>
+        <item name="absences">@string/absences</item>
     </string-array>
 </resources>

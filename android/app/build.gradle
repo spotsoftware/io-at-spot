@@ -50,6 +50,7 @@ dependencies {
     compile project.MULTIDEX
     compile project.PLAY_SERVICES
     compile project.ANDROID_SUPPORT_APP_COMPAT_V7
+    compile project.ANDROID_SUPPORT_APP_COMPAT_V13
     compile project.ANDROID_SUPPORT_WEARABLE
     compile project.OK_HTTP
     compile project.RETROFIT
@@ -57,6 +58,6 @@ dependencies {
     compile project.STETHO_OK_HTTP
     compile project.FLOATING_BUTTON_LIB
     compile project(':lib')
-    debugWearApp project(path:':wear', configuration: 'debug')
-    releaseWearApp project(path:':wear', configuration: 'release')
+    debugWearApp project(path: ':wear', configuration: 'debug')
+    releaseWearApp project(path: ':wear', configuration: 'release')
 }
