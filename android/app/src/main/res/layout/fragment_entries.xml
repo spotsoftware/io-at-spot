@@ -7,7 +7,7 @@
     <it.spot.io.android.views.SlidingTabLayout
         android:id="@id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="@color/color_primary_darker" />
 

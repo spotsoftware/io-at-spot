@@ -2,6 +2,7 @@ package it.spot.io.app.home;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import it.spot.io.android.BaseFragment;
 import it.spot.io.android.R;
 import it.spot.io.android.views.SlidingTabLayout;
 import it.spot.io.app.absences.AbsencesListFragment;
+import it.spot.io.app.absences.AbsencesNewActivity;
 import it.spot.io.app.absences.AbsencesStatsFragment;
 
 /**
@@ -45,6 +47,13 @@ public class AbsencesFragment
             @Override
             public int getIndicatorColor(int position) {
                 return Color.WHITE;
+            }
+        });
+
+        view.findViewById(R.id.create_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), AbsencesNewActivity.class));
             }
         });
 
