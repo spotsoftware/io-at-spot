@@ -1,4 +1,4 @@
-package it.spot.io.android.lib;
+package it.spot.io.lib;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

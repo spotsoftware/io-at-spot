@@ -1,7 +1,7 @@
-package it.spot.io.android.lib.proxies.ble;
+package it.spot.io.lib.proxies.ble;
 
-import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
-import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
+import it.spot.io.lib.proxies.ProxyNotInitializedException;
+import it.spot.io.lib.proxies.ProxyNotSupportedException;
 
 /**
  * @author a.rinaldi

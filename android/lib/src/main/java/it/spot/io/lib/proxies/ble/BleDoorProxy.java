@@ -1,4 +1,4 @@
-package it.spot.io.android.lib.proxies.ble;
+package it.spot.io.lib.proxies.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -14,8 +14,8 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 
-import it.spot.io.android.lib.proxies.ProxyNotInitializedException;
-import it.spot.io.android.lib.proxies.ProxyNotSupportedException;
+import it.spot.io.lib.proxies.ProxyNotInitializedException;
+import it.spot.io.lib.proxies.ProxyNotSupportedException;
 
 /**
  * @author a.rinaldi

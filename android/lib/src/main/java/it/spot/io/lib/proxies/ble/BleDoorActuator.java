@@ -1,4 +1,4 @@
-package it.spot.io.android.lib.proxies.ble;
+package it.spot.io.lib.proxies.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;

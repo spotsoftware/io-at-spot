@@ -29,5 +29,8 @@ android {
 
 dependencies {
     compile project.GSON
+    compile project.OK_HTTP
     compile project.RETROFIT
+    compile project.STETHO
+    compile project.STETHO_OK_HTTP
 }

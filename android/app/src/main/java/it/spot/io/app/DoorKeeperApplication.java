@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.facebook.stetho.Stetho;
 
+import it.spot.io.lib.api.Api;
+
 /**
  * The {@link android.app.Application} class for door keeper app.</br>
  * For the moment it's empty because we don't need it, but who knows.
@@ -29,8 +31,8 @@ public class DoorKeeperApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         this.initializeStethoDebug();
+        Api.create(this);
     }
 
     // endregion

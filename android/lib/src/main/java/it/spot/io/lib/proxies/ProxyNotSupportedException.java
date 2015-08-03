@@ -1,4 +1,4 @@
-package it.spot.io.android.lib.proxies;
+package it.spot.io.lib.proxies;
 
 /**
  * @author a.rinaldi

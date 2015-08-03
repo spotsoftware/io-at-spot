@@ -2,4 +2,5 @@
 <resources>
     <string name="server_url">http://io.spot.it:80</string>
     <string name="raspberry_name">raspy</string>
+    <string name="api_url">http://io.spot.it:80</string>
 </resources>

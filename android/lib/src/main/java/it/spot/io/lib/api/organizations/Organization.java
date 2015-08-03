@@ -1,9 +1,12 @@
-package it.spot.io.android.lib.api.organizations;
+package it.spot.io.lib.api.organizations;
+
+import it.spot.io.lib.api.shared.Entity;
 
 /**
  * @author a.rinaldi
  */
-public class Organization {
+public class Organization
+        extends Entity {
 
     protected String name;
 
