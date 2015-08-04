@@ -47,18 +47,19 @@ nfc.open(function (err, dev) {
         ///home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py
         var extNfc = require('child_process').spawn('python', ["python/acr122/nfc_controller.py", "usb"]);
         var intNfc = require('child_process').spawn('python', ['python/ada_pn532/nfc_controller.py']);
+        
         process.on('exit', function () {
             extNfc.kill();
             intNfc.kill();
         });
         intNfc.stdout.on('data', function (data) {
-            logger.info('internal reader: ' + data);
+            logger.debug('internal reader: ' + data);
         });
         intNfc.stderr.on('data', function (data) {
             logger.error('internal reader: ' + data);
         });
         extNfc.stdout.on('data', function (data) {
-            logger.info('external reader: ' + data);
+            logger.debug('external reader: ' + data);
         });
         extNfc.stderr.on('data', function (data) {
             logger.error('external reader: ' + data);

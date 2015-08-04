@@ -33,6 +33,19 @@ module.exports = function (grunt) {
             client: require('./bower.json').appPath || 'client',
             dist: 'dist'
         },
+        eol: {
+            dist: {
+                options: {
+                    eol: 'lf',
+                    replace: true
+                },
+                files: [
+                    {
+                        src: ['<%= yeoman.dist %>/**/*.html'],
+                    }
+                ]
+            }
+        },
         express: {
             options: {
                 port: process.env.PORT || 9000
@@ -638,11 +651,11 @@ module.exports = function (grunt) {
     ]);
     });
 
-    grunt.registerTask('build', [
+    grunt.registerTask('build', [        
     'clean:dist',
     'injector:sass',
     'concurrent:dist',
-    'injector',
+    'injector',       
     'wiredep',
     'useminPrepare',
     'autoprefixer',
@@ -650,6 +663,7 @@ module.exports = function (grunt) {
     'concat',
     'ngAnnotate',
     'copy:dist',
+         'eol',
     'cdnify',
     'cssmin',
     'uglify',
