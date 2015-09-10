@@ -7,6 +7,7 @@
 
 module.exports = {
     DOMAIN: 'http://localhost:9000',
+    DEVICE_PORT: '9001',
     SESSION_SECRET: 'use-your-secret',
     GOOGLE_ID: 'use-your-google-id',
     GOOGLE_SECRET: 'use-your-google-secret',

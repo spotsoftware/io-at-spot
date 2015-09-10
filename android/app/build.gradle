@@ -58,6 +58,6 @@ dependencies {
     compile project.STETHO_OK_HTTP
     compile project.FLOATING_BUTTON_LIB
     compile project(':lib')
-    debugWearApp project(path: ':wear', configuration: 'debug')
-    releaseWearApp project(path: ':wear', configuration: 'release')
+//    debugWearApp project(path: ':wear', configuration: 'debug')
+//    releaseWearApp project(path: ':wear', configuration: 'release')
 }
