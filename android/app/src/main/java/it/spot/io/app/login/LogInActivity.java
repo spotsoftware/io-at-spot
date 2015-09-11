@@ -82,6 +82,7 @@ public class LogInActivity
             editor.putString(ILoggedUser.PREF_LOGGED_USER_NAME, "");
             editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN, "");
             editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "");
+            editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN_HASH, "");
             editor.commit();
             // TODO - logout
             //this.mAuthenticator.googleLogout();
@@ -200,6 +201,7 @@ public class LogInActivity
         editor.putString(ILoggedUser.PREF_LOGGED_USER_ID, user.getId());
         editor.putString(ILoggedUser.PREF_LOGGED_USER_NAME, user.getName());
         editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN, user.getToken());
+        editor.putString(ILoggedUser.PREF_LOGGED_USER_TOKEN_HASH, user.getTokenHash());
         editor.putString(ILoggedUser.PREF_LOGGED_USER_EMAIL, user.getEmail());
         editor.commit();
 

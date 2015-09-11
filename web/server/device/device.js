@@ -3,6 +3,7 @@ var socketioJwt = require('socketio-jwt');
 var config = require('../config/environment');
 var io = require("socket.io").listen(config.device_port);
 var devices = [];
+var User = require('../api/user/user.model');
 var Organization = require("../api/organization/organization.model");
 var authService = require("../auth/auth.service");
 
@@ -136,6 +137,60 @@ io.sockets.on('connection', function (socket) {
 
                     });
 
+                }
+            });
+        });
+    });
+
+    socket.on("tokenHashSubmitted", function (data, callback) {
+        
+        Organization.findById(organizationId, function (err, org) {
+            if (err) {
+                return callback({
+                    responseCode: 403,
+                    message: err.message
+                });
+            }
+
+            if (!isWorkingTime(org.settings.workingDays)) {
+                return callback({
+                    responseCode: 403,
+                    message: "organization is not active at this time"
+                });
+            }
+
+            User.findOne({
+                'deviceTokenHash': data.tokenHash
+            }, function (err, user) {
+                if (err) {
+                    return callback({
+                        responseCode: 403,
+                        message: err.message
+                    });                    
+                }
+                
+                if(!user){
+                    return callback({
+                        responseCode: 403,
+                        message: 'user not found'
+                    });
+                }
+                
+                callback({
+                    responseCode: 200,
+                    message: 'successfully authenticated'
+                });
+
+                if (data.mark) {
+
+                    addWorkTimeEntry({
+                        userId: user._id,
+                        organizationId: organizationId
+                    }, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
                 }
             });
         });

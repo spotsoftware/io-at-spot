@@ -22,6 +22,12 @@ public interface IBleDoorProxy {
 
     void openDoor(String token, boolean mark);
 
+    void openAndMark(String tokenHash);
+
+    void markOnly(String tokenHash);
+
+    void openOnly(String tokenHash);
+
     void destroy();
 
     // region Inner listener interface
@@ -31,6 +37,8 @@ public interface IBleDoorProxy {
         void onProxyReady();
 
         void onDoorOpened();
+
+        void onBLEError(String message);
     }
 
     // endregion

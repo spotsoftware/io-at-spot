@@ -128,10 +128,91 @@ public class BleDoorProxy
             @Override
             public void onBLEDeviceError(int status, int newState) {
                 Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
+                mListener.onBLEError("An error occurred, please retry");
             }
         });
 
-        this.mDoorActuator.openDoor(token, mark);
+        this.mDoorActuator.doActionWithToken(token, mark, true);
+    }
+
+
+    @Override
+    public void openAndMark(String tokenHash) {
+        Log.i(LOGTAG, "TokenHash " + tokenHash);
+
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
+
+            @Override
+            public void onBLEWriteTokenCompleted(int result) {
+                mListener.onDoorOpened();
+            }
+
+            @Override
+            public void onBLEDeviceDisconnected() {
+                startScan();
+            }
+
+            @Override
+            public void onBLEDeviceError(int status, int newState) {
+                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
+
+                mListener.onBLEError("An error occurred, please retry");
+            }
+        });
+
+        this.mDoorActuator.doActionWithTokenHash(tokenHash, true, true);
+    }
+
+    @Override
+    public void markOnly(String tokenHash) {
+        Log.i(LOGTAG, "TokenHash " + tokenHash);
+
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
+
+            @Override
+            public void onBLEWriteTokenCompleted(int result) {
+                mListener.onDoorOpened();
+            }
+
+            @Override
+            public void onBLEDeviceDisconnected() {
+                startScan();
+            }
+
+            @Override
+            public void onBLEDeviceError(int status, int newState) {
+                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
+                mListener.onBLEError("An error occurred, please retry");
+            }
+        });
+
+        this.mDoorActuator.doActionWithTokenHash(tokenHash, true, false);
+    }
+
+    @Override
+    public void openOnly(String tokenHash) {
+        Log.i(LOGTAG, "TokenHash " + tokenHash);
+
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
+
+            @Override
+            public void onBLEWriteTokenCompleted(int result) {
+                mListener.onDoorOpened();
+            }
+
+            @Override
+            public void onBLEDeviceDisconnected() {
+                startScan();
+            }
+
+            @Override
+            public void onBLEDeviceError(int status, int newState) {
+                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
+                mListener.onBLEError("An error occurred, please retry");
+            }
+        });
+
+        this.mDoorActuator.doActionWithTokenHash(tokenHash, false, true);
     }
 
     @Override

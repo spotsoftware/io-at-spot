@@ -5,7 +5,7 @@ var passport = require('passport');
 var auth = require('../auth.service');
 var request = require('request-json');
 var User = require('../../api/user/user.model');
-
+var crypto = require('crypto');
 
 var router = express.Router();
 
@@ -50,10 +50,22 @@ router
                         var token = auth.signToken({
                             _id: user._id
                         }, 60 * 24 * 10);
-                        res.json({
-                            token: token,
-                            user: user,
-                            type: 'local'
+                        
+                        var hash = crypto.createHash('md5').update(token).digest('hex');
+            
+                        user.deviceTokenHash = hash;
+
+                        user.save(function(err){
+                            if(err){
+                                return res.json(401, err);
+                            }
+
+                            res.json({
+                                token: token,
+                                tokenHash: hash,
+                                user: user,
+                                type: 'local'
+                            });
                         });
                     }
                 });

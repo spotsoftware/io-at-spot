@@ -180,9 +180,10 @@ public class Authenticator
                         String name = jsonUser.getString("name");
                         String id = jsonUser.getString("_id");
                         String newToken = jsonData.getString("token");
+                        String newTokenHash = jsonData.getString("tokenHash");
                         String type = jsonData.getString("type");
 
-                        mListener.onLoginCompleted(new LoggedUser(id, name, newToken, type));
+                        mListener.onLoginCompleted(new LoggedUser(id, name, newToken, type, newTokenHash));
                     } else {
                         mListener.onError(ERROR_CODE_REFRESH_ERROR, jsonResponse.getErrorMessage());
                     }
@@ -223,10 +224,11 @@ public class Authenticator
                         JSONObject jsonData = jsonResponse.getJSON();
                         JSONObject jsonUser = jsonData.getJSONObject("user");
                         String token = jsonData.getString("token");
+                        String tokenHash = jsonData.getString("tokenHash");
                         String name = jsonUser.getString("name");
                         String id = jsonUser.getString("_id");
 
-                        mListener.onLoginCompleted(new LoggedUser(id, name, token, email));
+                        mListener.onLoginCompleted(new LoggedUser(id, name, token, email, tokenHash));
                     } else {
                         Log.e("AUTH HELPER", "Error retrieving the user profile");
                         mListener.onError(ERROR_CODE_PROFILE_ERROR, "Error retrieving user profile.");

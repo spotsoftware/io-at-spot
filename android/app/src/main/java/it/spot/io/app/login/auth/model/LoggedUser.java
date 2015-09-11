@@ -13,19 +13,21 @@ public class LoggedUser implements ILoggedUser {
     private String mName;
     private String mId;
     private String mToken;
+    private String mTokenHash;
     private String mEmail;
 
     // }
 
     // { Construction
 
-    public LoggedUser(final String id, final String name, final String token, final String email) {
+    public LoggedUser(final String id, final String name, final String token, final String email, final String tokenHash) {
         super();
 
         this.mId = id;
         this.mName = name;
         this.mToken = token;
         this.mEmail = email;
+        this.mTokenHash = tokenHash;
     }
 
     public LoggedUser(final Parcel in) {
@@ -35,6 +37,7 @@ public class LoggedUser implements ILoggedUser {
         this.mName = in.readString();
         this.mToken = in.readString();
         this.mEmail = in.readString();
+        this.mTokenHash = in.readString();
     }
 
     // }
@@ -72,6 +75,16 @@ public class LoggedUser implements ILoggedUser {
     }
 
     @Override
+    public String getTokenHash() {
+        return this.mTokenHash;
+    }
+
+    @Override
+    public void setTokenHash(String tokenHash) {
+        this.mTokenHash = tokenHash;
+    }
+
+    @Override
     public String getEmail() {
         return this.mEmail;
     }
@@ -96,6 +109,7 @@ public class LoggedUser implements ILoggedUser {
         dest.writeString(this.mName);
         dest.writeString(this.mToken);
         dest.writeString(this.mEmail);
+        dest.writeString(this.mTokenHash);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

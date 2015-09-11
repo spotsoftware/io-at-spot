@@ -85,8 +85,10 @@ public class LoggedInActivity
         this.mOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDoorProxy.openDoor(mLoggedUser.getToken(), mMarkCheckbox.isChecked());
-                showProgressDialog(R.string.prompt_email, R.string.prompt_password);
+                //mDoorProxy.openDoor(mLoggedUser.getToken(), mMarkCheckbox.isChecked());
+                mDoorProxy.openAndMark(mLoggedUser.getTokenHash());
+
+                showProgressDialog(R.string.loading, R.string.please_wait);
                 mOpenButton.setEnabled(false);
             }
         });
@@ -218,11 +220,16 @@ public class LoggedInActivity
 //        this.mOpenButton.setEnabled(true);
     }
 
-//    TODO - notify ble error
-//    @Override
-//    public void onBLEError(String error) {
-//        this.handleGenericError(error);
-//    }
+    @Override
+    public void onBLEError(final String error) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideProgressDialog();
+                handleGenericError(error);
+            }
+        });
+    }
 
     // endregion
 
@@ -305,7 +312,8 @@ public class LoggedInActivity
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_ID, ""),
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_NAME, ""),
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN, ""),
-                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_EMAIL, "")
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_EMAIL, ""),
+                    sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN_HASH, "")
             );
         }
     }

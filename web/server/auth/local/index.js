@@ -6,7 +6,7 @@ var auth = require('../auth.service');
 var User = require('../../api/user/user.model');
 var mailer = require('../../mailer/mailer');
 var errorBuilder = require('../../error-builder');
-
+var crypto = require('crypto');
 var router = express.Router();
 
 router.post('/', function (req, res, next) {
@@ -58,10 +58,22 @@ router.post('/refresh', function (req, res, next) {
             var token = auth.signToken({
                 _id: user._id
             }, 60 * 24 * 10);
-            res.json({
-                token: token,
-                user: user,
-                type: 'local'
+            
+            var hash = crypto.createHash('md5').update(token).digest('hex');
+            
+            user.deviceTokenHash = hash;
+            
+            user.save(function(err){
+                if(err){
+                    return res.json(401, err);
+                }
+                
+                res.json({
+                    token: token,
+                    tokenHash: hash,
+                    user: user,
+                    type: 'local'
+                });
             });
         });
     });

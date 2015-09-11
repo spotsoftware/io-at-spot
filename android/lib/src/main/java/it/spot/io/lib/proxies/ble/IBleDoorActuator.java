@@ -5,7 +5,9 @@ package it.spot.io.lib.proxies.ble;
  */
 public interface IBleDoorActuator {
 
-    void openDoor(String token, boolean shouldMark);
+    void doActionWithToken(String token, boolean shouldMark, boolean shouldOpen);
+
+    void doActionWithTokenHash(String token, boolean shouldMark, boolean shouldOpen);
 
     void destroy();
 

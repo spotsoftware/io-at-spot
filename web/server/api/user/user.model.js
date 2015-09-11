@@ -22,6 +22,7 @@ var UserSchema = new BaseSchema({
     hashedPassword: String,
     provider: String,
     salt: String,
+    deviceTokenHash: String,
     role: {
         default: 'user',
         type: String

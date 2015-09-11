@@ -11,6 +11,7 @@ public interface ILoggedUser extends Parcelable {
     String PREF_LOGGED_USER_TOKEN = "logged_user_token";
     String PREF_LOGGED_USER_NAME = "logged_user_name";
     String PREF_LOGGED_USER_EMAIL = "logged_user_email";
+    String PREF_LOGGED_USER_TOKEN_HASH = "logged_user_token_hash";
 
     String getName();
 
@@ -23,6 +24,10 @@ public interface ILoggedUser extends Parcelable {
     String getToken();
 
     void setToken(String token);
+
+    String getTokenHash();
+
+    void setTokenHash(String tokenHash);
 
     String getEmail();
 
