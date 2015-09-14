@@ -13,9 +13,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.glomadrian.materialanimatedswitch.MaterialAnimatedSwitch;
 
 import it.spot.io.android.BaseActivity;
 import it.spot.io.android.R;
@@ -43,10 +44,10 @@ public class LoggedInActivity
     private ILoggedUser mLoggedUser;
     private boolean mHandledNfcOnStartup;
 
+    private MaterialAnimatedSwitch mMarkSwitch;
     private View mOpenButton;
     private View mMarkButton;
     private View mOpenAndMarkButton;
-    private CheckBox mMarkCheckbox;
     private ProgressDialog mProgressDialog;
     private TextView mNameTextView;
 
@@ -55,7 +56,6 @@ public class LoggedInActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this.setContentView(R.layout.activity_logged_in);
 
         this.mLoggedUser = this.retrieveLoggedUser();
@@ -67,9 +67,15 @@ public class LoggedInActivity
             return;
         }
 
-        this.mMarkCheckbox = (CheckBox) this.findViewById(R.id.chk_mark);
-        this.mNameTextView = (TextView) this.findViewById(R.id.name);
-        this.mNameTextView.setText(this.mLoggedUser.getName());
+        this.mMarkSwitch = (MaterialAnimatedSwitch) this.findViewById(R.id.mark_switch);
+        this.mMarkSwitch.post(new Runnable() {
+            @Override
+            public void run() {
+                mMarkSwitch.toggle();
+            }
+        });
+
+        ((TextView) this.findViewById(R.id.name)).setText(this.mLoggedUser.getName());
 
         NfcManager nfcManager = (NfcManager) this.getSystemService(NFC_SERVICE);
         this.mNfcHelper = new NfcHelper(this, this, nfcManager.getDefaultAdapter());
@@ -295,7 +301,7 @@ public class LoggedInActivity
             if (!this.mNfcHelper.isP2PStarted()) {
                 Log.w(LOGTAG, "Reading signature " + this.mNfcHelper.readSignature(intent));
 
-                this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkCheckbox.isChecked());
+                this.mNfcHelper.writeToken(this.mLoggedUser.getToken(), this.mMarkSwitch.isChecked());
             } else {
                 Log.w(LOGTAG, "Reading result");
                 Toast.makeText(this, this.mNfcHelper.readAuthenticationResult(intent), Toast.LENGTH_LONG).show();

@@ -2,6 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
 
+    repositories {
+        maven {
+            url "http://dl.bintray.com/glomadrian/maven"
+        }
+    }
+
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
@@ -58,6 +64,7 @@ dependencies {
     compile project.RETROFIT
     compile project.STETHO
     compile project.STETHO_OK_HTTP
+    compile 'com.github.glomadrian:MaterialAnimatedSwitch:1.1@aar'
     compile project(':lib')
 //    debugWearApp project(path: ':wear', configuration: 'debug')
 //    releaseWearApp project(path: ':wear', configuration: 'release')

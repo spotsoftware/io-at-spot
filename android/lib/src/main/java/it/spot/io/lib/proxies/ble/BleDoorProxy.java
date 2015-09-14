@@ -9,7 +9,6 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
@@ -22,7 +21,7 @@ import it.spot.io.lib.proxies.ProxyNotSupportedException;
  */
 public class BleDoorProxy
         extends ScanCallback
-        implements IBleDoorProxy, BluetoothBondBroadcastReceiver.Listener, IBleDoorActuator.Listener, Runnable {
+        implements IBleDoorProxy, IBleDoorActuator.Listener, Runnable {
 
     public static final int REQUEST_CODE_ENABLE_BT = 100;
 
@@ -170,18 +169,9 @@ public class BleDoorProxy
     public void onScanResult(int callbackType, ScanResult result) {
         Log.d(LOGTAG, "Found device " + result.getDevice().getName() + " with " + result.getRssi() + " rssi");
         if (result.getDevice().getName() != null && result.getDevice().getName().equals(this.mDoorId)) {
-            this.stopScan();
-
             this.mDoorBleDevice = result.getDevice();
-
-            if (result.getDevice().getBondState() == BluetoothDevice.BOND_BONDED) {
-                this.mListener.onProxyReady();
-            } else {
-                Log.e(LOGTAG, "Starting bonding creation");
-                this.mBondReceiver = new BluetoothBondBroadcastReceiver(this.mDoorBleDevice.getAddress(), this);
-                this.mActivity.registerReceiver(this.mBondReceiver, new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED));
-                result.getDevice().createBond();
-            }
+            this.mListener.onProxyReady();
+            this.stopScan();
         }
     }
 
@@ -219,26 +209,6 @@ public class BleDoorProxy
     @Override
     public void run() {
         this.stopScan();
-    }
-
-    // endregion
-
-    // region BluetoothBondBroadcastReceiver.Listener implementation
-
-    @Override
-    public void onBondCreated() {
-        this.mListener.onProxyReady();
-        this.stopScan();
-    }
-
-    @Override
-    public void onBondProgress() {
-        // INF: Empty
-    }
-
-    @Override
-    public void onBondRemoved() {
-        // INF: Empty
     }
 
     // endregion

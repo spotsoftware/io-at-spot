@@ -180,7 +180,12 @@ public class BleDoorActuator
 
             Log.w(LOGTAG, "Notify characteristic changed");
 
-            enableNotification(false);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    enableNotification(false);
+                }
+            }).start();
         }
     }
 
@@ -290,10 +295,10 @@ public class BleDoorActuator
         descriptor.setValue(enable ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
         boolean operation = this.mConnectedGatt.writeDescriptor(descriptor);
 
-        Log.d(LOGTAG, "Write enable notification " + enable);
+        Log.d(LOGTAG, "Write enable notification " + operation);
         if (!operation) {
             Log.d(LOGTAG, "Write enable notification fail");
-            enableNotification(enable);
+            //enableNotification(enable);
         }
     }
 

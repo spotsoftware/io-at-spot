@@ -16,7 +16,7 @@
     <string name="action_open_door">Open door</string>
     <string name="action_open_door_and_mark">Open door and mark</string>
     <string name="action_mark">Mark</string>
-    <string name="action_open_door_nfc">or via NFC reader</string>
+    <string name="action_open_door_nfc">or via NFC</string>
     <string name="action_logout">Logout</string>
     <string name="action_settings">Settings</string>
     <string name="plus_sign_out">Switch Google+ account</string>
