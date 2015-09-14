@@ -91,6 +91,11 @@ public class MainActivity
     // region IBleDoorProxy.Listener implementation
 
     @Override
+    public void onBLEError(String message) {
+
+    }
+
+    @Override
     public void onProxyReady() {
         this.mDoorProxy.openDoor("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NTQzM2Y5N2NiMDIwODE2MDAyMGYzZGIiLCJpYXQiOjE0Mzc2MzU1Njg1NTYsImV4cCI6MTQzODQ5OTU2ODU1Nn0.uK8Iyf8YuhhqGrLiD4-ndzbuQIWVXT56ZvtNj_Vz1Ak", false);
     }
