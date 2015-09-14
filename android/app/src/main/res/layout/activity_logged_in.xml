@@ -41,14 +41,43 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab_normal"-->
+        <!--app:fabSize="normal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/ic_lo" />-->
+
         <Button
             android:id="@+id/btn_open"
             style="@style/CustomButton.Drawable"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableRight="@drawable/ic_wifi"
             android:enabled="false"
-            android:text="@string/action_open_door_ble"
+            android:text="@string/action_open_door"
+            android:textAllCaps="false"
+            android:textSize="@dimen/font_medium" />
+
+        <Button
+            android:id="@+id/btn_mark"
+            style="@style/CustomButton.Drawable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_wifi"
+            android:enabled="false"
+            android:text="@string/action_mark"
+            android:textAllCaps="false"
+            android:textSize="@dimen/font_medium" />
+
+        <Button
+            android:id="@+id/btn_open_and_mark"
+            style="@style/CustomButton.Drawable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_wifi"
+            android:enabled="false"
+            android:text="@string/action_open_door_and_mark"
             android:textAllCaps="false"
             android:textSize="@dimen/font_medium" />
 

@@ -22,7 +22,7 @@ import it.spot.io.lib.proxies.ProxyNotSupportedException;
  */
 public class BleDoorProxy
         extends ScanCallback
-        implements IBleDoorProxy, BluetoothBondBroadcastReceiver.Listener, Runnable {
+        implements IBleDoorProxy, BluetoothBondBroadcastReceiver.Listener, IBleDoorActuator.Listener, Runnable {
 
     public static final int REQUEST_CODE_ENABLE_BT = 100;
 
@@ -138,80 +138,19 @@ public class BleDoorProxy
 
     @Override
     public void openAndMark(String tokenHash) {
-        Log.i(LOGTAG, "TokenHash " + tokenHash);
-
-        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
-
-            @Override
-            public void onBLEWriteTokenCompleted(int result) {
-                mListener.onDoorOpened();
-            }
-
-            @Override
-            public void onBLEDeviceDisconnected() {
-                startScan();
-            }
-
-            @Override
-            public void onBLEDeviceError(int status, int newState) {
-                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
-
-                mListener.onBLEError("An error occurred, please retry");
-            }
-        });
-
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, this);
         this.mDoorActuator.doActionWithTokenHash(tokenHash, true, true);
     }
 
     @Override
     public void markOnly(String tokenHash) {
-        Log.i(LOGTAG, "TokenHash " + tokenHash);
-
-        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
-
-            @Override
-            public void onBLEWriteTokenCompleted(int result) {
-                mListener.onDoorOpened();
-            }
-
-            @Override
-            public void onBLEDeviceDisconnected() {
-                startScan();
-            }
-
-            @Override
-            public void onBLEDeviceError(int status, int newState) {
-                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
-                mListener.onBLEError("An error occurred, please retry");
-            }
-        });
-
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, this);
         this.mDoorActuator.doActionWithTokenHash(tokenHash, true, false);
     }
 
     @Override
     public void openOnly(String tokenHash) {
-        Log.i(LOGTAG, "TokenHash " + tokenHash);
-
-        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, new IBleDoorActuator.Listener() {
-
-            @Override
-            public void onBLEWriteTokenCompleted(int result) {
-                mListener.onDoorOpened();
-            }
-
-            @Override
-            public void onBLEDeviceDisconnected() {
-                startScan();
-            }
-
-            @Override
-            public void onBLEDeviceError(int status, int newState) {
-                Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
-                mListener.onBLEError("An error occurred, please retry");
-            }
-        });
-
+        this.mDoorActuator = BleDoorActuator.create(this.mActivity, this.mDoorBleDevice, this);
         this.mDoorActuator.doActionWithTokenHash(tokenHash, false, true);
     }
 
@@ -230,7 +169,7 @@ public class BleDoorProxy
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
         Log.d(LOGTAG, "Found device " + result.getDevice().getName() + " with " + result.getRssi() + " rssi");
-        if (result.getDevice().getName().equals(this.mDoorId)) {
+        if (result.getDevice().getName() != null && result.getDevice().getName().equals(this.mDoorId)) {
             this.stopScan();
 
             this.mDoorBleDevice = result.getDevice();
@@ -251,6 +190,26 @@ public class BleDoorProxy
         super.onScanFailed(errorCode);
         this.mDiscovering = false;
         this.mHandler.removeCallbacks(this);
+    }
+
+    // endregion
+
+    // region IBleDoorActuator.Listener implementation
+
+    @Override
+    public void onBLEWriteTokenCompleted(int result) {
+        mListener.onDoorOpened();
+    }
+
+    @Override
+    public void onBLEDeviceDisconnected() {
+        startScan();
+    }
+
+    @Override
+    public void onBLEDeviceError(int status, int newState) {
+        Log.e(LOGTAG, String.format("onBLEDeviceError with status %d and newState %d", status, newState));
+        mListener.onBLEError("An error occurred, please retry");
     }
 
     // endregion

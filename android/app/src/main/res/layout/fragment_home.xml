@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:drawableRight="@drawable/ic_wifi"
             android:enabled="false"
-            android:text="@string/action_open_door_ble"
+            android:text="@string/action_open_door"
             android:textAllCaps="false"
             android:textSize="@dimen/font_medium" />
 

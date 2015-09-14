@@ -13,21 +13,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import it.spot.io.android.BaseActivity;
-import it.spot.io.app.DoorKeeperApplication;
 import it.spot.io.android.R;
+import it.spot.io.app.DoorKeeperApplication;
+import it.spot.io.app.login.LogInActivity;
+import it.spot.io.app.login.auth.model.ILoggedUser;
+import it.spot.io.app.login.auth.model.LoggedUser;
 import it.spot.io.lib.proxies.ProxyNotInitializedException;
 import it.spot.io.lib.proxies.ProxyNotSupportedException;
 import it.spot.io.lib.proxies.ble.BleDoorProxy;
 import it.spot.io.lib.proxies.ble.IBleDoorProxy;
-import it.spot.io.app.login.LogInActivity;
-import it.spot.io.app.login.auth.model.ILoggedUser;
-import it.spot.io.app.login.auth.model.LoggedUser;
 import it.spot.io.lib.proxies.nfc.INfcHelper;
 import it.spot.io.lib.proxies.nfc.INfcListener;
 import it.spot.io.lib.proxies.nfc.NfcHelper;
@@ -44,7 +43,9 @@ public class LoggedInActivity
     private ILoggedUser mLoggedUser;
     private boolean mHandledNfcOnStartup;
 
-    private Button mOpenButton;
+    private View mOpenButton;
+    private View mMarkButton;
+    private View mOpenAndMarkButton;
     private CheckBox mMarkCheckbox;
     private ProgressDialog mProgressDialog;
     private TextView mNameTextView;
@@ -81,15 +82,35 @@ public class LoggedInActivity
         this.checkBleProxy();
 
         // otherwise not useful
-        this.mOpenButton = (Button) this.findViewById(R.id.btn_open);
+        this.mOpenButton = this.findViewById(R.id.btn_open);
         this.mOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //mDoorProxy.openDoor(mLoggedUser.getToken(), mMarkCheckbox.isChecked());
-                mDoorProxy.openAndMark(mLoggedUser.getTokenHash());
-
+                mDoorProxy.openOnly(mLoggedUser.getTokenHash());
                 showProgressDialog(R.string.loading, R.string.please_wait);
-                mOpenButton.setEnabled(false);
+                enableActions(false);
+            }
+        });
+
+        // otherwise not useful
+        this.mMarkButton = this.findViewById(R.id.btn_mark);
+        this.mMarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDoorProxy.markOnly(mLoggedUser.getTokenHash());
+                showProgressDialog(R.string.loading, R.string.please_wait);
+                enableActions(false);
+            }
+        });
+
+        // otherwise not useful
+        this.mOpenAndMarkButton = this.findViewById(R.id.btn_open_and_mark);
+        this.mOpenAndMarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDoorProxy.openAndMark(mLoggedUser.getTokenHash());
+                showProgressDialog(R.string.loading, R.string.please_wait);
+                enableActions(false);
             }
         });
 
@@ -146,7 +167,6 @@ public class LoggedInActivity
         handleNFCIntent(getIntent());
 
         this.mNfcHelper.resume();
-        //}
     }
 
     @Override
@@ -209,7 +229,7 @@ public class LoggedInActivity
         this.mOpenButton.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mOpenButton.setEnabled(true);
+                enableActions(true);
             }
         }, 3000);
     }
@@ -217,7 +237,7 @@ public class LoggedInActivity
     @Override
     public void onDoorOpened() {
         this.hideProgressDialog();
-//        this.mOpenButton.setEnabled(true);
+//      enableActions(true);
     }
 
     @Override
@@ -316,6 +336,12 @@ public class LoggedInActivity
                     sharedPref.getString(ILoggedUser.PREF_LOGGED_USER_TOKEN_HASH, "")
             );
         }
+    }
+
+    private void enableActions(boolean enable) {
+        this.mOpenAndMarkButton.setEnabled(enable);
+        this.mOpenButton.setEnabled(enable);
+        this.mMarkButton.setEnabled(enable);
     }
 
     // endregion

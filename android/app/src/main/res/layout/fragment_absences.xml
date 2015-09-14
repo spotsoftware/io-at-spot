@@ -18,14 +18,14 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/tabs" />
 
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@id/create_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        fab:fab_colorNormal="@color/color_primary"
-        fab:fab_colorPressed="@color/color_primary_darker" />
+    <!--<com.melnykov.fab.FloatingActionButton-->
+        <!--android:id="@id/create_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:src="@drawable/ic_add"-->
+        <!--fab:fab_colorNormal="@color/color_primary"-->
+        <!--fab:fab_colorPressed="@color/color_primary_darker" />-->
 </RelativeLayout>

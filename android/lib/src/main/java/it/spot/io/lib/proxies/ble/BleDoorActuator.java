@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
-import android.os.Handler;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -72,9 +71,9 @@ public class BleDoorActuator
         this.connectToDevice();
     }
 
-
     @Override
     public void doActionWithTokenHash(String tokenHash, boolean shouldMark, boolean shouldOpen) {
+        Log.i(LOGTAG, "TokenHash " + tokenHash);
         this.mTokenHash = tokenHash;
         this.mShouldMark = shouldMark;
         this.mShouldOpen = shouldOpen;
@@ -223,7 +222,6 @@ public class BleDoorActuator
     }
 
     private void disconnectFromDevice() {
-
         //Obtain the discovered device to connect with
         Log.d(LOGTAG, "Disconnecting from " + this.mDevice.getName());
         this.mConnectedGatt.disconnect();
@@ -262,7 +260,6 @@ public class BleDoorActuator
     }
 
     private void writeNextChunk() {
-
         BluetoothGattCharacteristic tokenChunkCharacteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(WRITE_TOKEN_CHUNK_CHAR);
 
@@ -294,60 +291,63 @@ public class BleDoorActuator
         boolean operation = this.mConnectedGatt.writeDescriptor(descriptor);
 
         Log.d(LOGTAG, "Write enable notification " + enable);
-        if(!operation){
+        if (!operation) {
             Log.d(LOGTAG, "Write enable notification fail");
             enableNotification(enable);
         }
     }
 
     private void writeAccessTypeCharacteristic() {
-        BluetoothGattCharacteristic accessTypeCharacteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
+        BluetoothGattCharacteristic accessTypeCharacteristic = this.mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(WRITE_ACCESS_TYPE_CHAR);
         ByteBuffer bb = ByteBuffer.allocate(4);
         bb.order(ByteOrder.LITTLE_ENDIAN);
         int access_type = -1;
-        if(this.mShouldOpen && this.mShouldMark) {
+        if (this.mShouldOpen && this.mShouldMark) {
             access_type = 0;
-        }else if(this.mShouldOpen){
+        } else if (this.mShouldOpen) {
             access_type = 1;
-        }else if(this.mShouldMark){
+        } else if (this.mShouldMark) {
             access_type = 2;
         }
         bb.putInt(access_type);
         accessTypeCharacteristic.setValue(bb.array());
-        mConnectedGatt.writeCharacteristic(accessTypeCharacteristic);
-        Log.d(LOGTAG, "Write access type characteristic " + access_type);
+
+        if (this.mConnectedGatt.writeCharacteristic(accessTypeCharacteristic)) {
+            Log.d(LOGTAG, "Write access type characteristic " + access_type);
+        } else {
+            Log.d(LOGTAG, "Write access type characteristic " + access_type + " FAILED");
+        }
     }
 
     private void writeTokenHashCharacteristic() {
-
         String data = mTokenHash;
-
         byte[] tokenHash = hexStringToByteArray(data);
-
         BluetoothGattCharacteristic tokenHashCharacteristic = mConnectedGatt.getService(AUTHENTICATION_SERVICE)
                 .getCharacteristic(WRITE_TOKEN_HASH_CHAR);
-
         tokenHashCharacteristic.setValue(tokenHash);
-        mConnectedGatt.writeCharacteristic(tokenHashCharacteristic);
-        Log.d(LOGTAG, "Write token hash");
 
-    }
-
-    private void writeTokenCharacteristic() {
-
-        String data = mToken;
-
-        // TODO - notify MSG_PROGRESS, "Authenticating..."));
-        try {
-            mChunks = chunkArray(data.getBytes("UTF-8"), 20);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (this.mConnectedGatt.writeCharacteristic(tokenHashCharacteristic)) {
+            Log.d(LOGTAG, "Written token has characteristic " + tokenHash);
+        } else {
+            Log.d(LOGTAG, "Written token has characteristic " + tokenHash + " FAILED");
         }
-        mChunkIndex = 0;
-
-        writeNextChunk();
     }
+
+//    private void writeTokenCharacteristic() {
+//
+//        String data = mToken;
+//
+//        // TODO - notify MSG_PROGRESS, "Authenticating..."));
+//        try {
+//            mChunks = chunkArray(data.getBytes("UTF-8"), 20);
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        mChunkIndex = 0;
+//
+//        writeNextChunk();
+//    }
 
     /*
      * Enable notification of changes on the data characteristic for each sensor
@@ -378,7 +378,7 @@ public class BleDoorActuator
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }
