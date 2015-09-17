@@ -8,17 +8,17 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.github.glomadrian.materialanimatedswitch.MaterialAnimatedSwitch;
 
 import it.spot.io.android.BaseActivity;
 import it.spot.io.android.R;
@@ -46,12 +46,12 @@ public class LoggedInActivity
     private ILoggedUser mLoggedUser;
     private boolean mHandledNfcOnStartup;
 
-    private SwitchCompat mMarkSwitch;
+    private Switch mMarkSwitch;
     private View mOpenButton;
     private View mMarkButton;
     private View mOpenAndMarkButton;
     private ProgressDialog mProgressDialog;
-    private TextView mNameTextView;
+    private ImageView mMarkStatus;
 
     // { BaseActivity methods overriding
 
@@ -69,11 +69,18 @@ public class LoggedInActivity
             return;
         }
 
-        this.mMarkSwitch = (SwitchCompat) this.findViewById(R.id.mark_switch);
-        this.mMarkSwitch.post(new Runnable() {
+        this.mMarkStatus = (ImageView) this.findViewById(R.id.mark_status);
+
+        this.mMarkSwitch = (Switch) this.findViewById(R.id.mark_switch);
+        this.mMarkSwitch.setChecked(true);
+        this.mMarkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void run() {
-                mMarkSwitch.toggle();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mMarkStatus.setImageDrawable(getResources().getDrawable(R.drawable.ic_mark));
+                } else {
+                    mMarkStatus.setImageDrawable(getResources().getDrawable(R.drawable.ic_mark_disabled));
+                }
             }
         });
 

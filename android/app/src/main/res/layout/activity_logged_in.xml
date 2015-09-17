@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -44,15 +43,21 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_4"
             android:layout_marginRight="@dimen/margin_4"
-            android:src="@drawable/ic_nfc" />
+            android:src="@drawable/ic_nfc_white_36dp" />
 
-        <android.support.v7.widget.SwitchCompat
+        <Switch
             android:id="@+id/mark_switch"
-            android:layout_width="120dip"
-            android:layout_height="10dp"
-            android:maxHeight="10dp"
-            android:thumbTextPadding="25dp"
-            android:switchMinWidth="56dp" />
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_2"
+            android:switchMinWidth="60dp" />
+
+        <ImageView
+            android:id="@+id/mark_status"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_mark" />
     </LinearLayout>
 
     <RelativeLayout
