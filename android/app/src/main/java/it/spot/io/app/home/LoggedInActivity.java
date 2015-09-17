@@ -8,7 +8,9 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,7 +46,7 @@ public class LoggedInActivity
     private ILoggedUser mLoggedUser;
     private boolean mHandledNfcOnStartup;
 
-    private MaterialAnimatedSwitch mMarkSwitch;
+    private SwitchCompat mMarkSwitch;
     private View mOpenButton;
     private View mMarkButton;
     private View mOpenAndMarkButton;
@@ -67,7 +69,7 @@ public class LoggedInActivity
             return;
         }
 
-        this.mMarkSwitch = (MaterialAnimatedSwitch) this.findViewById(R.id.mark_switch);
+        this.mMarkSwitch = (SwitchCompat) this.findViewById(R.id.mark_switch);
         this.mMarkSwitch.post(new Runnable() {
             @Override
             public void run() {
@@ -79,11 +81,6 @@ public class LoggedInActivity
 
         NfcManager nfcManager = (NfcManager) this.getSystemService(NFC_SERVICE);
         this.mNfcHelper = new NfcHelper(this, this, nfcManager.getDefaultAdapter());
-
-        //this.mHandledNfcOnStartup = this.handleNFCIntent(this.getIntent());
-
-        //if (!this.mHandledNfcOnStartup) {
-        // initializes bluetooth low energy helper
 
         this.checkBleProxy();
 
@@ -111,6 +108,8 @@ public class LoggedInActivity
 
         // otherwise not useful
         this.mOpenAndMarkButton = this.findViewById(R.id.btn_open_and_mark);
+        this.mOpenAndMarkButton.getLayoutParams().height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+        this.mOpenAndMarkButton.getLayoutParams().width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
         this.mOpenAndMarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

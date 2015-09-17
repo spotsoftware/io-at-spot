@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.8"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="30dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,71 +27,17 @@
             android:textAllCaps="true"
             android:textSize="@dimen/font_large" />
 
-        <ImageView
-            android:layout_width="@dimen/clock_width"
-            android:layout_height="@dimen/clock_height"
-            android:layout_marginTop="@dimen/margin_4"
-            android:src="@drawable/ic_logo" />
-
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/nfc_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.6"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/darker_bg_border_bottom_white"
         android:gravity="center"
-        android:orientation="vertical">
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab_normal"-->
-        <!--app:fabSize="normal"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/ic_lo" />-->
-
-        <Button
-            android:id="@+id/btn_open"
-            style="@style/CustomButton.Drawable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableRight="@drawable/ic_wifi"
-            android:enabled="false"
-            android:text="@string/action_open_door"
-            android:textAllCaps="false"
-            android:textSize="@dimen/font_medium" />
-
-        <Button
-            android:id="@+id/btn_mark"
-            style="@style/CustomButton.Drawable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableRight="@drawable/ic_wifi"
-            android:enabled="false"
-            android:text="@string/action_mark"
-            android:textAllCaps="false"
-            android:textSize="@dimen/font_medium" />
-
-        <Button
-            android:id="@+id/btn_open_and_mark"
-            style="@style/CustomButton.Drawable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableRight="@drawable/ic_wifi"
-            android:enabled="false"
-            android:text="@string/action_open_door_and_mark"
-            android:textAllCaps="false"
-            android:textSize="@dimen/font_medium" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4"
-        android:background="@drawable/darker_bg_border_bottom_white"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="30dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -99,17 +46,52 @@
             android:layout_marginRight="@dimen/margin_4"
             android:src="@drawable/ic_nfc" />
 
-        <com.github.glomadrian.materialanimatedswitch.MaterialAnimatedSwitch
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/mark_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:ball_press_color="@color/button_color"
-            app:ball_release_color="@android:color/holo_red_dark"
-            app:base_press_color="@color/button_color_pressed"
-            app:base_release_color="@color/button_color_pressed"
-            app:icon_press="@drawable/ic_lock_open_white_18dp"
-            app:icon_release="@drawable/ic_lock_outline_white_18dp" />
-
+            android:layout_width="120dip"
+            android:layout_height="10dp"
+            android:maxHeight="10dp"
+            android:thumbTextPadding="25dp"
+            android:switchMinWidth="56dp" />
     </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/nfc_container"
+        android:layout_below="@id/header"
+        android:background="@drawable/darker_bg_border_bottom_white">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_open"
+            style="@style/CustomFloatingButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_open" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_mark"
+            style="@style/CustomFloatingButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_mark" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_open_and_mark"
+            style="@style/CustomFloatingButton.Large"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_open_and_mark" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_above="@id/btn_mark"
+            android:layout_below="@id/btn_open_and_mark"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_wifi" />
+    </RelativeLayout>
+</RelativeLayout>

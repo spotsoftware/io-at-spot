@@ -29,4 +29,7 @@
     <dimen name="clock_height">100dp</dimen>
 
     <dimen name="widget_margin">@dimen/margin_2</dimen>
+
+    <dimen name="fab_size_mini">75dp</dimen>
+    <dimen name="fab_size_normal">95dp</dimen>
 </resources>
