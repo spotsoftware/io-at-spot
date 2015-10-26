@@ -33,45 +33,41 @@ router
                 return res.send(err);
             }
 
-            if (req.body.email === body.email) {
+            User.findOne({
+                'email': body.email
+            }, function (err, user) {
 
-                User.findOne({
-                    'email': body.email
-                }, function (err, user) {
+                if (err) {
+                    return res.send(401, err);
+                }
 
-                    if (err) {
-                        return res.send(401, err);
-                    }
+                if (!user) {
+                    return res.send(401, "User not registered.");
+                } else {
+                    //user found, return this user
+                    var token = auth.signToken({
+                        _id: user._id
+                    }, 60 * 24 * 10);
 
-                    if (!user) {
-                        return res.send(401, "User not registered.");
-                    } else {
-                        //user found, return this user
-                        var token = auth.signToken({
-                            _id: user._id
-                        }, 60 * 24 * 10);
-                        
-                        var hash = crypto.createHash('md5').update(token).digest('hex');
-            
-                        user.deviceTokenHash = hash;
+                    var hash = crypto.createHash('md5').update(token).digest('hex');
 
-                        user.save(function(err){
-                            if(err){
-                                return res.json(401, err);
-                            }
+                    user.deviceTokenHash = hash;
 
-                            res.json({
-                                token: token,
-                                tokenHash: hash,
-                                user: user,
-                                type: 'local'
-                            });
+                    user.save(function(err){
+                        if(err){
+                            return res.json(401, err);
+                        }
+
+                        res.json({
+                            token: token,
+                            tokenHash: hash,
+                            user: user,
+                            type: 'local'
                         });
-                    }
-                });
-            } else {
-                return res.send(401, "Invalid token");
-            }
+                    });
+                }
+            });
+
         });
 
     });
