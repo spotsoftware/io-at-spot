@@ -1,74 +1,60 @@
-var zerorpc = require("zerorpc"),
-    pythonShell = require('python-shell'),
-    ecdsa = require('./ecdsa'),
-    logger = require('./logger');
-
-var nfc = require('./lib/nfc');
-
+var logger = require('./logger');
 var _listener = null;
+var usb = require('usb');
+var pythonShell = require('python-shell');
+var count = 0;
 
-var server = new zerorpc.Server({
-    token: function (token, mark, reply) {
-
-        mark = (mark === 'true');
-        logger.debug('nfc token read: ' + token.toString() + ', mark = ' + mark);
-
-        _listener.onTokenSubmitted(token, mark, function (response) {
-
-            reply(null, response);
-
+function cleanUsbDevice(nfc_reader) {
+    nfc_reader.open();
+    nfc_reader.reset(function(err) {
+        if (err) throw err;
+        nfc_reader.reset(function(err) {
+            if (err) throw err;
+            setTimeout(function() {
+                nfc_reader.close();
+                usbNfcRead();
+            }, 3000);
         });
-    },
-    tag: function (uid, signature, reply) {
+    });
+}
 
-        logger.debug('nfc tag read, uid: ' + uid.toString() + ' signature: ' + signature.toString());
+function usbNfcRead() {
+    var nfc_reader = usb.findByIds(1839, 8704);
 
-        ecdsa.verifySignature(uid, signature, function (isValid) {
+    count++;
+    pythonShell.run('python/tag_reader.py', { args: ['usb'] }, function(err, results) {
+        if (err) {
+            cleanUsbDevice(nfc_reader);
+            logger.warn(err, 'nfc reader error');
+        } else {
+            console.log(results)
+            // results is an array consisting of messages collected during execution
+            logger.debug('tag read uid: %j', results, count);
 
-            if (!isValid) {
-                logger.debug('invalid uid signature');
-                return reply(null, isValid);
-            }
+            _listener.onNFCTagSubmitted(results[0]);
 
-            //Valid UID
-            _listener.onNFCTagSubmitted(uid);
-            reply(null);
+            usbNfcRead();
+        }
+    });
+}
 
-        });
+function uartNfcRead(){
+    pythonShell.run('python/tag_reader.py', { args: ['tty:AMA0:pn53x'] }, function(err, results) {
+        if (err) {
+            throw err;
+        } else {
+            // results is an array consisting of messages collected during execution
+            logger.debug('tag read uid: %j', results, count);
 
-    }
-});
+            _listener.onNFCTagSubmitted(results[0]);
 
-nfc.open(function (err, dev) {
-    setTimeout(function () {
-        server.bind("tcp://0.0.0.0:4242");
+            uartNfcRead();
+        }
+    });
+}
 
-        logger.debug('starting nfcpy');
-        ///home/pi/Adafruit-WebIDE/repositories/pi-projects/node-server/python/nfc_controller.py
-        var extNfc = require('child_process').spawn('python', ["python/acr122/nfc_controller.py", "usb"]);
-        var intNfc = require('child_process').spawn('python', ['python/ada_pn532/nfc_controller.py']);
-        
-        process.on('exit', function () {
-            extNfc.kill();
-            intNfc.kill();
-        });
-        intNfc.stdout.on('data', function (data) {
-            logger.debug('internal reader: ' + data);
-        });
-        intNfc.stderr.on('data', function (data) {
-            logger.error('internal reader: ' + data);
-        });
-        extNfc.stdout.on('data', function (data) {
-            logger.debug('external reader: ' + data);
-        });
-        extNfc.stderr.on('data', function (data) {
-            logger.error('external reader: ' + data);
-        });
+usbNfcRead();
 
-    }, 1000);
-});
-
-
-module.exports = function (listener) {
+module.exports = function(listener) {
     _listener = listener;
 };

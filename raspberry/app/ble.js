@@ -5,15 +5,26 @@ var logger = require('./logger');
 var BlenoPrimaryService = bleno.PrimaryService;
 var BlenoCharacteristic = bleno.Characteristic;
 
+var uids = {
+    Service: 'f000cc40-0451-4000-b000-000000000000',
+    DigitalSignatureCharacteristic: 'f000cc41-0451-4000-b000-000000000000',
+    WriteTokenChunkCharacteristic: 'f000cc42-0451-4000-b000-000000000000',
+    NotifyCharacteristic: 'f000cc43-0451-4000-b000-000000000000',
+    WriteLastTokenChunkCharacteristic: 'f000cc44-0451-4000-b000-000000000000',
+    WriteAccessTypeCharacteristic: 'f000cc45-0451-4000-b000-000000000000',
+    WriteTokenHashCharacteristic: 'f000cc46-0451-4000-b000-000000000000'
+}
+
 var _listener = null,
     notifyCallback = null,
     dataBuffer = null,
-    markAccess = true;
+    accessType = 0; //0 --> Open & mark, 1 --> Open only, 2 --> Mark only
 
+console.log('bleno');
 
 var DigitalSignatureCharacteristic = function () {
     DigitalSignatureCharacteristic.super_.call(this, {
-        uuid: 'f000cc41-0451-4000-b000-000000000000',
+        uuid: uids.DigitalSignatureCharacteristic,
         properties: ['read']
     });
 };
@@ -23,6 +34,7 @@ util.inherits(DigitalSignatureCharacteristic, BlenoCharacteristic);
 DigitalSignatureCharacteristic.prototype.onReadRequest = function (offset, callback) {
 
     logger.debug('BLE digital signature characteristic read request.');
+    console.log('signature Read ', data);
 
     var result = this.RESULT_SUCCESS;
     var data = new Buffer('dynamic value');
@@ -39,9 +51,9 @@ DigitalSignatureCharacteristic.prototype.onReadRequest = function (offset, callb
 var WriteTokenChunkCharacteristic = function () {
 
     WriteTokenChunkCharacteristic.super_.call(this, {
-        uuid: 'f000cc42-0451-4000-b000-000000000000',
+        uuid: uids.WriteTokenChunkCharacteristic,
         properties: ['write'],
-        secure: ['write']
+        //secure: ['write']
     });
 };
 
@@ -49,6 +61,8 @@ util.inherits(WriteTokenChunkCharacteristic, BlenoCharacteristic);
 
 WriteTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
 
+    console.log('tokenChunk ', data);
+    
     if (dataBuffer === null) {
         dataBuffer = data;
     } else {
@@ -58,29 +72,30 @@ WriteTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset,
     callback(this.RESULT_SUCCESS);
 };
 
-var WriteMarkAccessCharacteristic = function () {
+var WriteAccessTypeCharacteristic = function () {
 
-    WriteMarkAccessCharacteristic.super_.call(this, {
-        uuid: 'f000cc45-0451-4000-b000-000000000000',
+    WriteAccessTypeCharacteristic.super_.call(this, {
+        uuid: uids.WriteAccessTypeCharacteristic,
         properties: ['write'],
-        secure: ['write']
+        //secure: ['write']
     });
 };
 
-util.inherits(WriteMarkAccessCharacteristic, BlenoCharacteristic);
+util.inherits(WriteAccessTypeCharacteristic, BlenoCharacteristic);
 
-WriteMarkAccessCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
+WriteAccessTypeCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
+    console.log('Access type', data);
 
-    markAccess = !!(data.readUInt32LE(0)); 
+    accessType = data.readUInt32LE(0); 
 
     callback(this.RESULT_SUCCESS);
 };
 
 var WriteLastTokenChunkCharacteristic = function () {
     WriteLastTokenChunkCharacteristic.super_.call(this, {
-        uuid: 'f000cc44-0451-4000-b000-000000000000',
+        uuid: uids.WriteLastTokenChunkCharacteristic,
         properties: ['write'],
-        secure: ['write']
+        //secure: ['write']
     });
 };
 
@@ -88,23 +103,21 @@ util.inherits(WriteLastTokenChunkCharacteristic, BlenoCharacteristic);
 
 WriteLastTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
 
+    console.log('last token write ', data);
+    
+    
     var newBuffer = Buffer.concat([dataBuffer, data]);
     dataBuffer = newBuffer;
 
     logger.debug('BLE final token read:' + dataBuffer.toString());
 
-    _listener.onTokenSubmitted(dataBuffer.toString(), markAccess, function (response) {
+    _listener.onTokenSubmitted(dataBuffer.toString(), accessType, function (response) {
 
         //write back the response and disconnect client!
         var data = new Buffer(4);
         data.writeUInt32LE(response.responseCode, 0);
         logger.debug('notify back client');
         notifyCallback(data);
-
-        setTimeout(function () {
-            logger.debug('forcing client disconnection');
-            bleno.disconnect();
-        }, 500)
 
     });
 
@@ -113,9 +126,9 @@ WriteLastTokenChunkCharacteristic.prototype.onWriteRequest = function (data, off
 
 var NotifyCharacteristic = function () {
     NotifyCharacteristic.super_.call(this, {
-        uuid: 'f000cc43-0451-4000-b000-000000000000',
+        uuid: uids.NotifyCharacteristic,
         properties: ['notify'],
-        secure: ['write']
+        //secure: ['write']
     });
 };
 
@@ -130,26 +143,55 @@ NotifyCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValue
 NotifyCharacteristic.prototype.onUnsubscribe = function () {
     logger.debug('client unsubscribed from notify characteristic');
 
-    if (this.changeInterval) {
-        clearInterval(this.changeInterval);
-        this.changeInterval = null;
-    }
+    setTimeout(function () {
+        logger.debug('forcing client disconnection');
+        bleno.disconnect();
+    }, 500);
 };
 
 NotifyCharacteristic.prototype.onNotify = function () {
     logger.debug('on notify');
 };
 
+var WriteTokenHashCharacteristic = function () {
+
+    WriteTokenHashCharacteristic.super_.call(this, {
+        uuid: uids.WriteTokenHashCharacteristic,
+        properties: ['write'],
+        //secure: ['write']
+    });
+};
+
+util.inherits(WriteTokenHashCharacteristic, BlenoCharacteristic);
+
+WriteTokenHashCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
+
+    console.log('tokenHash ', data);
+    
+    _listener.onTokenHashSubmitted(data.toString('hex'), accessType, function (response) {
+
+        //write back the response and disconnect client!
+        var data = new Buffer(4);
+        data.writeUInt32LE(response.responseCode, 0);
+        logger.debug('notify back client');
+        notifyCallback(data);
+
+    });
+    
+    callback(this.RESULT_SUCCESS);
+};
+
 function SampleService() {
     SampleService.super_.call(this, {
-        uuid: 'f000cc40-0451-4000-b000-000000000000',
+        uuid: uids.Service,
         characteristics: [
-      new DigitalSignatureCharacteristic(),
-      new WriteTokenChunkCharacteristic(),
-      new WriteLastTokenChunkCharacteristic(),
-      new NotifyCharacteristic(),
-      new WriteMarkAccessCharacteristic()
-    ]
+          new DigitalSignatureCharacteristic(),
+          new WriteTokenChunkCharacteristic(),
+          new NotifyCharacteristic(),
+          new WriteLastTokenChunkCharacteristic(),
+          new WriteAccessTypeCharacteristic(),
+          new WriteTokenHashCharacteristic()
+        ]
     });
 }
 
@@ -159,7 +201,7 @@ bleno.on('stateChange', function (state) {
     logger.debug('bleno state change: ' + state);
 
     if (state === 'poweredOn') {
-        bleno.startAdvertising('raspy', ['f000cc40-0451-4000-b000-000000000000']);
+        bleno.startAdvertising('raspy2', [uids.Service]);
     } else {
         bleno.stopAdvertising();
     }
@@ -171,7 +213,7 @@ bleno.on('accept', function (clientAddress) {
 
 
     dataBuffer = null;
-    markAccess = true;
+    accessType = 0;
 });
 
 bleno.on('disconnect', function (clientAddress) {
@@ -186,19 +228,19 @@ bleno.on('rssiUpdate', function (rssi) {
 bleno.on('advertisingStart', function (error) {
 
     if (error) {
-        log.fatal(error, 'bleno: cannot start advertising');
+        logger.fatal(error, 'bleno: cannot start advertising');
     }
     logger.debug('bleno advertising start.');
 
     if (!error) {
         bleno.setServices([
-      new SampleService()
-    ]);
+          new SampleService()
+        ]);
     }
 });
 
 bleno.on('advertisingStop', function () {
-    logger.debug('bleno advertising start.');
+    logger.debug('bleno advertising stop.');
 });
 
 bleno.on('servicesSet', function () {

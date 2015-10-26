@@ -12,6 +12,7 @@ var client = require('request-json').newClient(config.SERVER_ADDR + ':' + config
 require('./config/close_handler');
 require('./ble')(this);
 require('./nfc')(this);
+require('./web/web')(this);
 
 //Module vars
 var _socket = null;
@@ -192,9 +193,53 @@ function onTokenSubmitted(stringData, mark, callback) {
 }
 
 
+function onTokenHashSubmitted(stringData, accessType, callback) {
+    log.info('token read:' + stringData);
+
+    if (isOnline()) {
+
+        var token = stringData;
+
+        _socket.emit('tokenHashSubmitted', {
+            tokenHash: token,
+            mark: (accessType !== 1)
+        }, function (response) {
+
+            console.log(response, 'response received');
+            log.info({
+                response: response
+            }, 'token authentication response received');
+
+            if (response.responseCode == 200) {
+                if(accessType !== 2){
+                    actuatorService.openDoor();
+                }else {
+                    actuatorService.notifyOk();
+                }
+            } else {
+                actuatorService.error();
+            }
+            callback(response);
+        });
+
+    } else {
+        log.warn('device is offline, cannot authenticate.');
+
+        actuatorService.error();
+
+        callback({
+            responseCode: 503,
+            message: 'device is offline, cannot authenticate'
+        });
+    }
+}
+
+
+
 log.debug('starting socket service');
 
 authenticate();
 
 exports.onNFCTagSubmitted = onNFCTagSubmitted;
 exports.onTokenSubmitted = onTokenSubmitted;
+exports.onTokenHashSubmitted = onTokenHashSubmitted;

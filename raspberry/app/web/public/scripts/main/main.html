@@ -1,0 +1,36 @@
+<div class="main-partial text-center" layout="column" flex>
+	<div flex layout="column" layout-align="center center">
+		<div class="md-display-1">Welcome</div>
+		<h1 class="md-display-1">{{vm.name}}</h1>
+	</div>
+	<div flex class="md-padding" layout-sm="column" layout-gt-sm="row" flex hide-sm >
+		<div flex layout-sm="column" flex-order-sm="2" layout-align="center center">
+			<md-button class="md-raised md-primary" ng-click="vm.action(false, true)">Open</md-button>
+		</div>
+		<div flex layout-sm="column" flex-order-sm="1" layout-align="center center">
+			<md-button class="md-raised md-primary" ng-click="vm.action(true, true)">Open & Mark</md-button>
+		</div>
+		<div flex layout-sm="column" flex-order-sm="3" layout-align="center center">
+			<md-button class="md-raised md-primary" ng-click="vm.action(true, false)">Mark</md-button>
+		</div>
+	</div>
+	<div flex class="md-padding" layout-sm="column" flex hide-gt-sm>
+		<div flex layout="row">
+			<div flex="70" flex-offset="15">
+				<md-button class="md-raised md-primary" ng-click="vm.action(true, true)">Open & Mark</md-button>
+			</div>
+		</div>
+		<div layout="row" flex>
+			<div flex>
+				<md-button class="md-fab md-raised md-primary" aria-label="Open" ng-click="vm.action(false, true)">
+					<md-icon md-svg-src="styles/images/icon_lock_open.svg"></md-icon>
+				</md-button>
+			</div>
+			<div flex>
+				<md-button class="md-fab md-raised md-primary" aria-label="Mark" ng-click="vm.action(true, false)">
+					<md-icon md-svg-src="styles/images/icon_payment.svg"></md-icon>
+				</md-button>
+			</div>
+		</div>
+	</div>
+</div>
