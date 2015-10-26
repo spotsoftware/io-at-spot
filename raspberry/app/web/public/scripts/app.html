@@ -1,0 +1,25 @@
+<md-toolbar flex="none">
+    <div class="md-toolbar-tools text-white">
+        <h2>
+	        <span>io@spot</span>
+	    </h2>
+        <span flex></span>
+        <!--<div><img alt="io@spot" src="styles/images/logo.png" class="logo"></div>-->
+        <!--<h1 class="md-display-2">io@spot</h1>-->
+
+        <md-menu ng-if="vm.isAuthenticated()">
+            <md-button class="md-icon-button" aria-label="More" ng-click="vm.openMenu($mdOpenMenu, $event)">
+                <md-icon md-svg-icon="styles/images/more_vert.svg"></md-icon>
+            </md-button>
+            <md-menu-content width="2">
+                <md-menu-item>
+                    <md-button ng-click="vm.logout($event)">
+                        <md-icon  md-svg-icon="styles/images/logout.svg" md-menu-align-target></md-icon>
+                        Logout
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+    </div>
+</md-toolbar>
+<div ui-view flex layout="column"></div>

@@ -18,7 +18,7 @@ var log = require('bunyan').createLogger({
             level: 'warn',
             path: '/home/pi/io-at-spot/doorkeeper/logs/doorkeeper_warn.log',
             period: '1d', // daily rotation
-            count: 1 // keep 1 back copies
+            count: 2 // keep 1 back copies
     },
         {
             type: 'rotating-file',

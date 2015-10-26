@@ -2,8 +2,8 @@ var Gpio = require('onoff').Gpio,
     relay = new Gpio(22, 'out'),
     redLed = new Gpio(24, 'out'),
     greenLed = new Gpio(23, 'out'),
-    buzzer = new Gpio(18, 'out');
-
+    buzzer = new Gpio(18, 'out'),
+    errorInterval = null,
     blinkingInterval = null;
 
 
@@ -39,6 +39,16 @@ function openDoor(){
     }, 1000);
 }
 
+function notifyOk(){
+    greenLed.writeSync(1);
+    buzzer.writeSync(1);
+    
+    setTimeout(function(){
+        greenLed.writeSync(0);
+        buzzer.writeSync(0);
+    }, 250);
+}
+
 function error(){
     var cont=0;
     errorInterval = setInterval(function() {
@@ -57,3 +67,4 @@ exports.error = error;
 exports.openDoor = openDoor;
 exports.startBlinking = startBlinking;
 exports.stopBlinking = stopBlinking;
+exports.notifyOk = notifyOk;
