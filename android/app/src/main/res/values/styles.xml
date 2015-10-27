@@ -1,13 +1,19 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="colorButtonNormal">@color/button_color</item>
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="android:windowBackground">@color/windows_background_color</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="DrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
     </style>
 
     <style name="CustomButton" parent="Base.TextAppearance.AppCompat.Button">
@@ -23,4 +29,18 @@
         <item name="android:drawablePadding">@dimen/padding_4</item>
     </style>
 
+    <style name="CustomFloatingButton" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="backgroundTint">@color/button_color</item>
+        <item name="rippleColor">@color/button_color_pressed</item>
+        <item name="elevation">6dp</item>
+        <item name="fabSize">mini</item>
+        <item name="borderWidth">0dp</item>
+    </style>
+
+    <style name="CustomFloatingButton.Large">
+        <item name="fabSize">normal</item>
+    </style>
 </resources>

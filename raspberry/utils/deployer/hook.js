@@ -8,7 +8,7 @@ gith({
     branch: 'deploy'
 }).on('all', function (payload) {
 
-    console.log("new push on deploy branch and raspberry folder received");
+    console.log("new push on master branch and raspberry folder received");
     if (!busy) {
         busy = true;
         exec('./hook.sh', function (err, stdout, stderr) {

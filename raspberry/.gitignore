@@ -4,3 +4,4 @@ app/persist/
 app/tmp/
 app/config/config.js
 utils/deployer/node_modules
+.c9/

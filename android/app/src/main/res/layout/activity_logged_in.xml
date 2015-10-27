@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="30dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,62 +26,77 @@
             android:textAllCaps="true"
             android:textSize="@dimen/font_large" />
 
-        <ImageView
-            android:layout_width="@dimen/clock_width"
-            android:layout_height="@dimen/clock_height"
-            android:layout_marginTop="@dimen/margin_4"
-            android:src="@drawable/ic_logo" />
-
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/nfc_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/darker_bg_border_bottom_white"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="30dp">
 
-        <Button
-            android:id="@+id/btn_open"
-            android:enabled="false"
-            style="@style/CustomButton.Drawable"
-            android:drawableRight="@drawable/ic_wifi"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_medium"
-            android:textAllCaps="false"
-            android:text="@string/action_open_door_ble" />
-
-        <CheckBox
-            android:id="@+id/chk_mark"
-            android:text="@string/mark"
-            android:checked="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="25dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:background="@drawable/darker_bg_border_bottom_white"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableRight="@drawable/ic_nfc"
-            android:drawablePadding="@dimen/padding_4"
             android:layout_marginLeft="@dimen/margin_4"
             android:layout_marginRight="@dimen/margin_4"
-            android:text="@string/action_open_door_nfc"
-            android:textSize="@dimen/font_medium" />
+            android:src="@drawable/ic_nfc_white_36dp" />
 
+        <Switch
+            android:id="@+id/mark_switch"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_2"
+            android:switchMinWidth="60dp" />
+
+        <ImageView
+            android:id="@+id/mark_status"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_mark" />
     </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/nfc_container"
+        android:layout_below="@id/header"
+        android:background="@drawable/darker_bg_border_bottom_white">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_open"
+            style="@style/CustomFloatingButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_open" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_mark"
+            style="@style/CustomFloatingButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_mark" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_open_and_mark"
+            style="@style/CustomFloatingButton.Large"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_open_and_mark" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_above="@id/btn_mark"
+            android:layout_below="@id/btn_open_and_mark"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_wifi" />
+    </RelativeLayout>
+</RelativeLayout>

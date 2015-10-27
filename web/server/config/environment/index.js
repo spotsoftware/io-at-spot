@@ -20,6 +20,9 @@ var all = {
 
     // Server port
     port: process.env.PORT || 9000,
+    
+    //device port
+    device_port: process.env.DEVICE_PORT,
 
     // enables CORS request
     enableCORS: true,

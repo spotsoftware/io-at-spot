@@ -46,7 +46,6 @@ function usbDeviceOpener(nfc, devString) {
 }
 
 function usbDeviceResetter(nfc, devString) {
-    
   return function (cb) {
     nfc.dev.reset(function(err) {
       if (err) {
@@ -143,9 +142,6 @@ function driverSetupper(nfc, properties) {
   };
 }
 
-function reset(cb){
-}
-
 function openNfc(cb) {
   // Set once we successfully open and init an NFC reader.
   var openedNfc;
@@ -178,8 +174,8 @@ function openNfc(cb) {
         async.series([
           usbDeviceOpener(nfc, devString),
           usbDeviceResetter(nfc, devString),
-          //deviceInfoGetter(nfc, properties),
-          //driverSetupper(nfc, properties),
+          deviceInfoGetter(nfc, properties),
+          driverSetupper(nfc, properties),
         ], function (err, results) {
           if (err) {
             cb(false);
@@ -206,6 +202,6 @@ function openNfc(cb) {
 
 module.exports = {
   open: openNfc,
-  openInterface: openInterface
+  openInterface: openInterface,
 };
 

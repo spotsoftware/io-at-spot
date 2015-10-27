@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Door keeper</string>
+    <string name="app_name">io@spot</string>
     <string name="app_title">io@spot</string>
-    <string name="title_activity_logged_in">LoggedInActivity</string>
-    <string name="title_activity_login">Sign in</string>
 
     <string name="error_generic_title">Error</string>
 
@@ -15,8 +13,10 @@
     <string name="mark">Mark</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="action_open_door_ble">Open door via BLE</string>
-    <string name="action_open_door_nfc">or via NFC reader</string>
+    <string name="action_open_door">Open door</string>
+    <string name="action_open_door_and_mark">Open door and mark</string>
+    <string name="action_mark">Mark</string>
+    <string name="action_open_door_nfc">or via NFC</string>
     <string name="action_logout">Logout</string>
     <string name="action_settings">Settings</string>
     <string name="plus_sign_out">Switch Google+ account</string>
@@ -28,7 +28,21 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="loading_title">Please wait</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading</string>
+    <string name="please_wait">Please wait...</string>
     <string name="title_activity_splash">SplashActivity</string>
 
+    <string name="cancel">Annulla</string>
+    <string name="exit">Esci</string>
+    <string name="attention">Attenzione</string>
+    <string name="exit_confirmation">Sei sicuro di voler uscire dall\'app?</string>
+    <string name="entries">Marcature</string>
+    <string name="absences">Assenze</string>
+    <string name="stats">Statistiche</string>
+
+    <string-array name="menu_voices">
+        <item name="home">Home</item>
+        <item name="entries">@string/entries</item>
+        <item name="absences">@string/absences</item>
+    </string-array>
 </resources>

@@ -1,8 +1,9 @@
 var WorkTimeEntry = require('../api/workTimeEntry/workTimeEntry.model');
 var socketioJwt = require('socketio-jwt');
 var config = require('../config/environment');
-var io = require("socket.io").listen(9001);
+var io = require("socket.io").listen(config.device_port);
 var devices = [];
+var User = require('../api/user/user.model');
 var Organization = require("../api/organization/organization.model");
 var authService = require("../auth/auth.service");
 
@@ -66,7 +67,7 @@ function addWorkTimeEntry(data, callback) {
 
     workTimeEntry._user = data.userId;
     workTimeEntry._organization = data.organizationId;
-    
+
     /*
     workTimeEntry.workTimeEntryType = 'in'; //AUTO-GUESS
     workTimeEntry.manual = false;
@@ -110,41 +111,86 @@ io.sockets.on('connection', function (socket) {
                     message: "organization is not active at this time"
                 });
             }
-            
+
             authService.verifyToken(data.token, function (err, decoded) {
                 if (err) {
                     return callback({
                         responseCode: 403,
                         message: err.message
                     });
-                }                
+                }
 
-                if(data.mark){
-                
+                callback({
+                    responseCode: 200,
+                    message: 'successfully authenticated'
+                });
+
+                if (data.mark) {
+
                     addWorkTimeEntry({
                         userId: decoded._id,
                         organizationId: organizationId
                     }, function (err) {
                         if (err) {
                             console.log(err);
-                            return callback({
-                                responseCode: 403,
-                                message: err.message
-                            });
                         }
 
-                        callback({
-                            responseCode: 200,
-                            message: 'successfully authenticated'
-                        });
                     });
-                    
-                }else {
-                    
-                    callback({
-                            responseCode: 200,
-                            message: 'successfully authenticated'
-                        });    
+
+                }
+            });
+        });
+    });
+
+    socket.on("tokenHashSubmitted", function (data, callback) {
+        
+        Organization.findById(organizationId, function (err, org) {
+            if (err) {
+                return callback({
+                    responseCode: 403,
+                    message: err.message
+                });
+            }
+
+            if (!isWorkingTime(org.settings.workingDays)) {
+                return callback({
+                    responseCode: 403,
+                    message: "organization is not active at this time"
+                });
+            }
+
+            User.findOne({
+                'deviceTokenHash': data.tokenHash
+            }, function (err, user) {
+                if (err) {
+                    return callback({
+                        responseCode: 403,
+                        message: err.message
+                    });                    
+                }
+                
+                if(!user){
+                    return callback({
+                        responseCode: 403,
+                        message: 'user not found'
+                    });
+                }
+                
+                callback({
+                    responseCode: 200,
+                    message: 'successfully authenticated'
+                });
+
+                if (data.mark) {
+
+                    addWorkTimeEntry({
+                        userId: user._id,
+                        organizationId: organizationId
+                    }, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
                 }
             });
         });
@@ -182,21 +228,19 @@ io.sockets.on('connection', function (socket) {
                 });
             }
 
+            callback({
+                responseCode: 200
+            });
+
             //user found
             addWorkTimeEntry({
                 userId: userId,
                 organizationId: organizationId
             }, function (err) {
                 if (err) {
-                    return callback({
-                        responseCode: 401,
-                        message: err.message
-                    });
+                    console.log(err);
                 }
 
-                callback({
-                    responseCode: 200
-                });
             });
         });
     });
