@@ -92,7 +92,7 @@ function connectSocket(authToken) {
         _readingUid = true;
         actuatorService.startBlinking();
 
-        readingUidTimeout = setTimeout(function () {
+        _readingUidTimeout = setTimeout(function () {
             log.info('was not possible to read uid in last 5 seconds');
 
             _socket.emit('uid', {
@@ -205,7 +205,6 @@ function onTokenHashSubmitted(stringData, accessType, callback) {
             mark: (accessType !== 1)
         }, function (response) {
 
-            console.log(response, 'response received');
             log.info({
                 response: response
             }, 'token authentication response received');

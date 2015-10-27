@@ -52,14 +52,8 @@ module.exports = function (app, passport, listener) {
 			session: false
 		}),
 		function(req, res){
-			console.log('google auth success', req.google_token);
 			res.cookie('google_token', req.google_token);
     		res.redirect('/');
-    		
-    		/*res.cookie('google_token', req.google_token, {
-				domain: 'door.io.spot.local'
-			});
-    		res.redirect('http://door.io.spot.local:9000');*/
 		});
 
 	// application -------------------------------------------------------------

@@ -27,7 +27,6 @@ function usbNfcRead() {
             cleanUsbDevice(nfc_reader);
             logger.warn(err, 'nfc reader error');
         } else {
-            console.log(results)
             // results is an array consisting of messages collected during execution
             logger.debug('tag read uid: %j', results, count);
 
@@ -54,6 +53,7 @@ function uartNfcRead(){
 }
 
 usbNfcRead();
+uartNfcRead();
 
 module.exports = function(listener) {
     _listener = listener;

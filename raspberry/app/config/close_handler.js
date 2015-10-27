@@ -22,8 +22,6 @@ function exitHandler(options, err) {
     }
 }
 
-console.log('registering closing handlers');
-
 //do something when app is closing
 /*
 process.on('exit', exitHandler.bind(null, {

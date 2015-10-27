@@ -5,14 +5,15 @@
 		.module('io.doorkeeper')
 		.controller('LoginController', LoginController);
 	
-	LoginController.$inject = ['auth', '$mdToast', '$state']
-	function LoginController(auth, $mdToast, $state) {
+	LoginController.$inject = ['auth', '$mdToast', '$state', '$scope']
+	function LoginController(auth, $mdToast, $state, $scope) {
 		var vm = this;
 		
 		vm.email = '';
 		vm.password = '';
 		
 		vm.login = function(form){
+			
 			if(form.$valid){
 				auth.login({
 					email: vm.email,

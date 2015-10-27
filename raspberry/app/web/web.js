@@ -30,11 +30,9 @@ require('./passport')(passport);
 
 
 var server = app.listen(80, function () {
-    console.log('Listening on port %d', server.address().port);
 });
 
 module.exports = function (listener) {
     //Routing
-    console.log('init routes');
     require('./routes.js')(app, passport, listener);
 };

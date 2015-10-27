@@ -11,6 +11,8 @@
 		var vm = this;
 		var originatorEv;
 		
+		vm.loading = false;
+		
 		vm.logout = function(){
 			auth.logout();
 			$state.go('app.login');

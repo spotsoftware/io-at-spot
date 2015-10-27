@@ -5,21 +5,25 @@
 		.module('io.doorkeeper')
 		.controller('MainController', MainController);
 
-	MainController.$inject = ['$http', '$mdToast', 'session', 'auth', '$state'];
+	MainController.$inject = ['$http', '$mdToast', 'session', 'auth', '$state', '$scope'];
 
-	function MainController($http, $mdToast, session, auth, $state) {
+	function MainController($http, $mdToast, session, auth, $state, $scope) {
 		var vm = this;
 
 		vm.name = session.name.toUpperCase();
 
 		vm.action = function(mark, open) {
+			$scope.$parent.vm.loading = true;
+			
 			$http.post('action', {
 				open: open,
 				mark: mark,
 				tokenHash: session.tokenHash
 			}).then(function(result) {
+				$scope.$parent.vm.loading = false;
 				vm.showToast('success', 'success');
 			}).catch(function(reason) {
+				$scope.$parent.vm.loading = false;
 				vm.showToast('error', 'error');
 			});
 		};

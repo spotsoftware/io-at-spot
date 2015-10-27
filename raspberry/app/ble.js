@@ -20,8 +20,6 @@ var _listener = null,
     dataBuffer = null,
     accessType = 0; //0 --> Open & mark, 1 --> Open only, 2 --> Mark only
 
-console.log('bleno');
-
 var DigitalSignatureCharacteristic = function () {
     DigitalSignatureCharacteristic.super_.call(this, {
         uuid: uids.DigitalSignatureCharacteristic,
@@ -34,7 +32,6 @@ util.inherits(DigitalSignatureCharacteristic, BlenoCharacteristic);
 DigitalSignatureCharacteristic.prototype.onReadRequest = function (offset, callback) {
 
     logger.debug('BLE digital signature characteristic read request.');
-    console.log('signature Read ', data);
 
     var result = this.RESULT_SUCCESS;
     var data = new Buffer('dynamic value');
@@ -60,8 +57,6 @@ var WriteTokenChunkCharacteristic = function () {
 util.inherits(WriteTokenChunkCharacteristic, BlenoCharacteristic);
 
 WriteTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
-
-    console.log('tokenChunk ', data);
     
     if (dataBuffer === null) {
         dataBuffer = data;
@@ -84,7 +79,6 @@ var WriteAccessTypeCharacteristic = function () {
 util.inherits(WriteAccessTypeCharacteristic, BlenoCharacteristic);
 
 WriteAccessTypeCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
-    console.log('Access type', data);
 
     accessType = data.readUInt32LE(0); 
 
@@ -102,8 +96,6 @@ var WriteLastTokenChunkCharacteristic = function () {
 util.inherits(WriteLastTokenChunkCharacteristic, BlenoCharacteristic);
 
 WriteLastTokenChunkCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
-
-    console.log('last token write ', data);
     
     
     var newBuffer = Buffer.concat([dataBuffer, data]);
@@ -165,8 +157,6 @@ var WriteTokenHashCharacteristic = function () {
 util.inherits(WriteTokenHashCharacteristic, BlenoCharacteristic);
 
 WriteTokenHashCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
-
-    console.log('tokenHash ', data);
     
     _listener.onTokenHashSubmitted(data.toString('hex'), accessType, function (response) {
 

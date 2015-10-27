@@ -52,7 +52,6 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
 	margin-bottom: 0px;
 }
 
-
 .login-partial {
 	max-width:400px;
 	margin: 0 auto; 
@@ -108,4 +107,34 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
 
 .main-partial button{
 	width: 90%;
+}
+
+.loader {
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	background-color:white;
+	opacity:0.7;
+	z-index:999;
+}
+
+.loader md-progress-circular {
+	margin: 100px auto;
+}
+
+md-progress-circular .md-inner .md-gap{
+	border-top-color: #0080FF !important;
+    border-bottom-color: #0080FF !important;
+}
+
+md-progress-circular .md-inner .md-left .md-half-circle{
+	border-top-color: #0080FF !important;
+    border-left-color: #0080FF !important;
+}
+
+md-progress-circular .md-inner .md-right .md-half-circle{
+	border-top-color: #0080FF !important;
+    border-right-color: #0080FF !important;
 }
