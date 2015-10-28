@@ -9,7 +9,7 @@
 	]);
 
     angular.module('io.doorkeeper').constant('CONFIG', {
-        ioUrl: 'http://io-demo.dokku.demo.spot.it/',
+        ioUrl: 'http://io.spot.it/',
     });
 
 	angular.module('io.doorkeeper').config(moduleConfig).run(moduleRun);

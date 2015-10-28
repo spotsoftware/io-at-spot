@@ -21,10 +21,10 @@
 				tokenHash: session.tokenHash
 			}).then(function(result) {
 				$scope.$parent.vm.loading = false;
-				vm.showToast('success', 'success');
+				vm.showToast('success', result.data);
 			}).catch(function(reason) {
 				$scope.$parent.vm.loading = false;
-				vm.showToast('error', 'error');
+				vm.showToast('error', reason.data);
 			});
 		};
 
