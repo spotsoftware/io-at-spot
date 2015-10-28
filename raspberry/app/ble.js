@@ -191,7 +191,7 @@ bleno.on('stateChange', function (state) {
     logger.debug('bleno state change: ' + state);
 
     if (state === 'poweredOn') {
-        bleno.startAdvertising('raspy2', [uids.Service]);
+        bleno.startAdvertising('raspy', [uids.Service]);
     } else {
         bleno.stopAdvertising();
     }
