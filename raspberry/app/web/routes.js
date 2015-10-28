@@ -26,7 +26,7 @@ module.exports = function (app, passport, listener) {
         	}
         	
         	listener.onTokenHashSubmitted(req.body.tokenHash, accessType, function (response) {
-				res.send(response);
+				res.status(response.responseCode).send(response.message);
 		    });
         }
         
