@@ -11,7 +11,7 @@ var client = require('request-json').newClient(config.SERVER_ADDR + ':' + config
 //Start of parallel entities
 require('./config/close_handler');
 require('./ble')(this);
-//require('./nfc')(this);
+require('./nfc')(this);
 require('./web/web')(this);
 
 //Module vars
