@@ -4,7 +4,7 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // load the auth variables
-var configAuth = require('./auth');
+var config = require('../config/config');
 
 module.exports = function(passport) {
     
@@ -14,9 +14,9 @@ module.exports = function(passport) {
     
     passport.use(new GoogleStrategy({
 
-        clientID        : configAuth.Google.clientId,
-        clientSecret    : configAuth.Google.clientSecret,
-        callbackURL     : configAuth.Google.callbackURL,
+        clientID        : config.Google.clientId,
+        clientSecret    : config.Google.clientSecret,
+        callbackURL     : config.Google.callbackURL,
         passReqToCallback: true
     },
     function(req, token, refreshToken, profile, done) {
