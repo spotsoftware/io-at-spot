@@ -1,35 +1,24 @@
 <div class="main-partial text-center" layout="column" flex>
-	<div flex layout="column" layout-align="center center" flex>
+	<div class="welcome" layout="column" layout-align="center center" flex="none">
 		<div class="md-headline">Welcome,</div>
-		<h1 class="md-display-1">{{vm.name}}</h1>
+		<div class="md-headline"><strong>{{vm.name}}</strong></div>
 	</div>
-	<div flex class="md-padding" layout-sm="column" layout-gt-sm="row" flex hide-sm >
-		<div flex layout-sm="column" flex-order-sm="2" layout-align="center center">
-			<md-button class="md-raised md-primary" ng-click="vm.action(false, true)">Open</md-button>
+	<div flex class="md-padding" layout-sm="column" flex="grow">
+		<div layout-align="center center">
+			<md-button class="md-raised md-primary big" ng-click="vm.action(true, true)"><strong>Open & Mark</strong></md-button>
 		</div>
-		<div flex layout-sm="column" flex-order-sm="1" layout-align="center center">
-			<md-button class="md-raised md-primary" ng-click="vm.action(true, true)">Open & Mark</md-button>
-		</div>
-		<div flex layout-sm="column" flex-order-sm="3" layout-align="center center">
-			<md-button class="md-raised md-primary" ng-click="vm.action(true, false)">Mark</md-button>
-		</div>
-	</div>
-	<div flex class="md-padding" layout-sm="column" flex hide-gt-sm>
-		<div flex layout="row">
-			<div flex="70" flex-offset="15">
-				<md-button class="md-raised md-primary big" ng-click="vm.action(true, true)">Open & Mark</md-button>
-			</div>
-		</div>
-		<div layout="row" flex>
-			<div flex>
-				<md-button class="md-fab md-raised md-primary big door" aria-label="Open" ng-click="vm.action(false, true)">
-					<md-icon md-svg-src="styles/images/door.svg"></md-icon>
-				</md-button>
+		<div layout="row">
+			<div flex >
+				<md-button class="md-raised md-secondary" ng-click="vm.action(false, true)">Open</md-button>
+				<!--<md-button class="md-fab md-raised md-primary big door" aria-label="Open" ng-click="vm.action(false, true)">-->
+				<!--	<md-icon md-svg-src="styles/images/door.svg"></md-icon>-->
+				<!--</md-button>-->
 			</div>
 			<div flex>
-				<md-button class="md-fab md-raised md-primary big mark" aria-label="Mark" ng-click="vm.action(true, false)">
-					<md-icon md-svg-src="styles/images/timbro.svg"></md-icon>
-				</md-button>
+				<md-button class="md-raised md-secondary" ng-click="vm.action(true, false)">Mark</md-button>
+				<!--<md-button class="md-fab md-raised md-primary big mark" aria-label="Mark" ng-click="vm.action(true, false)">-->
+				<!--	<md-icon md-svg-src="styles/images/timbro.svg"></md-icon>-->
+				<!--</md-button>-->
 			</div>
 		</div>
 	</div>
