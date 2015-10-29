@@ -102,7 +102,7 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
 /*}*/
 
 .main-partial button{
-	width: 90%;
+	width: calc(100% - 16px);
 }
 
 .loader {
@@ -159,4 +159,13 @@ md-progress-circular .md-inner .md-right .md-half-circle{
 	height: 70px;
     width: auto;
     margin: 20px 0 0 -12px;
+}
+
+.md-button.md-secondary {
+	background-color: white !important;
+	color: #0080FF !important;
+}
+
+.welcome {
+	height:200px;
 }
