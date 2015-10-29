@@ -19,7 +19,7 @@ body {
 }
 
 .md-fab.md-raised md-icon svg {
-	fill: #0080FF !important;
+	fill: black !important;
 }
 
 .md-menu {
@@ -101,10 +101,6 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
 /*	color: white !important;*/
 /*}*/
 
-.md-display-1{
-	line-height: 20px;
-}
-
 .main-partial button{
 	width: 90%;
 }
@@ -137,4 +133,30 @@ md-progress-circular .md-inner .md-left .md-half-circle{
 md-progress-circular .md-inner .md-right .md-half-circle{
 	border-top-color: #0080FF !important;
     border-right-color: #0080FF !important;
+}
+
+.md-button.big {
+	font-size: 18px;
+	line-height: 40px;
+}
+
+.md-button.md-fab.big {
+	width: 70px;
+	height: 70px;
+} 
+
+.md-button.md-fab.big md-icon {
+	height: 50px;
+	width: 50px;
+}
+
+.md-button.md-fab.big.door md-icon {
+    height: auto;
+    width: 30px;
+}
+
+.md-button.md-fab.big.mark md-icon {
+	height: 70px;
+    width: auto;
+    margin: 20px 0 0 -12px;
 }
