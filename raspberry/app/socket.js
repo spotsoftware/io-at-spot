@@ -156,7 +156,7 @@ function onNFCTagSubmitted(uid) {
     }
 }
 
-function onTokenSubmitted(stringData, mark, callback) {
+function onTokenSubmitted(stringData, accessType, callback) {
     log.info('token read:' + stringData);
 
     if (isOnline()) {
@@ -165,7 +165,7 @@ function onTokenSubmitted(stringData, mark, callback) {
 
         _socket.emit('tokenSubmitted', {
             token: token,
-            mark: mark
+            mark: (accessType !== 1)
         }, function (response) {
 
             log.info({
@@ -173,7 +173,11 @@ function onTokenSubmitted(stringData, mark, callback) {
             }, 'token authentication response received');
 
             if (response.responseCode == 200) {
-                actuatorService.openDoor();
+                if(accessType !== 2){
+                    actuatorService.openDoor();
+                }else {
+                    actuatorService.notifyOk();
+                }
             } else {
                 actuatorService.error();
             }
