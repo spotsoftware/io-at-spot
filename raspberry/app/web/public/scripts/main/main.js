@@ -18,7 +18,7 @@
 			$http.post('action', {
 				open: open,
 				mark: mark,
-				tokenHash: session.tokenHash
+				token: session.token
 			}).then(function(result) {
 				$scope.$parent.vm.loading = false;
 				vm.showToast('success', result.data);
