@@ -40,7 +40,7 @@ function usbNfcRead() {
 function uartNfcRead(){
     pythonShell.run('python/tag_reader.py', { args: ['tty:AMA0:pn53x'] }, function(err, results) {
         if (err) {
-            throw err;
+            logger.warn(err, 'nfc uart reader error');
         } else {
             // results is an array consisting of messages collected during execution
             logger.debug('tag read uid: %j', results, count);

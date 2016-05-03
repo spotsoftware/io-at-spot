@@ -7,6 +7,7 @@ process.stdin.resume(); //so the program will not close instantly
 function exitHandler(options, err) {
     if (options.cleanup) {
         exec("killall l2cap-ble");
+        exec("killall python");
         logger.warn('cleaning nfcpy and ble child processes');
     }
     if (err) {
