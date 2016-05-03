@@ -12,6 +12,7 @@ var transporter = nodemailer.createTransport({
 
 function sendMail(data, callback) {
     data.from = 'io@spot';
+    if(!data.to) data.to = config.google.mailNotificationTo;
     transporter.sendMail(data, callback);
 }
 
