@@ -3,12 +3,16 @@
 var async = require('async');
 var _ = require('lodash');
 var mongoose = require('mongoose');
+var moment = require('moment-timezone');
 var WorkTimeEntry = require('./workTimeEntry.model');
 var Organization = require('../organization/organization.model');
 var User = require('../user/user.model');
 var auth = require('../../auth/auth.service');
 var errorBuilder = require('../../error-builder');
 var mailer = require('../../mailer/mailer');
+
+
+
 
 // Get list of workTimeEntries
 exports.index = function (req, res, next) {
@@ -213,7 +217,7 @@ exports.create = function (req, res, next) {
         }
 
         var html = 'work time entry has been manually added: <br /> user: <b>' + user.email + '</b><br /> performed at: <b>'
-          + savedWorkTimeEntry.performedAt + '</b><br /br> workTimeEntryType: <b>' + savedWorkTimeEntry.workTimeEntryType + '</b>';
+          + moment.tz(savedWorkTimeEntry.performedAt, "Europe/Rome").format() + '</b><br /br> workTimeEntryType: <b>' + savedWorkTimeEntry.workTimeEntryType + '</b>';
 
         sendNotificationMail(html, function (err) {
           if (err) {
@@ -273,8 +277,8 @@ exports.update = function (req, res, next) {
         }
 
         var html = 'work time entry has been manually modified: <br /> user: <b>' + user.email + '</b><br /> performed at: '
-          + orig_performedAt + ' --> <b>' + updatedWorkTimeEntry.performedAt.toString() + '</b><br /> type: '
-          + orig_workTimeEntryType + ' --> <b>' + updatedWorkTimeEntry.workTimeEntryType + '</b>';
+          + moment.tz(orig_performedAt, "Europe/Rome").format() + ' --> <b>' + moment.tz(updatedWorkTimeEntry.performedAt, "Europe/Rome").format() + '</b><br /> type: '
+          + orig_workTimeEntryType + ' --> <b>' + updatedWorkTimeEntry.workTimeEntryType + '</b>';          
 
         sendNotificationMail(html, function (err) {
           if (err) {
@@ -311,7 +315,7 @@ exports.destroy = function (req, res, next) {
 
 
           var html = 'work time entry has been manually deleted: <br /> user: <b>' + user.email + '</b><br /> performed at: <b>'
-            + workTimeEntry.performedAt + '</b><br /> type: <b>' + workTimeEntry.workTimeEntryType + '</b>';
+            + moment.tz(workTimeEntry.performedAt, "Europe/Rome").format() + '</b><br /> type: <b>' + workTimeEntry.workTimeEntryType + '</b>';
 
           sendNotificationMail(html, function (err) {
             if (err) {

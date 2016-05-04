@@ -16,5 +16,6 @@ module.exports = {
     GMAIL_USER: 'use-your-gmail-account',
     GMAIL_PASSWORD: 'use-your-gmail-password',
     ADMIN_EMAIL: 'admin@admin.com',
-    ADMIN_PASSWORD: 'admin'
+    ADMIN_PASSWORD: 'admin',
+    MAIL_NOTIFICATION_TO: 'admin@admin.com'
 };
