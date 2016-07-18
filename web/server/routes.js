@@ -12,6 +12,7 @@ module.exports = function (app) {
 
     // Insert routes below
     app.all('/api/organizations/:organizationId/workTimeEntries*', require('./api/workTimeEntry'));
+    app.all('/api/organizations/:organizationId/workedHours*', require('./api/workedHour'));
     app.all('/api/organizations/:organizationId/timeOffs*', require('./api/timeOff'));
     app.all('/api/organizations/:organizationId/members*', require('./api/member'));
     app.all('/api/organizations/:organizationId/invites*', require('./api/invite'));

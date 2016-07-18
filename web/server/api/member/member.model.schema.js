@@ -24,6 +24,10 @@ var MemberSchema = new Schema({
         required: true,
         default: false
     },
+    hours: {
+      type: Number,
+      default: 8
+    },
     nfc_uid: String
 });
 
