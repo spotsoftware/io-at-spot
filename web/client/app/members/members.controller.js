@@ -68,7 +68,8 @@ angular.module('ioAtSpotApp')
                         id: member._id
                     }, {
                         role: $scope.model.editingMember.role,
-                        nfc_uid: $scope.model.editingMember.nfc_uid
+                        nfc_uid: $scope.model.editingMember.nfc_uid,
+                        hours: $scope.model.editingMember.hours
                     }).$promise.then(
                         function () {
                             $scope.model.editingMember = null;

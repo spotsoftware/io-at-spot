@@ -12,6 +12,11 @@ angular.module('ioAtSpotApp')
                 'title': 'Time Offs',
                 'link': '/TimeOffs',
                 'onlyAuth': true
+            },
+            {
+                'title': 'Worked Hours',
+                'link': '/WorkedHours',
+                'onlyAuth': true
             }
         ];
 

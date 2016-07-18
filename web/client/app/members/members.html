@@ -13,6 +13,9 @@
                         Role
                     </th>
                     <th>
+                        Hours
+                    </th>
+                    <th>
                         NFC-uid
                     </th>
                     <th>
@@ -37,7 +40,15 @@
                             {{ member.role }}
                         </div>
                     </td>
-                    <td class="col-md-3">
+                     <td class="col-md-1">
+                        <div class="btn-group" ng-show="model.editingMember._id === member._id">
+                            <input type='number' ng-model="model.editingMember.hours" class="form-control" style="width:50px" />
+                        </div>
+                        <div ng-hide="model.editingMember._id === member._id">
+                            {{ member.hours }}
+                        </div>
+                    </td>
+                    <td class="col-md-2">
                         <div class="read-uid input-group" ng-show="model.editingMember._id === member._id">
                             <input type='text' ng-model="model.editingMember.nfc_uid" class="form-control" />
                             <a class="btn btn-primary has-spinner input-group-addon" ng-click="actions.readUid(model.editingMember)" ng-class="{ active: utils.readingUid }" ng-show="utils.currentUserIsAdmin()">

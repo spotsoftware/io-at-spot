@@ -53,6 +53,7 @@ exports.update = function (req, res, next) {
             if (organization.members[i]._id.equals(memberId) && organization.members[i].active) {
                 organization.members[i].nfc_uid = req.body.nfc_uid;
                 organization.members[i].role = req.body.role;
+                organization.members[i].hours = req.body.hours;
             } else {
                 if (req.body.nfc_uid && req.body.nfc_uid !== '' && organization.members[i].nfc_uid === req.body.nfc_uid) {
                     return next(new errorBuilder("duplicate uid found on this organization", 403));

@@ -1,0 +1,114 @@
+<div class="container table-list">
+    <div class="row title">
+        <div class="col-xs-12 col-sm-8">
+            <h2>Worked Hours</h2>
+        </div>
+        <div class="col-xs-12 col-sm-4">
+            <div class="pull-right toggles">
+                <button class="btn btn-primary" ng-model="model.showFilters" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+                </button>
+                <button class="btn btn-primary" ng-if="model.chartData" ng-model="model.showChart" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div collapse="!model.showFilters">
+        <div class="row filters">
+
+            <div class="btn-group col-md-5">
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'lm'" uncheckable>Last month</label>
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'lw'" uncheckable>Last week</label>
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tm'" uncheckable>This month</label>
+                <label class="btn btn-primary col-xs-3" ng-model="model.fastPeriodFilter" btn-radio="'tw'" uncheckable>This week</label>
+            </div>
+
+            <div class="col-md-3">
+                <div class="btn-group combo" dropdown>
+                    <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="!utils.isCurrentOrganizationAdmin()" dropdown-toggle>
+                        <span>{{model.membersFilterText}}</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="member in model.members">
+                            <a class="pointer" ng-click="actions.memberFilterChange(member._user)" href>{{member._user.name}}</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="pointer" ng-click="actions.memberFilterChange('all') " href>All</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-xs col-md-3 btn-group btn-type">
+                <label class="btn btn-primary" ng-model="model.onlyLess" btn-checkbox>only less</label>
+            </div>
+        </div>
+        <div class="row filters form-inline">
+            <div class="col-xs-12 col-sm-5 col-lg-4 form-group">
+                <label>
+                    From:
+                </label>
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.from" is-open="utils.fromOpened" min-date="null" max-date="model.to" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" readonly />
+                    <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="actions.dateFromOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+                </p>
+            </div>
+
+            <div class="col-xs-12 col-sm-5 col-lg-4 form-group">
+                <label>
+                    To:
+                </label>
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{utils.format}}" ng-model="model.to" is-open="utils.toOpened" min-date="model.from" max-date="null" date-disabled="utils.disabled(date, mode)" ng-required="false" close-text="Close" readonly/>
+                    <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="actions.dateToOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+                </p>
+            </div>
+
+            <div class="col-xs-4 col-sm-2 form-group">
+                <button class="btn btn-primary btn-search" ng-click="actions.search()">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in model.workedHours | filter:utils.filterLess() | orderBy:'-_id.day'">
+                    <td>
+                        {{ utils.getMember( item._id.user)._user.name }}
+                    </td>
+                    <td>
+                        {{ item._id.day | date: 'shortDate' }}
+                    </td>
+                    <td>
+                      <span class="glyphicon glyphicon-exclamation-sign" ng-show="utils.hasWarning(item)"></span>
+                    </td>
+                    <td>
+                        {{ utils.getTimeAmount(item.value) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
