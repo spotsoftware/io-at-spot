@@ -74,8 +74,6 @@ exports.index = function (req, res, next) {
     });
   }
 
-  console.log(util.inspect(filterConditions, {showHidden: false, depth: null}));
-
   var o = {
     map: function () {
 
@@ -94,10 +92,6 @@ exports.index = function (req, res, next) {
     },
     reduce: function (key, values) {
 
-      //Thanks to 
-      //http://stackoverflow.com/questions/22623360/mongodb-mapreduce-nodejs-reduce-returning-nested-objects-and-not-values
-      // in & out of reduce functions must be idempotent :-DDD
-
       var reducedValue = 0;
 
       if (values.length % 2 === 1) return reducedValue;
@@ -107,8 +101,6 @@ exports.index = function (req, res, next) {
         reducedValue += (values[i] - values[i + 1]);
 
       }
-
-      //reducedValue = (reducedValue / 1000 / 60 / 60 );
       
       return reducedValue;
     },
