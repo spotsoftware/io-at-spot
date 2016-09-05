@@ -300,11 +300,11 @@ angular.module('ioAtSpotApp')
                     requestData: function () {
 
                         return {
-                            from: $scope.model.from,
+                            from: $scope.model.from ? $moment($scope.model.from).startOf('day').toDate() : null,
                             organizationId: authModel.currentOrganization._id,
                             page: $scope.model.page,
                             timeOffType: $scope.model.timeOffTypeFilter === 'All' ? null : $scope.model.timeOffTypeFilter,
-                            to: $scope.model.to,
+                            to: $scope.model.to ? $moment($scope.model.to).endOf('day').toDate() : null,
                             members: JSON.stringify($scope.model.membersFilter),
                             itemsPerPage: $scope.model.itemsPerPage
                         };

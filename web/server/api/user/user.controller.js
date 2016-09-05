@@ -12,8 +12,6 @@ var mailer = require('../../mailer/mailer');
 var validationError = function (next, err) {
     var error = new errorBuilder(err.message, 422);
 
-    console.log('Error built.');
-
     error.validation = err.errors;
     return next(error);
 };

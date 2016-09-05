@@ -86,22 +86,38 @@ exports.index = function (req, res, next) {
         user: this._user
       };
 
-      //value is type and performedAt
-
-      emit(key, this.performedAt.getTime());
+      emit(key, {
+        time: this.performedAt.getTime(),
+        single: true
+      });
     },
     reduce: function (key, values) {
 
+      if (values.length % 2 === 1) {
+        return {
+          time: 0,
+          single: false
+        };
+      }
+      
       var reducedValue = 0;
 
-      if (values.length % 2 === 1) return reducedValue;
+      values.sort(function(a, b){ return b.time-a.time; });
 
       for (var i = 0; i < values.length; i = i + 2) {
 
-        reducedValue += (values[i] - values[i + 1]);
+        reducedValue += (values[i].time - values[i + 1].time);
 
       }
       
+      return {
+        time: reducedValue,
+        single: false
+      };
+    },
+
+    finalize: function(key, reducedValue){
+      if(reducedValue.single) reducedValue.time = 0;
       return reducedValue;
     },
 
@@ -109,9 +125,9 @@ exports.index = function (req, res, next) {
       $and: filterConditions
     },
 
-    sort: {
-      performedAt: -1
-    }
+    // sort: {
+    //   performedAt: -1
+    // }
   };
 
   WorkTimeEntry.mapReduce(o, function (err, items) {

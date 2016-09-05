@@ -26,16 +26,12 @@ describe('GET /api/organizations/:organizationId/members', function () {
     before(function (done) {
 
         Organization.remove().exec().then(function () {
-            console.log("removed all organizations");
             User.remove().exec().then(function () {
-                console.log("removed all users");
                 user.save(function (err) {
                     if (err) {
                         console.log("user not saved");
                         return;
                     }
-
-                    console.log("saved user");
 
                     Organization.create(organizationBuilder(user), function (err, organization) {
                         if (err) {

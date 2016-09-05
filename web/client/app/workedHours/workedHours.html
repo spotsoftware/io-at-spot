@@ -91,6 +91,8 @@
                     <th>
                         Amount
                     </th>
+                    <th>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -105,7 +107,10 @@
                       <span class="glyphicon glyphicon-exclamation-sign" ng-show="utils.hasWarning(item)"></span>
                     </td>
                     <td>
-                        {{ utils.getTimeAmount(item.value) }}
+                        {{ utils.getTimeAmount(item.value.time) }}
+                    </td>
+                    <td>
+                        <a href="WorkTimeEntries?userid={{ utils.getMember( item._id.user)._user._id }}&date={{item._id.day}}" target="_blank">view</a>
                     </td>
                 </tr>
             </tbody>

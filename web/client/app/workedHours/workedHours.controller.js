@@ -159,7 +159,9 @@ angular.module('ioAtSpotApp')
                 };
 
                 utils.getTimeAmount = function(millis){
-                  return moment.utc(millis).format("HH:mm:ss");
+                  if(millis){
+                    return moment.utc(millis).format("HH:mm:ss");
+                  } else return '';
                 }
 
                 utils.filterLess = function( ) {
@@ -175,7 +177,7 @@ angular.module('ioAtSpotApp')
                 utils.hasWarning = function(item){
                   var amount = utils.getMember(item._id.user).hours;
 
-                  return item.value < amount * (60 * 60 * 1000);
+                  return item.value.time < amount * (60 * 60 * 1000);
                 };
 
                 // utils.setupChart = function () {

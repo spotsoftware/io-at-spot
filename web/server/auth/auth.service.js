@@ -113,7 +113,7 @@ function ensureOrganizationAdminMiddleware() {
 function signToken(data, expiration) {
 
     var signedToken = jwt.sign(data, config.secrets.session, {
-        expiresInMinutes: expiration ? expiration : 60 * 5
+        expiresInMinutes: expiration ? expiration : 60 * 24 * 5
     });
 
     return signedToken;

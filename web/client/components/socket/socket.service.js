@@ -30,8 +30,6 @@ angular.module('ioAtSpotApp')
              */
             syncUpdates: function (modelName, id, cb) {
 
-                console.log('sync updates:', id, modelName);
-
                 cb = cb || angular.noop;
 
                 /**
@@ -75,7 +73,6 @@ angular.module('ioAtSpotApp')
              * @param id
              */
             unsyncUpdates: function (modelName, id) {
-                console.log('unsyinc updates');
                 socket.removeAllListeners(id + ':' + modelName + ':save');
                 socket.removeAllListeners(id + ':' + modelName + ':remove');
             }

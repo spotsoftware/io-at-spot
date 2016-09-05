@@ -144,8 +144,6 @@ exports.index = function (req, res, next) {
 
             if (results.length > 0) {
 
-                console.log(results);
-
                 for (var i = 0; i < results.length; i++) {
 
                     var userAggregatedData = {};

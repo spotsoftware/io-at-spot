@@ -56,7 +56,6 @@ function syncWorkingDays(organizationId, workingDays) {
     if (!socket) {
         return;
     }
-    console.log('emitting workingDays');
     socket.emit('workingDays', {
         workingDays: workingDays
     });
@@ -279,7 +278,6 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on("disconnect", function (data) {
-        console.log('socket disconnected ');
         delete devices[organizationId];
     });
 

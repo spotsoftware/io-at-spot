@@ -2,7 +2,7 @@
 
 angular.module('ioAtSpotApp')
     .controller('WorkTimeEntriesCtrl',
-        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel, Members, messageCenterService) {
+        function ($scope, socket, WorkTimeEntries, $moment, $modal, authModel, Members, messageCenterService, $stateParams) {
 
             $scope.model = new function () {
                 var model = this;
@@ -43,8 +43,15 @@ angular.module('ioAtSpotApp')
                 model.membersFilter = [authModel.currentUser._id];
                 model.membersFilterText = authModel.currentUser.name;
                 model.workTimeEntryType = null;
+
                 model.from = null;
                 model.to = null;
+
+                if($stateParams.date){
+                  model.from = new Date($stateParams.date);
+                  model.to = new Date($stateParams.date);                
+                }
+
 
                 $scope.$watch('model.fastPeriodFilter', function (newValue, oldValue) {
                     if (newValue != oldValue) {
@@ -365,6 +372,15 @@ angular.module('ioAtSpotApp')
                     }).$promise.then(
                         function (members) {
                             $scope.model.members = members;
+
+                            
+                            if($stateParams.userid && $stateParams.userid !== authModel.currentUser._id && $scope.utils.isCurrentOrganizationAdmin()){
+                                for(var i=0; i<members.length; i++){
+                                  if(members[i]._user._id === $stateParams.userid){
+                                    return $scope.actions.memberFilterChange(members[i]._user);
+                                  }
+                                }   
+                            }
                         },
                         function (err) {
                             messageCenterService.add('danger', err.data.error, {
@@ -380,7 +396,7 @@ angular.module('ioAtSpotApp')
                             organizationId: authModel.currentOrganization._id,
                             page: $scope.model.page,
                             from: $scope.model.from,
-                            to: $scope.model.to,
+                            to: $scope.model.to ? $moment($scope.model.to).endOf('day').toDate() : null,
                             type: $scope.model.workTimeEntryType,
                             members: JSON.stringify($scope.model.membersFilter),
                             itemsPerPage: $scope.model.itemsPerPage
@@ -434,7 +450,7 @@ angular.module('ioAtSpotApp')
                 proxies.edit = {
                     requestData: function (workTimeEntry) {
                         return {
-                            workTimeEntryType: workTimeEntry.workTimeEntryType,
+                            //workTimeEntryType: workTimeEntry.workTimeEntryType,
                             manual: workTimeEntry.manual,
                             performedAt: workTimeEntry.performedAt
                         }

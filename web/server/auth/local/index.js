@@ -122,9 +122,7 @@ router.post('/forgot', function (req, res, next) {
 
 router.post('/reset', function (req, res, next) {
     auth.verifyToken(req.body.token, function (err, decoded) {
-        console.log(req.body.token);
-        console.log(err);
-        console.log(decoded);
+
         if (err) {
             res.json(401, {
                 message: err

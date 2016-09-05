@@ -175,7 +175,6 @@ exports.batch = function (req, res, next) {
           return next(err);
         }
         if (newItems.length > 0) {
-          console.log(newItems);
           WorkTimeEntry.collection.insert(newItems, {
             continueOnError: 1
           }, function (err, documents) {

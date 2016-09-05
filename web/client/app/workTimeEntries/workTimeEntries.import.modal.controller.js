@@ -186,7 +186,6 @@ angular.module('ioAtSpotApp')
                         messageCenterService.add('danger', err.msg, {
                             timeout: 3000
                         });
-                        console.log('data preparing error', err);
                     }
                 };
             };

@@ -18,7 +18,6 @@ exports.register = function (socket) {
 }
 
 function onSave(socket, doc, cb) {
-    console.log("emitting", doc);
     socket.emit(doc._organization + ':workTimeEntry:save', doc);
 }
 

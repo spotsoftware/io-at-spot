@@ -4,7 +4,7 @@ angular.module('ioAtSpotApp')
     .config(function ($stateProvider) {
         $stateProvider
             .state('private.workTimeEntries', {
-                url: '/WorkTimeEntries',
+                url: '/WorkTimeEntries?userid&date',
                 templateUrl: 'app/workTimeEntries/workTimeEntries.html',
                 controller: 'WorkTimeEntriesCtrl',
                 resolve: {

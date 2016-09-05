@@ -12,7 +12,6 @@ angular.module('ioAtSpotApp')
         };
 
         if ($cookieStore.get('token')) {
-            console.log('starting auth service, there is a token');
             authModel.$promise = populateModel();
         };
 
@@ -39,7 +38,6 @@ angular.module('ioAtSpotApp')
                     deferred.resolve(authModel);
 
                 }, function (err) {
-                    console.log('rejecting deferred');
                     deferred.reject(err);
                 });
             }, function (err) {
@@ -99,7 +97,6 @@ angular.module('ioAtSpotApp')
             $http.post('/auth/local/forgot', {
                 email: user.email
             }).success(function (data) {
-                console.log(data.message);
                 deferred.resolve(data);
                 return cb();
             }).error(function (err) {

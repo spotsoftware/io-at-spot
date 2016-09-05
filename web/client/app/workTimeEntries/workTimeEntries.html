@@ -7,8 +7,8 @@
             <div class="pull-right toggles">
                 <button class="btn btn-primary" ng-model="model.showFilters" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
                 </button>
-                <button class="btn btn-primary" ng-if="model.chartData" ng-model="model.showChart" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-                </button>
+                <!--<button class="btn btn-primary" ng-if="model.chartData" ng-model="model.showChart" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                </button>-->
                 <button class="btn btn-primary" ng-if="utils.isCurrentOrganizationAdmin()" ng-click="actions.import()"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
                 </button>
             </div>
@@ -49,10 +49,10 @@
                 </div>
             </div>
 
-            <div class="col-xs col-md-3 btn-group btn-type">
+            <!--<div class="col-xs col-md-3 btn-group btn-type">
                 <label class="btn btn-primary" ng-model="model.workTimeEntryType" btn-radio="'in'" uncheckable>in</label>
                 <label class="btn btn-primary" ng-model="model.workTimeEntryType" btn-radio="'out'" uncheckable>out</label>
-            </div>
+            </div>-->
         </div>
 
         <div class="row filters form-inline">
@@ -85,12 +85,12 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <!--<div class="row">
         <div class="col-xs-12" collapse="!model.showChart" ng-if="model.chartData">
             <canvas id="line" class="chart chart-line" data="model.chartData" labels="model.chartLabels" legend="true" series="model.chartSeries" options="model.chartOptions">
             </canvas>
         </div>
-    </div>
+    </div>-->
 
     <div class="row main-commands">
         <button class="btn btn-new" ng-click="actions.new()">
@@ -111,9 +111,9 @@
                     <th>
                         Time
                     </th>
-                    <th>
+                    <!--<th>
                         Type
-                    </th>
+                    </th>-->
                     <th>
 
                     </th>
@@ -133,9 +133,9 @@
                     <td>
                         {{ item.performedAt | date: 'shortTime' }}
                     </td>
-                    <td>
+                    <!--<td>
                         {{ item.workTimeEntryType }}
-                    </td>
+                    </td>-->
                     <td>
                         <div class="icon-device" ng-show="{{ !item.manual }}"></div>
                     </td>
