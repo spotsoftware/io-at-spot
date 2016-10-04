@@ -86,6 +86,10 @@ function connectSocket(authToken) {
         log.error(err, 'socket error');
     });
 
+    _socket.on('mark_error', function (err) {
+        actuatorService.error(5);
+    });
+
     _socket.on('read', function () {
         log.info('reading nfc uid request, start blinking');
 

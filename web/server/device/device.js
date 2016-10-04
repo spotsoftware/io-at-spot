@@ -130,10 +130,10 @@ io.sockets.on('connection', function (socket) {
                         userId: decoded._id,
                         organizationId: organizationId
                     }, function (err) {
-                        if (err) {
-                            console.log(err);
+                        if (err) {                     
+                            console.log('insert work time entry error', err);       
+                            socket.emit('mark_error', {});
                         }
-
                     });
 
                 }

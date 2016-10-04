@@ -49,10 +49,11 @@ function notifyOk(){
     }, 250);
 }
 
-function error(){
+function error(blinks){
     var cont=0;
+    blinks = blinks ? blinks : 3;
     errorInterval = setInterval(function() {
-        if(cont<6){
+        if(cont<blinks*2){
             redLed.writeSync(redLed.readSync() === 0 ? 1 : 0);
             buzzer.writeSync(buzzer.readSync() === 0 ? 1 : 0);
             cont++;
