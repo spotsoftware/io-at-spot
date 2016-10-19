@@ -22,7 +22,7 @@ var WorkTimeEntrySchema = new BaseSchema({
     workTimeEntryType: {
         type: String,
         enum: ['in', 'out'],
-        required: true
+        required: false
     },
     manual: {
         type: Boolean,
