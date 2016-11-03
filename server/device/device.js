@@ -70,11 +70,12 @@ function addWorkTimeEntry(data, callback) {
     /*
     workTimeEntry.workTimeEntryType = 'in'; //AUTO-GUESS
     workTimeEntry.manual = false;
+    */
+
     if (data.performedAt) {
         workTimeEntry.performedAt = data.performedAt;
     }
-    */
-
+    
     workTimeEntry.save(function (err, savedWorkTimeEntry) {
 
         callback(err);

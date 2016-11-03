@@ -22,7 +22,7 @@ exports.setup = function (User, config) {
 
                 if (!user) {
 
-                    return done(new errorBuilder(403, 'user not found'));
+                    return done(new errorBuilder('user not found', 403));
                     //                    //User is not found on db, create a new user
                     //                    user = new User({
                     //                        name: profile.displayName,
