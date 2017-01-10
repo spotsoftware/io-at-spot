@@ -8,6 +8,7 @@ var mailer = require('../../mailer/mailer');
 var errorBuilder = require('../../error-builder');
 var crypto = require('crypto');
 var router = express.Router();
+var config = require('../../config/environment');
 
 router.post('/', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
